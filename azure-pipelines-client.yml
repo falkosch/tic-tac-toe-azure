@@ -11,15 +11,47 @@ trigger:
 pool:
   vmImage: 'ubuntu-18.04'
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '10.x'
-  displayName: 'Install Node.js'
+variables:
+  # Azure Resource Manager connection created during pipeline creation
+  azureSubscription: 'e6d67870-028a-476c-83e0-c0f302ecbb6e'
 
-- script: |
-    pushd tic-tac-toe-client
-    npm install
-    npm run build
-    popd
-  displayName: 'npm install and build'
+  # Agent VM image name
+  vmImageName: 'ubuntu-18.04'
+
+  # Working Directory
+  workingDirectory: '$(System.DefaultWorkingDirectory)/tic-tac-toe-client'
+
+stages:
+- stage: Build
+  displayName: Build stage
+
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '10.x'
+      displayName: 'Install Node.js'
+
+    - script: |
+        pushd tic-tac-toe-client
+        npm install
+        npm run build
+        popd
+      displayName: 'npm install and build'
+
+    - task: ArchiveFiles@2
+      displayName: 'Archive files'
+      inputs:
+        rootFolderOrFile: '$(workingDirectory)/build'
+        includeRootFolder: false
+        archiveType: zip
+        archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+        replaceExistingArchive: true
+
+    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+      artifact: drop
