@@ -3,6 +3,8 @@
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
+# Pipeline for the ReactJS web app tic-tac-toe-client
+
 trigger:
 - master
 
