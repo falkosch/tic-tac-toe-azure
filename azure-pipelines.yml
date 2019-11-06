@@ -11,7 +11,7 @@ variables:
   azureSubscription: 'e6d67870-028a-476c-83e0-c0f302ecbb6e'
 
   # Function app name
-  functionAppName: 'TicTacToeGame'
+  functionAppName: 'FSTicTacToeGame'
 
   # Agent VM image name
   vmImageName: 'windows-2019'
