@@ -1,4 +1,3 @@
-// @ts-ignore
 import fpGet from 'lodash/fp/get';
 import React from 'react';
 

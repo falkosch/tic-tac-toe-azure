@@ -1,7 +1,6 @@
-// @ts-ignore
 import fpTimes from 'lodash/fp/times';
 
-import { NoCellOwner } from '../meta-model/Cell';
+import { NoCellOwner, AnyCellOwner } from '../meta-model/Cell';
 import { Defender } from '../meta-model/Defender';
 import { Game } from '../meta-model/Game';
 import { GameAction } from '../meta-model/GameAction';
@@ -14,7 +13,7 @@ export default class MockDefender implements Defender {
   handshake(): Promise<Game> {
     return Promise.resolve({
       board: {
-        cells: fpTimes(() => NoCellOwner)(DefaultHeight * DefaultWidth),
+        cells: fpTimes<AnyCellOwner>(() => NoCellOwner)(DefaultHeight * DefaultWidth),
         height: DefaultHeight,
         width: DefaultWidth,
       },
