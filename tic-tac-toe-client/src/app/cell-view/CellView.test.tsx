@@ -3,13 +3,13 @@ import ReactDOM from 'react-dom';
 
 import CellView from './CellView';
 
-import { AnyCellOwner, XCellOwner } from '../../meta-model/Cell';
+import { CellOwner } from '../../meta-model/Cell';
 
 describe(`${CellView.name}`, () => {
-  let cellOwner: AnyCellOwner;
+  let cellOwner: CellOwner;
 
   beforeEach(() => {
-    cellOwner = XCellOwner;
+    cellOwner = CellOwner.X;
   });
 
   it('renders without crashing', () => {

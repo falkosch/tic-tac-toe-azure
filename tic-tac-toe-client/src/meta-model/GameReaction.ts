@@ -6,11 +6,12 @@ export interface GameReaction {
     consecutiveness: Consecutiveness[];
 }
 
-export const WonEndState = 'won';
-export const LostEndState = 'lost';
-export const DrawEndState = 'draw';
-
-export type EndState = typeof WonEndState | typeof LostEndState | typeof DrawEndState;
+export enum EndState {
+    Won = 'won',
+    Lost = 'lost',
+    Draw = 'draw',
+}
+export default EndState;
 
 export interface GameEndsReaction extends GameReaction {
     endStates: Record<SpecificCellOwner, EndState>;

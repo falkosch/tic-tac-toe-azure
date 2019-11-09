@@ -4,15 +4,15 @@ import ReactDOM from 'react-dom';
 
 import BoardView from './BoardView';
 
+import { CellOwner } from '../../meta-model/Cell';
 import { Board } from '../../meta-model/Game';
-import { NoCellOwner, AnyCellOwner } from '../../meta-model/Cell';
 
 describe(`${BoardView.name}`, () => {
   let board: Board;
 
   beforeEach(() => {
     board = {
-      cells: fpTimes<AnyCellOwner>(() => NoCellOwner)(9),
+      cells: fpTimes<CellOwner>(() => CellOwner.None)(9),
       height: 3,
       width: 3,
     };

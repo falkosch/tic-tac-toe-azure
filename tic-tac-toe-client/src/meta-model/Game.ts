@@ -1,7 +1,7 @@
-import { AnyCellOwner } from './Cell';
+import { CellOwner } from './Cell';
 
 export interface Board {
-    cells: AnyCellOwner[];
+    cells: CellOwner[];
     height: number;
     width: number;
 }

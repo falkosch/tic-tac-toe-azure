@@ -1,8 +1,6 @@
 import React from 'react';
 
-import {
-  AnyCellOwner, OCellOwner, XCellOwner, NoCellOwner,
-} from '../../meta-model/Cell';
+import { CellOwner } from '../../meta-model/Cell';
 
 import './CellView.css';
 
@@ -10,16 +8,16 @@ import strokeNone from './stroke-none.svg';
 import strokeO from './stroke-o.svg';
 import strokeX from './stroke-x.svg';
 
-function mapCellOwnerToImage(cellOwner: AnyCellOwner): string {
+function mapCellOwnerToImage(cellOwner: CellOwner): string {
   const cellOwnersToImages = {
-    [NoCellOwner]: strokeNone,
-    [OCellOwner]: strokeO,
-    [XCellOwner]: strokeX,
+    [CellOwner.None]: strokeNone,
+    [CellOwner.O]: strokeO,
+    [CellOwner.X]: strokeX,
   };
   return cellOwnersToImages[cellOwner];
 }
 
-const CellView: React.FC<{ cellOwner: AnyCellOwner }> = ({ cellOwner }) => (
+const CellView: React.FC<{ cellOwner: CellOwner }> = ({ cellOwner }) => (
   <div className="cell-view">
     <img
       className="cell-view-cell-owner"

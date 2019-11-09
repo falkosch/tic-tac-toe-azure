@@ -1,4 +1,4 @@
-import { AnyCellOwner } from './Cell';
+import { CellOwner } from './Cell';
 import { Board } from './Game';
 
 export interface GameAction {
@@ -7,5 +7,5 @@ export interface GameAction {
 
 export interface UpdateOwnerAction extends GameAction {
     affectedCellsAt: number[];
-    newOwner: AnyCellOwner;
+    newOwner: CellOwner;
 }

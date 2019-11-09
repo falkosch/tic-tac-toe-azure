@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import GameView from './GameView';
 
 import { Game } from '../../meta-model/Game';
-import { NoCellOwner, AnyCellOwner } from '../../meta-model/Cell';
+import { CellOwner } from '../../meta-model/Cell';
 
 describe(`${GameView.name}`, () => {
   let game: Game;
@@ -13,7 +13,7 @@ describe(`${GameView.name}`, () => {
   beforeEach(() => {
     game = {
       board: {
-        cells: fpTimes<AnyCellOwner>(() => NoCellOwner)(9),
+        cells: fpTimes<CellOwner>(() => CellOwner.None)(9),
         height: 3,
         width: 3,
       },
