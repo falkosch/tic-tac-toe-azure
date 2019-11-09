@@ -1,0 +1,107 @@
+{
+  "root": true,
+  "extends": [
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:compat/recommended",
+    "airbnb",
+    "airbnb/hooks",
+    "plugin:jest/recommended",
+    "plugin:jest/style"
+  ],
+  "env": {
+    "commonjs": true,
+    "node": false,
+    "serviceworker": false
+  },
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint",
+    "prettier",
+    "html",
+    "jest",
+    "json",
+    "markdown"
+  ],
+  "settings": {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
+    "import/resolver": {
+      "typescript": {}
+    }
+  },
+  "rules": {
+    "class-methods-use-this": "off",
+    "no-use-before-define": [
+      "error",
+      {
+        "functions": false,
+        "classes": false,
+        "variables": true
+      }
+    ],
+    "react/jsx-filename-extension": [
+      "error",
+      {
+        "extensions": [".jsx", ".tsx"]
+      }
+    ],
+    "react/prop-types": "off",
+    "@typescript-eslint/explicit-function-return-type": [
+      "error",
+      {
+        "allowExpressions": true,
+        "allowTypedFunctionExpressions": true
+      }
+    ],
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-parameter-properties": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^__(_*|\\w+)$"
+      }
+    ],
+    "@typescript-eslint/no-use-before-define": [
+      "error",
+      {
+        "functions": false,
+        "classes": false,
+        "variables": true,
+        "typedefs": true
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["src/**/*.d.ts"],
+      "rules": {
+        "spaced-comment": "off"
+      }
+    },
+    {
+      "files": ["src/**/*.ts{,x}"],
+      "globals": {
+        "process": true
+      }
+    },
+    {
+      "files": ["src/**/*.test.ts{,x}"],
+      "env": {
+        "jest/globals": true
+      }
+    },
+    {
+      "files": ["src/serviceWorker.ts"],
+      "env": {
+        "serviceworker": true
+      },
+      "rules": {
+        "no-console": "off",
+        "no-param-reassign": "off",
+        "compat/compat": "off"
+      }
+    }
+  ]
+}
