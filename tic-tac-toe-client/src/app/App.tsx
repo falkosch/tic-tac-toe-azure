@@ -2,7 +2,7 @@ import React from 'react';
 
 import './App.css';
 
-import logo from '../assets/logo.svg';
+import logo from './logo.svg';
 
 const App: React.FC = () => (
   <div className="App">
