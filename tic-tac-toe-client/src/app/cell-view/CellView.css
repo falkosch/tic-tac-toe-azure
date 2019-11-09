@@ -1,0 +1,10 @@
+.cell-view {
+  border: 1px darkgray solid;
+  flex-basis: 33%;
+}
+
+.cell-view-cell-owner {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
