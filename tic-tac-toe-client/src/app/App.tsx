@@ -9,19 +9,16 @@ import { Game } from '../meta-model/Game';
 import './App.css';
 import logo from './logo.svg';
 
-const defender = new MockDefender();
-
-let game: Game;
-async function handshake(): Promise<Game> {
-  game = await defender.handshake();
-  return game;
-}
-
 export const App: React.FC = () => {
-  const [_game, setGame] = useState(game);
+  const [defender] = useState(new MockDefender());
+  const [game, setGame] = useState<Game>();
+
+  const appGameView = game === undefined || game === null
+    ? <div>Create a new game first.</div>
+    : <GameView game={game} />;
 
   async function newGame(): Promise<void> {
-    setGame(await handshake());
+    setGame(await defender.handshake());
   }
 
   return (
@@ -37,13 +34,7 @@ export const App: React.FC = () => {
           </Navbar.Collapse>
         </Navbar>
       </div>
-      <div className="app-game-view">
-        {
-          _game === undefined || _game === null
-            ? <div>Create a new game first.</div>
-            : <GameView game={_game} />
-        }
-      </div>
+      <div className="app-game-view">{appGameView}</div>
     </div>
   );
 };
