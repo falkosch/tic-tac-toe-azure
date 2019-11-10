@@ -1,5 +1,6 @@
 .cell-view {
-  border: 1px darkgray solid;
+  border: darkgray solid;
+  border-width: 0 1px 1px 0;
   height: calc(100% / 3);
   width: calc(100% / 3);
 }
@@ -8,4 +9,16 @@
   display: block;
   height: 100%;
   width: 100%;
+}
+
+.cell-view-edge-ul,
+.cell-view-edge-ui,
+.cell-view-edge-uu {
+  border-right: none;
+}
+
+.cell-view-edge-lu,
+.cell-view-edge-iu,
+.cell-view-edge-uu {
+  border-bottom: none;
 }

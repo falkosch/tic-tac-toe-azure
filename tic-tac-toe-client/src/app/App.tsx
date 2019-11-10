@@ -2,14 +2,12 @@ import React, { useState } from 'react';
 import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
 
-import GameView from './game-view/GameView';
+import { GameView } from './game-view/GameView';
+import { MockDefender } from '../defender/MockDefender';
+import { Game } from '../meta-model/Game';
 
 import './App.css';
-
 import logo from './logo.svg';
-
-import MockDefender from '../defender/MockDefender';
-import { Game } from '../meta-model/Game';
 
 const defender = new MockDefender();
 
@@ -19,7 +17,7 @@ async function handshake(): Promise<Game> {
   return game;
 }
 
-const App: React.FC = () => {
+export const App: React.FC = () => {
   const [_game, setGame] = useState(game);
 
   async function newGame(): Promise<void> {
@@ -40,10 +38,12 @@ const App: React.FC = () => {
         </Navbar>
       </div>
       <div className="app-game-view">
-        <GameView game={_game} />
+        {
+          _game === undefined || _game === null
+            ? <div>Create a new game first.</div>
+            : <GameView game={_game} />
+        }
       </div>
     </div>
   );
 };
-
-export default App;

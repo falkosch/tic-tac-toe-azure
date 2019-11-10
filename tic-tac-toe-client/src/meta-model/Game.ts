@@ -1,10 +1,4 @@
-import { CellOwner } from './Cell';
-
-export interface Board {
-    cells: CellOwner[];
-    height: number;
-    width: number;
-}
+import { Board } from './Board';
 
 export interface Consecutiveness {
     cellsAt: number[];

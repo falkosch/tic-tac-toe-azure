@@ -9,6 +9,9 @@
 }
 
 .app-game-view {
+  align-items: center;
+  display: flex;
   flex-basis: auto;
   flex-grow: 1;
+  justify-content: center;
 }

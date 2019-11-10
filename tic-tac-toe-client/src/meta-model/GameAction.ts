@@ -1,5 +1,5 @@
-import { CellOwner } from './Cell';
-import { Board } from './Game';
+import { Board } from './Board';
+import { CellOwner } from './CellOwner';
 
 export interface GameAction {
     board: Board;

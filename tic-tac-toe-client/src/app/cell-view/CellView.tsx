@@ -1,30 +1,36 @@
 import React from 'react';
 
-import { CellOwner } from '../../meta-model/Cell';
+import { cellCoordinates } from '../../mechanics/CellCoordinates';
+import { cellEdgeClassifiers } from '../../mechanics/CellEdgeClassifiers';
+import { mapCellOwnerToImage } from '../../mechanics/MapCellOwnerToImage';
+import { BoardDimensions } from '../../meta-model/Board';
+import { CellOwner } from '../../meta-model/CellOwner';
 
 import './CellView.css';
 
-import strokeNone from './stroke-none.svg';
-import strokeO from './stroke-o.svg';
-import strokeX from './stroke-x.svg';
+export const CellView: React.FC<{
+  cellOwner: CellOwner;
+  cellAt: number;
+  boardDimensions: BoardDimensions;
+}> = ({ cellOwner, cellAt, boardDimensions }) => {
+  const cellOwnerImage = mapCellOwnerToImage(cellOwner);
 
-function mapCellOwnerToImage(cellOwner: CellOwner): string {
-  const cellOwnersToImages = {
-    [CellOwner.None]: strokeNone,
-    [CellOwner.O]: strokeO,
-    [CellOwner.X]: strokeX,
-  };
-  return cellOwnersToImages[cellOwner];
-}
+  const edgeClassifiers = cellEdgeClassifiers(
+    cellCoordinates(cellAt, boardDimensions),
+    boardDimensions,
+  );
 
-const CellView: React.FC<{ cellOwner: CellOwner }> = ({ cellOwner }) => (
-  <div className="cell-view">
-    <img
-      className="cell-view-cell-owner"
-      src={mapCellOwnerToImage(cellOwner)}
-      alt={cellOwner}
-    />
-  </div>
-);
-
-export default CellView;
+  return (
+    <div className={`cell-view cell-view-edge-${edgeClassifiers.x + edgeClassifiers.y}`}>
+      {
+        cellOwnerImage && (
+          <img
+            className="cell-view-cell-owner"
+            src={cellOwnerImage}
+            alt={cellOwner}
+          />
+        )
+      }
+    </div>
+  );
+};

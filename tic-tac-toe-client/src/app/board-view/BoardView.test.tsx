@@ -2,19 +2,21 @@ import fpTimes from 'lodash/fp/times';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import BoardView from './BoardView';
+import { BoardView } from './BoardView';
 
-import { CellOwner } from '../../meta-model/Cell';
-import { Board } from '../../meta-model/Game';
+import { Board } from '../../meta-model/Board';
+import { CellOwner } from '../../meta-model/CellOwner';
 
 describe(`${BoardView.name}`, () => {
   let board: Board;
 
   beforeEach(() => {
     board = {
-      cells: fpTimes<CellOwner>(() => CellOwner.None)(9),
-      height: 3,
-      width: 3,
+      cells: fpTimes(() => CellOwner.None)(1),
+      dimensions: {
+        height: 1,
+        width: 1,
+      },
     };
   });
 
