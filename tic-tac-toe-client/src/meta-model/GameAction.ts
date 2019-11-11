@@ -5,7 +5,7 @@ export interface GameAction {
     board: Board;
 }
 
-export interface UpdateOwnerAction extends GameAction {
+export interface AttackAction extends GameAction {
     affectedCellsAt: number[];
     newOwner: CellOwner;
 }

@@ -13,6 +13,6 @@ export enum EndState {
     Draw = 'draw',
 }
 
-export interface GameEndsReaction extends GameReaction {
+export interface EndedGameReaction extends GameReaction {
     endStates: Record<SpecificCellOwner, EndState>;
 }
