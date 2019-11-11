@@ -24,7 +24,7 @@ describe(`${GameView.name}`, () => {
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
-    ReactDOM.render(<GameView game={game} />, div);
+    ReactDOM.render(<GameView game={game} onCellClick={() => {}} />, div);
     ReactDOM.unmountComponentAtNode(div);
   });
 });

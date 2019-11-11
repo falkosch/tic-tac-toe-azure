@@ -8,31 +8,46 @@ import Form from 'react-bootstrap/Form';
 import Navbar from 'react-bootstrap/Navbar';
 import React, { useState } from 'react';
 
+import { commenceAttack } from '../mechanics/Actions';
 import { ClientDefender } from '../defender/ClientDefender';
+import { Defender } from '../meta-model/Defender';
 import { Game } from '../meta-model/Game';
 import { GameView } from './game-view/GameView';
 import { MockDefender } from '../defender/MockDefender';
 
 import './App.css';
 import logo from './logo.svg';
+import { evaluateReaction } from '../mechanics/Reactions';
 
 const mockDefenderName = 'Mock defender';
-const defenders = {
+const defenders: Record<string, () => Defender> = {
   [mockDefenderName]: () => new MockDefender(),
   'Client-side defender': () => new ClientDefender(),
   'Azure Function defender': () => new MockDefender(),
 };
 
 export const App: React.FC = () => {
-  const [defenderName, setDefenderName] = useState(mockDefenderName);
+  const [defenderName, setDefenderName] = useState<string>(mockDefenderName);
+  const [defender, setDefender] = useState<Defender>(defenders[mockDefenderName]);
   const [game, setGame] = useState<Game>();
 
-  const appGameView = game === undefined || game === null
-    ? <div>Create a new game first.</div>
-    : <GameView game={game} />;
-
   async function newGame(): Promise<void> {
-    setGame(await defenders[defenderName]().handshake());
+    setGame(await defender.handshake());
+  }
+
+  async function changeDefender(newDefenderName: string): Promise<void> {
+    setDefenderName(newDefenderName);
+    const newDefender = defenders[newDefenderName]();
+    setDefender(newDefender);
+    setGame(await newDefender.handshake());
+  }
+
+  async function commenceAction(cellAt: number): Promise<void> {
+    if (!game) return;
+    const action = commenceAttack(game.board, cellAt);
+    const reaction = await defender.defend(action);
+    const alteredGame = evaluateReaction(game, action, reaction);
+    setGame(alteredGame);
   }
 
   return (
@@ -56,7 +71,7 @@ export const App: React.FC = () => {
                         <Dropdown.Item
                           active={_defenderName === defenderName}
                           key={_defenderName}
-                          onClick={() => setDefenderName(_defenderName)}
+                          onClick={() => { changeDefender(_defenderName); }}
                         >
                           {_defenderName}
                         </Dropdown.Item>
@@ -70,7 +85,16 @@ export const App: React.FC = () => {
         </Navbar>
       </div>
       <div className="app-game-view d-flex justify-content-center align-items-center">
-        {appGameView}
+        {
+          game === undefined || game === null
+            ? <div>Create a new game first.</div>
+            : (
+              <GameView
+                game={game}
+                onCellClick={(__event, cellAt) => commenceAction(cellAt)}
+              />
+            )
+        }
       </div>
     </div>
   );

@@ -20,9 +20,10 @@ describe(`${CellView.name}`, () => {
   it('renders without crashing', () => {
     const div = document.createElement('div');
     ReactDOM.render(<CellView
-      cellOwner={cellOwner}
-      cellAt={0}
       boardDimensions={boardDimensions}
+      cellAt={0}
+      cellOwner={cellOwner}
+      onClick={() => {}}
     />, div);
     ReactDOM.unmountComponentAtNode(div);
   });

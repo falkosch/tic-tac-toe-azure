@@ -1,4 +1,5 @@
 .cell-view {
   border: 0 solid;
   box-sizing: content-box;
+  padding: 0;
 }

@@ -22,7 +22,7 @@ describe(`${BoardView.name}`, () => {
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
-    ReactDOM.render(<BoardView board={board} />, div);
+    ReactDOM.render(<BoardView board={board} onCellClick={() => {}} />, div);
     ReactDOM.unmountComponentAtNode(div);
   });
 });
