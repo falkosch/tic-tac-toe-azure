@@ -65,6 +65,7 @@
         "directory": "./tic-tac-toe-client",
         "changeProcessCWD": true
       }
-    ]
+    ],
+    "css.lint.unknownAtRules": "ignore"
   }
 }
