@@ -34,10 +34,10 @@ export const CellView: React.FC<{
     boardDimensions,
   );
   const gridStyle = {
-    borderRightWidth: selectborderwidth(edgeClassifiers.x === EdgeClassifier.Upper),
-    borderBottomWidth: selectborderwidth(edgeClassifiers.y === EdgeClassifier.Upper),
-    height: tilesize(boardDimensions.height),
-    width: tilesize(boardDimensions.width),
+    borderRightWidth: selectBorderWidth(edgeClassifiers.x === EdgeClassifier.Upper),
+    borderBottomWidth: selectBorderWidth(edgeClassifiers.y === EdgeClassifier.Upper),
+    height: tileSize(boardDimensions.height),
+    width: tileSize(boardDimensions.width),
   };
 
   return (

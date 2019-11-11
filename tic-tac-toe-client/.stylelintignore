@@ -2,10 +2,14 @@ build/
 node_modules/
 *.config
 *.ico
+*.js
 *.json
+*.jsx
 *.odg
 *.png
 *.svg
+*.ts
+*.tsx
 *.txt
 *.webmanifest
 *.xml
