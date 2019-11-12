@@ -3,17 +3,17 @@ import { SpecificCellOwner } from './CellOwner';
 import { Consecutiveness } from './Game';
 
 export enum EndState {
-    Won = 'won',
-    Lost = 'lost',
-    Draw = 'draw',
+  Draw = 'draw',
+  Lost = 'lost',
+  Won = 'won',
 }
 
 export interface EndedGameReaction {
-    endStates: Record<SpecificCellOwner, EndState>;
+  endStates: Readonly<Record<SpecificCellOwner, EndState>>;
 }
 
 export interface GameReaction {
-  board: Board;
-  consecutiveness: Consecutiveness[];
-  endedReaction?: EndedGameReaction;
+  board: Readonly<Board>;
+  consecutiveness: ReadonlyArray<Consecutiveness>;
+  endedReaction?: Readonly<EndedGameReaction>;
 }

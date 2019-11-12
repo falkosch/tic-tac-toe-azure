@@ -6,6 +6,6 @@ export interface BoardDimensions {
 }
 
 export interface Board {
-    cells: CellOwner[];
-    dimensions: BoardDimensions;
+    cells: ReadonlyArray<CellOwner>;
+    dimensions: Readonly<BoardDimensions>;
 }
