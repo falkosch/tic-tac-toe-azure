@@ -23,10 +23,10 @@ function selectBorderWidth(upperEdge): string {
 }
 
 export const CellView: React.FC<{
-  boardDimensions: BoardDimensions;
+  boardDimensions: Readonly<BoardDimensions>;
   cellAt: number;
-  cellOwner: CellOwner;
-  onClick: (event: React.MouseEvent) => void;
+  cellOwner: Readonly<CellOwner>;
+  onClick: (event: Readonly<React.MouseEvent>) => void;
 }> = ({
   boardDimensions,
   cellAt,
@@ -49,7 +49,7 @@ export const CellView: React.FC<{
   return (
     <button
       className="cell-view bg-light border-secondary"
-      onClick={(event: React.MouseEvent) => onClick(event)}
+      onClick={(event) => onClick(event)}
       style={gridStyle}
       type="button"
     >

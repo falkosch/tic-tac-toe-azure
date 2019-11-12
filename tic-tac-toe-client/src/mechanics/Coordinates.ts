@@ -1,4 +1,4 @@
 export interface Coordinates<T> {
-    x: T;
-    y: T;
+    x: Readonly<T>;
+    y: Readonly<T>;
 }

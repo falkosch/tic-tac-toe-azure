@@ -5,7 +5,7 @@ export type CellCoordinates = Coordinates<number>;
 
 export function cellCoordinates(
   cellAt: number,
-  boardDimensions: BoardDimensions,
+  boardDimensions: Readonly<BoardDimensions>,
 ): CellCoordinates {
   const span = boardDimensions.width;
   const x = cellAt % span;

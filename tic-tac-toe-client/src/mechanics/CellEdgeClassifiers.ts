@@ -21,8 +21,8 @@ export function cellEdgeClassifier(coordinate: number, dimension: number): EdgeC
 }
 
 export function cellEdgeClassifiers(
-  coordinates: CellCoordinates,
-  boardDimensions: BoardDimensions,
+  coordinates: Readonly<CellCoordinates>,
+  boardDimensions: Readonly<BoardDimensions>,
 ): EdgeClassifiers {
   return {
     x: cellEdgeClassifier(coordinates.x, boardDimensions.width),
