@@ -4,6 +4,7 @@ import strokeO from './assets/stroke-o.svg';
 import strokeX from './assets/stroke-x.svg';
 
 const cellOwnersToImages = Object.freeze({
+  [CellOwner.None]: undefined,
   [CellOwner.O]: strokeO,
   [CellOwner.X]: strokeX,
 });
