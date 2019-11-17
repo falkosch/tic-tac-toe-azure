@@ -1,22 +1,23 @@
 import { buildAttackModifier } from './Actions';
-import { AttackAction, GameAction } from '../meta-model/GameAction';
-import { Board } from '../meta-model/Board';
+import { GameAction } from '../meta-model/GameAction';
 import { Game } from '../meta-model/Game';
 import { GameReaction } from '../meta-model/GameReaction';
 
-export type ReactionModifier = (gameReaction: Readonly<GameReaction>) => GameReaction;
+export function prepareReaction(gameAction: Readonly<GameAction>): GameReaction {
+  let gameReaction: Readonly<GameReaction> = {
+    board: gameAction.board,
+    consecutiveness: [],
+  };
 
-export function buildReactionModifier(
-  attack: Readonly<AttackAction>,
-  board: Readonly<Board>,
-): ReactionModifier {
-  const attackModifier = buildAttackModifier(attack);
+  if (gameAction.attack) {
+    const attackModifier = buildAttackModifier(gameAction.attack);
+    gameReaction = {
+      ...gameReaction,
+      board: attackModifier(gameReaction.board),
+    };
+  }
 
-  return (gameReaction) => ({
-    board: attackModifier(board),
-    consecutiveness: gameReaction.consecutiveness,
-    endedReaction: gameReaction.endedReaction,
-  });
+  return gameReaction;
 }
 
 export function validate(

@@ -8,6 +8,8 @@ import { GameReaction } from '../meta-model/GameReaction';
  * fstictactoegame.azurewebsites.net
  */
 export class AzureFunctionDefender implements Defender {
+  static ReadableName = 'Azure function as defender (Remote)'
+
   handshake(): Promise<Game> {
     return Promise.reject(new Error('not implemented'));
   }
