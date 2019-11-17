@@ -1,19 +1,21 @@
-import { buildAttackModifier } from './Actions';
+import { buildBoardModifier } from './Actions';
 import { GameAction } from '../meta-model/GameAction';
 import { Game } from '../meta-model/Game';
 import { GameReaction } from '../meta-model/GameReaction';
+import { findConsecutiveness } from './Consecutiveness';
 
 export function prepareReaction(gameAction: Readonly<GameAction>): GameReaction {
   let gameReaction: Readonly<GameReaction> = {
     board: gameAction.board,
-    consecutiveness: [],
+    consecutiveness: findConsecutiveness(gameAction.board),
   };
 
   if (gameAction.attack) {
-    const attackModifier = buildAttackModifier(gameAction.attack);
+    const boardAfterAttack = buildBoardModifier(gameAction.attack)(gameReaction.board);
     gameReaction = {
       ...gameReaction,
-      board: attackModifier(gameReaction.board),
+      board: boardAfterAttack,
+      consecutiveness: findConsecutiveness(boardAfterAttack),
     };
   }
 

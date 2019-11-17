@@ -12,3 +12,10 @@ export function cellCoordinates(
   const y = (cellAt - x) / span;
   return { x, y };
 }
+
+export function cellAtCoordinate(
+  coordinates: Readonly<CellCoordinates>,
+  boardDimensions: Readonly<BoardDimensions>,
+): number {
+  return coordinates.y * boardDimensions.width + coordinates.x;
+}

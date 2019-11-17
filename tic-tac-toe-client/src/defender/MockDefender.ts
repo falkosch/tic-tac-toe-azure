@@ -1,3 +1,4 @@
+import { findConsecutiveness } from '../mechanics/Consecutiveness';
 import { prepareReaction } from '../mechanics/Reactions';
 import { CellOwner } from '../meta-model/CellOwner';
 import { Defender } from '../meta-model/Defender';
@@ -9,22 +10,22 @@ export class MockDefender implements Defender {
   static ReadableName = 'Not reacting defender (Mock)';
 
   handshake(): Promise<Game> {
-    return Promise.resolve(
-      {
-        board: {
-          cells: [
-            CellOwner.X, CellOwner.O, CellOwner.None,
-            CellOwner.None, CellOwner.None, CellOwner.None,
-            CellOwner.None, CellOwner.None, CellOwner.None,
-          ],
-          dimensions: {
-            height: 3,
-            width: 3,
-          },
-        },
-        consecutiveness: [],
+    const board = {
+      cells: [
+        CellOwner.X, CellOwner.X, CellOwner.X,
+        CellOwner.X, CellOwner.X, CellOwner.X,
+        CellOwner.X, CellOwner.None, CellOwner.X,
+      ],
+      dimensions: {
+        height: 3,
+        width: 3,
       },
-    );
+    };
+
+    return Promise.resolve({
+      board,
+      consecutiveness: findConsecutiveness(board),
+    });
   }
 
   defend(gameAction: Readonly<GameAction>): Promise<GameReaction> {

@@ -19,6 +19,7 @@ import { MockDefender } from '../defender/MockDefender';
 import './App.css';
 import logo from './logo.svg';
 import { evaluateReaction } from '../mechanics/Reactions';
+import { CellOwner } from '../meta-model/CellOwner';
 
 const defenders: Readonly<Record<string, () => Defender>> = {
   [MockDefender.ReadableName]: () => new MockDefender(),
@@ -44,7 +45,7 @@ export const App: React.FC = () => {
 
   async function commenceAction(cellAt: number): Promise<void> {
     if (!game) return;
-    const action = prepareAttack(game.board, cellAt);
+    const action = prepareAttack(game.board, cellAt, CellOwner.X);
     const reaction = await defender.defend(action);
     const alteredGame = evaluateReaction(game, action, reaction);
     setGame(alteredGame);
