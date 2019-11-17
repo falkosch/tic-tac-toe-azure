@@ -20,11 +20,9 @@
   "dependencies": {
     "bootstrap": "4.3.1",
     "jquery": "3.4.1",
-    "lodash": "4.17.15",
     "react": "16.11.0",
     "react-bootstrap": "1.0.0-beta.14",
     "react-dom": "16.11.0",
-    "react-lodash": "0.1.2",
     "react-scripts": "3.2.0",
     "reinforce-js": "1.5.1"
   },
@@ -54,14 +52,12 @@
     }
   },
   "browserslist": [
-    "> 0.5%",
-    "last 2 versions",
-    "Firefox ESR",
+    "> 1%",
+    "last 1 versions",
     "not dead",
     "not IE 9-11",
     "not ie_mob 11",
-    "not OperaMini all",
-    "not safari <= 6"
+    "not OperaMini all"
   ],
   "jest": {
     "transformIgnorePatterns": [

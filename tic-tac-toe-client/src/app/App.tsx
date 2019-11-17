@@ -1,6 +1,3 @@
-import fpEntries from 'lodash/fp/entries';
-import fpFlow from 'lodash/fp/flow';
-import fpMap from 'lodash/fp/map';
 import Button from 'react-bootstrap/Button';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
@@ -65,20 +62,16 @@ export const App: React.FC = () => {
               <Button className="mr-2" onClick={newGame}>New game</Button>
               <DropdownButton id="defenders-dropdown" title="Defender">
                 {
-                  fpFlow(
-                    fpEntries,
-                    fpMap(
-                      ([_defenderName]) => (
-                        <Dropdown.Item
-                          active={_defenderName === defenderName}
-                          key={_defenderName}
-                          onClick={() => changeDefender(_defenderName)}
-                        >
-                          {_defenderName}
-                        </Dropdown.Item>
-                      ),
-                    ),
-                  )(defenders)
+                  Object.entries(defenders)
+                    .map(([_defenderName]) => (
+                      <Dropdown.Item
+                        active={_defenderName === defenderName}
+                        key={_defenderName}
+                        onClick={() => changeDefender(_defenderName)}
+                      >
+                        {_defenderName}
+                      </Dropdown.Item>
+                    ))
                 }
               </DropdownButton>
             </Form>

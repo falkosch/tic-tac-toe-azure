@@ -1,5 +1,4 @@
-import fpTimes from 'lodash/fp/times';
-import { DQNOpt, DQNSolver, DQNEnv } from 'reinforce-js';
+import { DQNEnv, DQNOpt, DQNSolver } from 'reinforce-js';
 
 import { prepareReaction } from '../../mechanics/Reactions';
 import { BoardDimensions } from '../../meta-model/Board';
@@ -83,9 +82,7 @@ export class DQNDefender implements Defender {
   handshake(): Promise<Game> {
     return Promise.resolve({
       board: {
-        cells: fpTimes<CellOwner>(() => CellOwner.None)(
-          DQNDefender.numCells,
-        ),
+        cells: Array.from({ length: DQNDefender.numCells }).map(() => CellOwner.None),
         dimensions: DefaultBoardDimensions,
       },
       consecutiveness: [],
