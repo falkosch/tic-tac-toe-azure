@@ -8,86 +8,192 @@ type IteratorsToCoordinates = (j: number, i: number) => CellCoordinates;
 
 interface LineDimensions {
   j: number;
-  i: number;
+  i: (atJ: number) => number;
 }
 
-function findConsecutivenessOnLine(
+interface LineSpanTracking {
+  cellsAt: ReadonlyArray<number>;
+  consecutiveness: ReadonlyArray<Consecutiveness>;
+  ownerOfSpan: Readonly<CellOwner>;
+}
+
+function addConsecutiveness(
+  consecutiveness: ReadonlyArray<Consecutiveness>,
+  cellsAt: ReadonlyArray<number>,
+  minimumSpan: number,
+  ownerOfSpan: Readonly<CellOwner>,
+): Consecutiveness[] {
+  if (cellsAt.length >= minimumSpan && ownerOfSpan !== CellOwner.None) {
+    return [...consecutiveness, { cellsAt }];
+  }
+  return consecutiveness as Consecutiveness[];
+}
+
+function trackCellOwnerSpanChanges(
+  { cells, dimensions }: Readonly<Board>,
+  minimumSpan: number,
+  iteratorToCoordinates: IteratorToCoordinates,
+  { cellsAt, consecutiveness, ownerOfSpan }: LineSpanTracking,
+  index: number,
+): LineSpanTracking {
+  const iAsCellAt = cellAtCoordinate(iteratorToCoordinates(index), dimensions);
+  const ownerAtCell = cells[iAsCellAt];
+
+  if (ownerOfSpan !== ownerAtCell) {
+    return {
+      cellsAt: [iAsCellAt],
+      consecutiveness: addConsecutiveness(consecutiveness, cellsAt, minimumSpan, ownerOfSpan),
+      ownerOfSpan: ownerAtCell,
+    };
+  }
+
+  return {
+    cellsAt: [...cellsAt, iAsCellAt],
+    consecutiveness,
+    ownerOfSpan,
+  };
+}
+
+function findConsecutivenessInCellOwnerSpans(
   board: Readonly<Board>,
-  lineDimensions: LineDimensions,
+  lineDimension: number,
   minimumSpan: number,
   iteratorToCoordinates: IteratorToCoordinates,
 ): Consecutiveness[] {
-  const { dimensions } = board;
-  const consecutiveness: Consecutiveness[] = [];
-
-  // first cell is our pivot cell for the first span
-  let cellsAt: number[] = [cellAtCoordinate(iteratorToCoordinates(0), dimensions)];
-  let ownerOfSpan: CellOwner = board.cells[cellsAt[0]];
-
-  Array.from({ length: lineDimensions.i })
-    .forEach((__, i) => {
-      // skip pivot cell
-      if (i === 0) return;
-
-      const iAsCellAt = cellAtCoordinate(iteratorToCoordinates(i), dimensions);
-      const ownerAtCell = board.cells[iAsCellAt];
-
-      if (ownerOfSpan !== ownerAtCell) {
-        if (cellsAt.length >= minimumSpan) {
-          consecutiveness.push({ cellsAt });
-        }
-
-        cellsAt = [];
-        ownerOfSpan = ownerAtCell;
-      }
-
-      cellsAt.push(iAsCellAt);
-    });
-
-  if (cellsAt.length >= minimumSpan) {
-    consecutiveness.push({ cellsAt });
+  if (lineDimension < minimumSpan) {
+    return [];
   }
 
-  return consecutiveness;
+  // first cell is our pivot cell for the first span
+  const pivotCellAt = cellAtCoordinate(iteratorToCoordinates(0), board.dimensions);
+  const initialSpan: LineSpanTracking = {
+    cellsAt: [pivotCellAt],
+    consecutiveness: [],
+    ownerOfSpan: board.cells[pivotCellAt],
+  };
+  const lastSpan = Array.from({ length: lineDimension - 1 })
+    .reduce(
+      (tracking: LineSpanTracking, __, i) => trackCellOwnerSpanChanges(
+        board,
+        minimumSpan,
+        iteratorToCoordinates,
+        tracking,
+        i + 1,
+      ),
+      initialSpan,
+    );
+
+  return addConsecutiveness(
+    lastSpan.consecutiveness,
+    lastSpan.cellsAt,
+    minimumSpan,
+    lastSpan.ownerOfSpan,
+  );
 }
 
-
-function findConsecutivenessOnBoard(
+function findConsecutivenessForEachLine(
   board: Readonly<Board>,
   lineDimensions: LineDimensions,
   minimumSpan: number,
   coordinatesFromIterators: IteratorsToCoordinates,
 ): Consecutiveness[] {
-  let consecutiveness: Consecutiveness[] = [];
-
-  Array.from({ length: lineDimensions.j })
-    .forEach((__, j) => {
-      const iteratorToCoordinates: IteratorToCoordinates = (i) => coordinatesFromIterators(j, i);
-
-      consecutiveness = [
+  return Array.from({ length: lineDimensions.j })
+    .reduce(
+      (consecutiveness: Consecutiveness[], __, j: number) => [
         ...consecutiveness,
-        ...findConsecutivenessOnLine(board, lineDimensions, minimumSpan, iteratorToCoordinates),
-      ];
-    });
-
-  return consecutiveness;
+        ...findConsecutivenessInCellOwnerSpans(
+          board,
+          lineDimensions.i(j),
+          minimumSpan,
+          (i) => coordinatesFromIterators(j, i),
+        ),
+      ],
+      [],
+    );
 }
 
-export function findConsecutiveness(board: Readonly<Board>): Consecutiveness[] {
-  const minimumSpan = 3;
-
+export function findConsecutiveness(board: Readonly<Board>, minimumSpan = 3): Consecutiveness[] {
+  const maxDiagonalLength = Math.min(board.dimensions.height, board.dimensions.width);
   return [
-    ...findConsecutivenessOnBoard(
+    // find consecutiveness in each horizontal span
+    ...findConsecutivenessForEachLine(
       board,
-      { j: board.dimensions.height, i: board.dimensions.width },
+      {
+        j: board.dimensions.height,
+        i: () => board.dimensions.width,
+      },
       minimumSpan,
-      (j, i) => ({ x: i, y: j }),
+      (j, i) => ({
+        x: i,
+        y: j,
+      }),
     ),
-    ...findConsecutivenessOnBoard(
+    // find consecutiveness in each vertical span
+    ...findConsecutivenessForEachLine(
       board,
-      { j: board.dimensions.width, i: board.dimensions.height },
+      {
+        j: board.dimensions.width,
+        i: () => board.dimensions.height,
+      },
       minimumSpan,
-      (j, i) => ({ x: j, y: i }),
+      (j, i) => ({
+        x: j,
+        y: i,
+      }),
+    ),
+    // find consecutiveness in each TL to BR diagonal span
+    // - j iterates from TL to TR
+    ...findConsecutivenessForEachLine(
+      board,
+      {
+        j: board.dimensions.width,
+        i: (j: number) => Math.min(maxDiagonalLength, board.dimensions.width - j),
+      },
+      minimumSpan,
+      (j, i) => ({
+        x: j + i,
+        y: i,
+      }),
+    ),
+    // - j iterates from TL to BL
+    ...findConsecutivenessForEachLine(
+      board,
+      {
+        j: board.dimensions.height - 1,
+        i: (j: number) => Math.min(maxDiagonalLength, board.dimensions.height - (j + 1)),
+      },
+      minimumSpan,
+      (j, i) => ({
+        x: i,
+        y: (j + 1) + i,
+      }),
+    ),
+    // find consecutiveness in each TR to BL diagonal span
+    // - j iterates from TR to TL
+    ...findConsecutivenessForEachLine(
+      board,
+      {
+        j: board.dimensions.width,
+        i: (j: number) => Math.min(maxDiagonalLength, board.dimensions.width - j),
+      },
+      minimumSpan,
+      (j, i) => ({
+        x: (board.dimensions.width - 1) - (j + i),
+        y: i,
+      }),
+    ),
+    // - j iterates from TR to BR
+    ...findConsecutivenessForEachLine(
+      board,
+      {
+        j: board.dimensions.height - 1,
+        i: (j: number) => Math.min(maxDiagonalLength, board.dimensions.height - (j + 1)),
+      },
+      minimumSpan,
+      (j, i) => ({
+        x: (board.dimensions.width - 1) - i,
+        y: (j + 1) + i,
+      }),
     ),
   ];
 }
