@@ -6,13 +6,28 @@ import { BoardDimensions } from '../../meta-model/Board';
 import { Decision, ReinforcedAgent, StateSpace } from './ReinforcedAgent';
 
 export class DQNReinforcedAgent implements ReinforcedAgent {
+  id: string;
+
   solver: Solver;
 
-  constructor(boardDimensions: Readonly<BoardDimensions>) {
-    this.solver = DQNReinforcedAgent.createSolver(
-      boardDimensions.width,
-      boardDimensions.height,
-    );
+  constructor({ width, height }: Readonly<BoardDimensions>) {
+    const cellCount = width * height;
+    const actionCount = cellCount;
+    const stateCount = cellCount;
+    this.id = `dqn-${width}x${height}-${stateCount}-${actionCount}`;
+
+    const agentEnvironment = new DQNEnv(width, height, stateCount, actionCount);
+    const agentOptions = new DQNOpt();
+    agentOptions.setEpsilonDecay(1.0, agentOptions.get('epsilon'), 100);
+
+    this.solver = new DQNSolver(agentEnvironment, agentOptions);
+
+    const storedDQN = localStorage.getItem(this.id);
+    if (storedDQN === undefined || storedDQN === null) {
+      localStorage.setItem(this.id, JSON.stringify(this.solver.toJSON()));
+    } else {
+      this.solver.fromJSON(JSON.parse(storedDQN));
+    }
   }
 
   decide(prior: Readonly<StateSpace>): Decision {
@@ -24,12 +39,6 @@ export class DQNReinforcedAgent implements ReinforcedAgent {
 
   reward(value: number): void {
     this.solver.learn(value);
-  }
-
-  static createSolver(width: number, height: number): Solver {
-    const cellCount = width * height;
-    const agentEnvironment = new DQNEnv(width, height, cellCount, cellCount);
-    const agentOptions = new DQNOpt();
-    return new DQNSolver(agentEnvironment, agentOptions);
+    localStorage.setItem(this.id, JSON.stringify(this.solver.toJSON()));
   }
 }

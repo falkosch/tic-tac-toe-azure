@@ -14,13 +14,6 @@ const DefaultBoardDimensions: Readonly<BoardDimensions> = {
   width: 3,
 };
 
-function cellToState(cellOwner: CellOwner): number {
-  if (cellOwner === CellOwner.None) {
-    return 1.0;
-  }
-  return -1.0;
-}
-
 export class DQNDefender implements Defender {
   static ReadableName = 'DQN learning defender (In browser)';
 
@@ -50,7 +43,7 @@ export class DQNDefender implements Defender {
     }
 
     return Promise.resolve(
-      commenceReaction(reaction, DQNDefender.agent, cellToState),
+      commenceReaction(reaction, DQNDefender.agent),
     );
   }
 }
