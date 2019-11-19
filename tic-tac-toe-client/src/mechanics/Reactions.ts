@@ -1,26 +1,23 @@
 import { buildBoardModifier } from './Actions';
-import { GameAction } from '../meta-model/GameAction';
-import { Game } from '../meta-model/Game';
-import { GameReaction } from '../meta-model/GameReaction';
+import { countPoints } from './GameRules';
 import { findConsecutiveness } from './Consecutiveness';
+import { Game } from '../meta-model/Game';
+import { GameAction } from '../meta-model/GameAction';
+import { GameReaction } from '../meta-model/GameReaction';
 
 export function prepareReaction(gameAction: Readonly<GameAction>): GameReaction {
-  let gameReaction: Readonly<GameReaction> = {
+  let reaction: Readonly<GameReaction> = {
     board: gameAction.board,
-    consecutiveness: [],
   };
 
   if (gameAction.attack) {
-    gameReaction = {
-      ...gameReaction,
-      board: buildBoardModifier(gameAction.attack)(gameReaction.board),
+    reaction = {
+      ...reaction,
+      board: buildBoardModifier(gameAction.attack)(reaction.board),
     };
   }
 
-  return {
-    ...gameReaction,
-    consecutiveness: findConsecutiveness(gameReaction.board),
-  };
+  return reaction;
 }
 
 export function validate(
@@ -37,9 +34,11 @@ export function evaluateReaction(
   reaction: Readonly<GameReaction>,
 ): Game {
   if (validate(gameBefore, action, reaction)) {
+    const consecutiveness = findConsecutiveness(reaction.board);
     return {
       board: reaction.board,
-      consecutiveness: reaction.consecutiveness,
+      consecutiveness,
+      points: countPoints(reaction.board, consecutiveness),
     };
   }
   return gameBefore;

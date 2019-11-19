@@ -1,3 +1,4 @@
+import { countPoints } from '../mechanics/GameRules';
 import { findConsecutiveness } from '../mechanics/Consecutiveness';
 import { prepareReaction } from '../mechanics/Reactions';
 import { CellOwner } from '../meta-model/CellOwner';
@@ -12,19 +13,21 @@ export class MockDefender implements Defender {
   handshake(): Promise<Game> {
     const board = {
       cells: [
-        CellOwner.X, CellOwner.X, CellOwner.X,
-        CellOwner.X, CellOwner.X, CellOwner.X,
-        CellOwner.X, CellOwner.None, CellOwner.X,
+        CellOwner.X, CellOwner.O, CellOwner.None,
+        CellOwner.None, CellOwner.None, CellOwner.None,
+        CellOwner.None, CellOwner.None, CellOwner.None,
       ],
       dimensions: {
         height: 3,
         width: 3,
       },
     };
+    const consecutiveness = findConsecutiveness(board);
 
     return Promise.resolve({
       board,
-      consecutiveness: findConsecutiveness(board),
+      consecutiveness,
+      points: countPoints(board, consecutiveness),
     });
   }
 

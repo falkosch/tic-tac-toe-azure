@@ -19,6 +19,10 @@ describe(`${GameView.name}`, () => {
         },
       },
       consecutiveness: [],
+      points: {
+        [CellOwner.O]: 0,
+        [CellOwner.X]: 0,
+      },
     };
   });
 
