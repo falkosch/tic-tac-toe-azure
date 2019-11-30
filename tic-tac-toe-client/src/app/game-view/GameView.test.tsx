@@ -1,18 +1,17 @@
-import fpTimes from 'lodash/fp/times';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { GameView } from './GameView';
-import { Game } from '../../meta-model/Game';
 import { CellOwner } from '../../meta-model/CellOwner';
+import { GameView } from './GameView';
+import { GameView as ModelGameView } from '../../meta-model/GameView';
 
 describe(`${GameView.name}`, () => {
-  let game: Game;
+  let gameView: ModelGameView;
 
   beforeEach(() => {
-    game = {
+    gameView = {
       board: {
-        cells: fpTimes(() => CellOwner.None)(1),
+        cells: [CellOwner.None],
         dimensions: {
           height: 1,
           width: 1,
@@ -28,7 +27,7 @@ describe(`${GameView.name}`, () => {
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
-    ReactDOM.render(<GameView game={game} onCellClick={() => {}} />, div);
+    ReactDOM.render(<GameView gameView={gameView} />, div);
     ReactDOM.unmountComponentAtNode(div);
   });
 });

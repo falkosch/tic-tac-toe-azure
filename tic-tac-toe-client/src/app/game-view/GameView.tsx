@@ -1,19 +1,14 @@
 import React from 'react';
 
 import { BoardView } from '../board-view/BoardView';
-import { Game } from '../../meta-model/Game';
+import { GameView as ModelGameView } from '../../meta-model/GameView';
 
 export const GameView: React.FC<{
-  game: Readonly<Game>;
-  onCellClick: (event: Readonly<React.MouseEvent>, cellAt: number) => void;
+  gameView: Readonly<ModelGameView>;
 }> = ({
-  game,
-  onCellClick,
+  gameView,
 }) => (
   <div className="d-flex justify-content-center align-items-center">
-    <BoardView
-      board={game.board}
-      onCellClick={(event, cellAt) => onCellClick(event, cellAt)}
-    />
+    <BoardView board={gameView.board} />
   </div>
 );

@@ -1,7 +1,6 @@
 import { Board } from '../meta-model/Board';
-import { Consecutiveness } from '../meta-model/Game';
 import { CellOwner, SpecificCellOwner } from '../meta-model/CellOwner';
-import { findConsecutiveness } from './Consecutiveness';
+import { Consecutiveness, GameView } from '../meta-model/GameView';
 
 export type Points = Record<SpecificCellOwner, number>;
 
@@ -28,7 +27,7 @@ export function countPoints(
   );
 }
 
-export function determineWinner(points: Readonly<Points>): SpecificCellOwner | undefined {
+export function pointsLeader(points: Readonly<Points>): SpecificCellOwner | undefined {
   return Object.entries(points)
     .reduce(
       (winnerTrackingAcc, [cellOwner, value]) => {
@@ -54,12 +53,11 @@ export function remainingMoves(cells: ReadonlyArray<CellOwner>): number {
   return cells.reduce((acc, cellOwner) => acc + (cellOwner === CellOwner.None ? 1 : 0), 0);
 }
 
-export function isEnding(board: Readonly<Board>): boolean {
-  if (remainingMoves(board.cells) === 0) {
+export function isEnding(gameView: Readonly<GameView>): boolean {
+  if (remainingMoves(gameView.board.cells) === 0) {
     return true;
   }
 
   // for now, occurrence of a first consecutiveness sequence ends the game
-  const consecutiveness = findConsecutiveness(board);
-  return consecutiveness.length > 0;
+  return gameView.consecutiveness.length > 0;
 }

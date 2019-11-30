@@ -1,12 +1,3 @@
-import { Board } from './Board';
-import { CellOwner } from './CellOwner';
-
-export interface AttackAction {
+export interface AttackGameAction {
   affectedCellsAt: ReadonlyArray<number>;
-  newOwner: Readonly<CellOwner>;
-}
-
-export interface GameAction {
-  attack?: Readonly<AttackAction>;
-  board: Readonly<Board>;
 }

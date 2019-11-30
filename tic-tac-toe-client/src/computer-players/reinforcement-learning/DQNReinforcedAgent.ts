@@ -4,23 +4,33 @@ import {
 
 import { BoardDimensions } from '../../meta-model/Board';
 import { Decision, ReinforcedAgent, StateSpace } from './ReinforcedAgent';
+import { SpecificCellOwner } from '../../meta-model/CellOwner';
+
+const agents: Record<string, Solver> = {};
 
 export class DQNReinforcedAgent implements ReinforcedAgent {
-  id: string;
+  private id: string;
 
-  solver: Solver;
+  private solver: Solver;
 
-  constructor({ width, height }: Readonly<BoardDimensions>) {
+  constructor(
+    public cellOwner: SpecificCellOwner,
+    { width, height }: Readonly<BoardDimensions>,
+  ) {
     const cellCount = width * height;
     const actionCount = cellCount;
     const stateCount = cellCount;
-    this.id = `dqn-${width}x${height}-${stateCount}-${actionCount}`;
+    this.id = `dqn-${this.cellOwner}-${width}x${height}-${stateCount}-${actionCount}`;
 
-    const agentEnvironment = new DQNEnv(width, height, stateCount, actionCount);
-    const agentOptions = new DQNOpt();
-    agentOptions.setEpsilonDecay(1.0, agentOptions.get('epsilon'), 100);
-
-    this.solver = new DQNSolver(agentEnvironment, agentOptions);
+    this.solver = agents[this.id];
+    if (!this.solver) {
+      const agentEnvironment = new DQNEnv(width, height, stateCount, actionCount);
+      const agentOptions = new DQNOpt();
+      agentOptions.setNumberOfHiddenUnits([100]);
+      agentOptions.setEpsilonDecay(1.0, 0.1, 1000);
+      this.solver = new DQNSolver(agentEnvironment, agentOptions);
+      agents[this.id] = this.solver;
+    }
 
     const storedDQN = localStorage.getItem(this.id);
     if (storedDQN === undefined || storedDQN === null) {
