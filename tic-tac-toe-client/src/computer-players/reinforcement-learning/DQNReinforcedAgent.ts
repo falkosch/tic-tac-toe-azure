@@ -8,7 +8,15 @@ import { SpecificCellOwner } from '../../meta-model/CellOwner';
 
 const agents: Record<string, Solver> = {};
 
+interface StorableAgent {
+  version: number;
+  learnTick: number;
+  network: any;
+}
+
 export class DQNReinforcedAgent implements ReinforcedAgent {
+  static ObjectVersion = 1;
+
   private id: string;
 
   private solver: Solver;
@@ -31,12 +39,19 @@ export class DQNReinforcedAgent implements ReinforcedAgent {
       this.solver = new DQNSolver(agentEnvironment, agentOptions);
       agents[this.id] = this.solver;
 
-      const storedDQN = localStorage.getItem(this.id);
-      if (storedDQN === undefined || storedDQN === null) {
-        localStorage.setItem(this.id, JSON.stringify(this.solver.toJSON()));
-      } else {
-        this.solver.fromJSON(JSON.parse(storedDQN));
+      const stored = localStorage.getItem(this.id);
+      if (stored) {
+        try {
+          const parsed: StorableAgent = JSON.parse(stored);
+          if (parsed && parsed.version === DQNReinforcedAgent.ObjectVersion) {
+            this.solver.fromJSON(parsed.network);
+            (this.solver as any).learnTick = parsed.learnTick;
+          }
+        } catch (e) {
+          console.error('could not load agent data for ', this.id, ' due to ', e);
+        }
       }
+      this.persist();
     }
   }
 
@@ -49,6 +64,15 @@ export class DQNReinforcedAgent implements ReinforcedAgent {
 
   reward(value: number): void {
     this.solver.learn(value);
-    localStorage.setItem(this.id, JSON.stringify(this.solver.toJSON()));
+    this.persist();
+  }
+
+  private persist(): void {
+    const data: StorableAgent = {
+      version: DQNReinforcedAgent.ObjectVersion,
+      learnTick: (this.solver as any).learnTick,
+      network: this.solver.toJSON(),
+    };
+    localStorage.setItem(this.id, JSON.stringify(data));
   }
 }
