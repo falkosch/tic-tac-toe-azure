@@ -102,9 +102,15 @@ function notifyGameEnd(
   );
 }
 
+function effectiveMaxTurns(dimensions: BoardDimensions, maxTurns: number): number {
+  const minTurnsRequired = dimensions.width * dimensions.height;
+  return Math.max(minTurnsRequired, maxTurns);
+}
+
 export async function runNewGame(
   joiningPlayers: Readonly<JoiningPlayers>,
   onGameViewUpdate?: OnGameViewUpdate,
+  maxTurns = 100,
 ): Promise<GameEndState> {
   const joinedPlayers = joinPlayers(joiningPlayers);
 
@@ -114,7 +120,8 @@ export async function runNewGame(
 
   notifyGameViewUpdate(gameView, joinedPlayers, onGameViewUpdate);
 
-  while (turn < 1000) {
+  const turnsLimit = effectiveMaxTurns(gameView.board.dimensions, maxTurns);
+  while (turn < turnsLimit) {
     const [cellOwner, playerWithTurn] = playerOfTurn(joinedPlayers, turn);
 
     // eslint-disable-next-line
