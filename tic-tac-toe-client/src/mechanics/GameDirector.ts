@@ -4,7 +4,7 @@ import { findConsecutiveness } from './Consecutiveness';
 import { Board, BoardDimensions } from '../meta-model/Board';
 import { CellOwner, SpecificCellOwner } from '../meta-model/CellOwner';
 import { GameActionHistory } from '../meta-model/GameActionHistory';
-import { GameEndedState } from '../meta-model/GameEndedState';
+import { GameEndState } from '../meta-model/GameEndState';
 import { GameView } from '../meta-model/GameView';
 import { Player } from '../meta-model/Player';
 
@@ -12,6 +12,10 @@ export type JoiningPlayers = Record<SpecificCellOwner, Readonly<Player>>;
 
 export interface OnGameViewUpdate {
   (gameView: Readonly<GameView>): void;
+}
+
+export interface OnGameEnd {
+  (gameView: Readonly<GameView>, endState: Readonly<GameEndState>): void;
 }
 
 type JoinedPlayer = [SpecificCellOwner, Readonly<Player>];
@@ -77,10 +81,31 @@ function notifyGameViewUpdate(
   );
 }
 
+function notifyGameEnd(
+  gameView: Readonly<GameView>,
+  endState: Readonly<GameEndState>,
+  joinedPlayers: ReadonlyArray<JoinedPlayer>,
+  onGameEnd?: OnGameEnd,
+): void {
+  if (onGameEnd) {
+    onGameEnd(gameView, endState);
+  }
+
+  joinedPlayers.forEach(
+    (
+      [cellOwner, { onGameEnd: playerOnGameEnd }],
+    ) => {
+      if (playerOnGameEnd) {
+        playerOnGameEnd(cellOwner, gameView, endState);
+      }
+    },
+  );
+}
+
 export async function runNewGame(
   joiningPlayers: Readonly<JoiningPlayers>,
   onGameViewUpdate?: OnGameViewUpdate,
-): Promise<GameEndedState> {
+): Promise<GameEndState> {
   const joinedPlayers = joinPlayers(joiningPlayers);
 
   let actionHistory = emptyActionHistory();
@@ -104,13 +129,15 @@ export async function runNewGame(
     notifyGameViewUpdate(gameView, joinedPlayers, onGameViewUpdate);
 
     if (isEnding(gameView)) {
-      return {
-        winner: pointsLeader(points),
-      };
+      const endState: GameEndState = { winner: pointsLeader(points) };
+      notifyGameEnd(gameView, endState, joinedPlayers);
+      return endState;
     }
 
     turn += 1;
   }
 
-  return { };
+  const endState: GameEndState = {};
+  notifyGameEnd(gameView, endState, joinedPlayers);
+  return endState;
 }
