@@ -2,7 +2,6 @@ import { StorableDQNAgent } from './StorableDQNAgent';
 
 export const Brains: Record<string, StorableDQNAgent> = {
   'dqn-X-3x3-9-9': {
-    version: 1,
     learnTick: 1593473,
     network: {
       ns: 9,
@@ -1948,7 +1947,6 @@ export const Brains: Record<string, StorableDQNAgent> = {
     },
   },
   'dqn-O-3x3-9-9': {
-    version: 1,
     learnTick: 783648,
     network: {
       ns: 9,

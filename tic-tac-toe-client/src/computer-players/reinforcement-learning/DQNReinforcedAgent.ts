@@ -2,6 +2,7 @@ import {
   DQNEnv, DQNOpt, DQNSolver, Solver,
 } from 'reinforce-js';
 
+import { loadAgent, persistAgent } from '../ai-agent/StorableAgent';
 import { BoardDimensions } from '../../meta-model/Board';
 import { Brains } from './DQNPretrainedBrain';
 import { Decision } from '../ai-agent/Decision';
@@ -10,6 +11,17 @@ import { SpecificCellOwner } from '../../meta-model/CellOwner';
 import { StorableDQNAgent } from './StorableDQNAgent';
 
 const agents: Record<string, Solver> = {};
+
+function loadDQNAgent(id: string): StorableDQNAgent | undefined {
+  const agentData = loadAgent<StorableDQNAgent>(id, DQNReinforcedAgent.ObjectVersion);
+  if (agentData) {
+    return agentData;
+  }
+  if (id in Brains) {
+    return Brains[id];
+  }
+  return undefined;
+}
 
 /**
  * Encapsulates and persists the state of a DQN solver (the "brain") and provides the interface
@@ -39,25 +51,12 @@ export class DQNReinforcedAgent implements ReinforcedAgent {
       this.solver = new DQNSolver(agentEnvironment, agentOptions);
       agents[this.id] = this.solver;
 
-      const stored = localStorage.getItem(this.id);
-      if (stored) {
-        try {
-          const parsed: StorableDQNAgent = JSON.parse(stored);
-          if (parsed && parsed.version === DQNReinforcedAgent.ObjectVersion) {
-            this.solver.fromJSON(parsed.network);
-            (this.solver as any).learnTick = parsed.learnTick;
-          }
-        } catch (e) {
-          console.error('could not load agent data for ', this.id, ' due to ', e);
-        }
-      } else if (this.id in Brains) {
-        const brain: StorableDQNAgent = Brains[this.id];
-        if (brain && brain.version === DQNReinforcedAgent.ObjectVersion) {
-          this.solver.fromJSON(brain.network);
-          (this.solver as any).learnTick = brain.learnTick;
-          (this.solver as DQNSolver).setTrainingModeTo(false);
-        }
+      const agentData = loadDQNAgent(this.id);
+      if (agentData) {
+        this.solver.fromJSON(agentData.network);
+        (this.solver as any).learnTick = agentData.learnTick;
       }
+
       this.persist();
     }
   }
@@ -75,11 +74,9 @@ export class DQNReinforcedAgent implements ReinforcedAgent {
   }
 
   private persist(): void {
-    const data: StorableDQNAgent = {
-      version: DQNReinforcedAgent.ObjectVersion,
+    persistAgent<StorableDQNAgent>(this.id, DQNReinforcedAgent.ObjectVersion, {
       learnTick: (this.solver as any).learnTick,
       network: this.solver.toJSON(),
-    };
-    localStorage.setItem(this.id, JSON.stringify(data));
+    });
   }
 }
