@@ -17,6 +17,7 @@ import { CellOwner, SpecificCellOwner } from '../meta-model/CellOwner';
 import { DQNPlayer } from '../computer-players/DQNPlayer';
 import { GameView } from './game-view/GameView';
 import { GameView as ModelGameView } from '../meta-model/GameView';
+import { MenacePlayer } from '../computer-players/MenacePlayer';
 import { MockPlayer } from '../computer-players/MockPlayer';
 import { Player } from '../meta-model/Player';
 
@@ -44,6 +45,7 @@ export const App: React.FC<{}> = () => {
     [PlayerType.Human]: { takeTurn: () => letPlayerTakeTurn() },
     [PlayerType.Mock]: new MockPlayer(),
     [PlayerType.DQN]: new DQNPlayer(),
+    [PlayerType.Menace]: new MenacePlayer(),
     [PlayerType.Azure]: new AzureFunctionPlayer(),
   };
   const playerKeys = Object.keys(players);

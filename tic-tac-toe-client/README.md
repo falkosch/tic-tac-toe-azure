@@ -44,3 +44,5 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 # Credits
 
 The DQN player is implemented using [mvrahden's reinforce-js](https://github.com/mvrahden/reinforce-js).
+
+The implementation of the Menace Matchboxes Engine is based upon [andrewmccarthy's Python version](https://github.com/andrewmccarthy/menace).
