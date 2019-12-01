@@ -10,6 +10,10 @@ import { Player } from '../meta-model/Player';
 
 export type JoiningPlayers = Record<SpecificCellOwner, Readonly<Player>>;
 
+export interface OnGameStart {
+  (gameView: Readonly<GameView>): void;
+}
+
 export interface OnGameViewUpdate {
   (gameView: Readonly<GameView>): void;
 }
@@ -81,6 +85,26 @@ function notifyGameViewUpdate(
   );
 }
 
+function notifyGameStart(
+  gameView: Readonly<GameView>,
+  joinedPlayers: ReadonlyArray<JoinedPlayer>,
+  onGameStart?: OnGameStart,
+): void {
+  if (onGameStart) {
+    onGameStart(gameView);
+  }
+
+  joinedPlayers.forEach(
+    (
+      [cellOwner, { onGameStart: playerOnGameStart }],
+    ) => {
+      if (playerOnGameStart) {
+        playerOnGameStart(cellOwner, gameView);
+      }
+    },
+  );
+}
+
 function notifyGameEnd(
   gameView: Readonly<GameView>,
   endState: Readonly<GameEndState>,
@@ -109,7 +133,9 @@ function effectiveMaxTurns(dimensions: BoardDimensions, maxTurns: number): numbe
 
 export async function runNewGame(
   joiningPlayers: Readonly<JoiningPlayers>,
-  onGameViewUpdate?: OnGameViewUpdate,
+  onGameStart: OnGameStart = () => {},
+  onGameViewUpdate: OnGameViewUpdate = () => {},
+  onGameEnd: OnGameEnd = () => {},
   maxTurns = 100,
 ): Promise<GameEndState> {
   const joinedPlayers = joinPlayers(joiningPlayers);
@@ -118,7 +144,7 @@ export async function runNewGame(
   let gameView = newGameView();
   let turn = 0;
 
-  notifyGameViewUpdate(gameView, joinedPlayers, onGameViewUpdate);
+  notifyGameStart(gameView, joinedPlayers, onGameStart);
 
   const turnsLimit = effectiveMaxTurns(gameView.board.dimensions, maxTurns);
   while (turn < turnsLimit) {
@@ -137,7 +163,7 @@ export async function runNewGame(
 
     if (isEnding(gameView)) {
       const endState: GameEndState = { winner: pointsLeader(points) };
-      notifyGameEnd(gameView, endState, joinedPlayers);
+      notifyGameEnd(gameView, endState, joinedPlayers, onGameEnd);
       return endState;
     }
 
@@ -145,6 +171,6 @@ export async function runNewGame(
   }
 
   const endState: GameEndState = {};
-  notifyGameEnd(gameView, endState, joinedPlayers);
+  notifyGameEnd(gameView, endState, joinedPlayers, onGameEnd);
   return endState;
 }

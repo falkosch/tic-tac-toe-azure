@@ -1,21 +1,34 @@
-export interface StorableAgent<T> {
-  version: number;
-  brain: T;
+export interface BrainStatistics {
+  draws: number;
+  losses: number;
+  wins: number;
 }
 
-export function persistAgent<T>(id: string, version: number, brain: Readonly<T>): void {
-  const data: StorableAgent<T> = {
+export interface StorableAgent<BrainType extends BrainStatistics> {
+  version: number;
+  brain: BrainType;
+}
+
+export function persistAgent<BrainType extends BrainStatistics>(
+  id: string,
+  version: number,
+  brain: Readonly<BrainType>,
+): void {
+  const data: StorableAgent<BrainType> = {
     version,
     brain,
   };
   localStorage.setItem(id, JSON.stringify(data));
 }
 
-export function loadAgent<T>(id: string, version: number): T | undefined {
+export function loadAgent<BrainType extends BrainStatistics>(
+  id: string,
+  version: number,
+): BrainType | undefined {
   const stored = localStorage.getItem(id);
   if (stored) {
     try {
-      const parsed: StorableAgent<T> = JSON.parse(stored);
+      const parsed: StorableAgent<BrainType> = JSON.parse(stored);
       if (parsed && parsed.version === version) {
         return parsed.brain;
       }

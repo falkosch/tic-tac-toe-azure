@@ -4,6 +4,9 @@ import { CellOwner, SpecificCellOwner } from '../../meta-model/CellOwner';
 export interface AIAgent<StateSpaceType> {
   readonly cellOwner: Readonly<SpecificCellOwner>;
   decide(prior: Readonly<StateSpaceType>): Decision;
+  rememberDraw(): void;
+  rememberLoss(): void;
+  rememberWin(): void;
 }
 
 export function findDecisionForStateSpace<StateSpaceType>(
