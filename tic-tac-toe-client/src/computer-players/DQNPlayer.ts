@@ -1,4 +1,4 @@
-import { findDecision } from './reinforcement-learning/ReinforcedAgent';
+import { findReinforcedDecision } from './reinforcement-learning/ReinforcedAgent';
 import { AttackGameAction } from '../meta-model/GameAction';
 import { DQNReinforcedAgent } from './reinforcement-learning/DQNReinforcedAgent';
 import { Player } from '../meta-model/Player';
@@ -10,7 +10,7 @@ export class DQNPlayer implements Player {
       playerTurn.cellOwner,
       playerTurn.gameView.board.dimensions,
     );
-    const decision = findDecision(playerTurn.gameView, agent);
+    const decision = findReinforcedDecision(agent, playerTurn.gameView.board);
     return {
       affectedCellsAt: decision ? decision.cellsAtToAttack : [],
     };

@@ -1,6 +1,6 @@
-import { StorableAgent } from './StorableAgent';
+import { StorableDQNAgent } from './StorableDQNAgent';
 
-export const Brains: Record<string, StorableAgent> = {
+export const Brains: Record<string, StorableDQNAgent> = {
   'dqn-X-3x3-9-9': {
     version: 1,
     learnTick: 1593473,

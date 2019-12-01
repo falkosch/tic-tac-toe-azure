@@ -1,31 +1,26 @@
 import { buildBoardModifier } from '../../mechanics/Actions';
 import { countPoints } from '../../mechanics/GameRules';
 import { findConsecutiveness } from '../../mechanics/Consecutiveness';
+import { findDecisionForStateSpace, AIAgent } from '../ai-agent/AIAgent';
 import { Board } from '../../meta-model/Board';
 import { CellOwner, SpecificCellOwner } from '../../meta-model/CellOwner';
-import { GameView } from '../../meta-model/GameView';
+import { Decision } from '../ai-agent/Decision';
 
 export interface StateSpace {
   states: ReadonlyArray<number>;
 }
 
-export interface Decision {
-  cellsAtToAttack: ReadonlyArray<number>;
-}
-
-export interface ReinforcedAgent {
-  readonly cellOwner: Readonly<SpecificCellOwner>;
-  decide(prior: StateSpace): Decision;
+export interface ReinforcedAgent extends AIAgent<StateSpace> {
   reward(value: number): void;
 }
 
 function buildStateSpace(
   agentCellOwner: Readonly<SpecificCellOwner>,
-  gameView: Readonly<GameView>,
+  cells: ReadonlyArray<CellOwner>,
 ): StateSpace {
   return {
     states: [
-      ...gameView.board.cells.map(
+      ...cells.map(
         (cellOwner) => {
           if (cellOwner === CellOwner.None) {
             return 1.0;
@@ -38,18 +33,6 @@ function buildStateSpace(
       ),
     ],
   };
-}
-
-function validateDecision(board: Readonly<Board>, decision: Readonly<Decision>): boolean {
-  return decision.cellsAtToAttack.reduce<boolean>(
-    (validAcc, cellAt) => {
-      if (!validAcc) {
-        return false;
-      }
-      return board.cells[cellAt] === CellOwner.None;
-    },
-    true,
-  );
 }
 
 function rewardOfDecision(
@@ -72,20 +55,17 @@ function rewardOfDecision(
   return Math.tanh(2 * points[agentCellOwner] - otherAgentsPoints);
 }
 
-export function findDecision(
-  gameView: Readonly<GameView>,
+export function findReinforcedDecision(
   agent: ReinforcedAgent,
+  board: Readonly<Board>,
 ): Decision | null {
-  const stateSpace = buildStateSpace(agent.cellOwner, gameView);
-
-  for (let i = 0; i < 100; i += 1) {
-    const decision = agent.decide(stateSpace);
-    if (validateDecision(gameView.board, decision)) {
-      const value = rewardOfDecision(agent.cellOwner, gameView.board, decision);
+  return findDecisionForStateSpace(
+    agent,
+    board.cells,
+    buildStateSpace(agent.cellOwner, board.cells),
+    (decision) => {
+      const value = rewardOfDecision(agent.cellOwner, board, decision);
       agent.reward(value);
-      return decision;
-    }
-  }
-
-  return null;
+    },
+  );
 }
