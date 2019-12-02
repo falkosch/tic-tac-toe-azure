@@ -1,9 +1,8 @@
 import {
   DQNEnv, DQNOpt, DQNSolver, Solver,
 } from 'reinforce-js';
-import { BrainStatistics, loadAgent, persistAgent } from '../ai-agent/StorableAgent';
 
-
+import { loadAgent, persistAgent, BrainStatistics } from '../ai-agent/StorableAgent';
 import { BoardDimensions } from '../../meta-model/Board';
 import { Brains } from './DQNPretrainedBrain';
 import { Decision } from '../ai-agent/Decision';
@@ -11,7 +10,12 @@ import { ReinforcedAgent, StateSpace } from './ReinforcedAgent';
 import { SpecificCellOwner } from '../../meta-model/CellOwner';
 import { StorableDQNAgent } from './StorableDQNAgent';
 
-const agents: Record<string, Solver> = {};
+interface SolverWithStatistics {
+  solver: Solver;
+  statistics: BrainStatistics;
+}
+
+const agents: Record<string, SolverWithStatistics> = {};
 
 function loadDQNAgent(id: string): StorableDQNAgent | undefined {
   const agentData = loadAgent<StorableDQNAgent>(id, DQNReinforcedAgent.ObjectVersion);
@@ -50,13 +54,15 @@ export class DQNReinforcedAgent implements ReinforcedAgent {
     const actionCount = cellCount;
     const stateCount = cellCount;
     this.id = `dqn-${this.cellOwner}-${width}x${height}-${stateCount}-${actionCount}`;
-    this.solver = agents[this.id];
 
-    if (!this.solver) {
+    if (this.id in agents) {
+      const solverWithStatistics = agents[this.id];
+      this.solver = solverWithStatistics.solver;
+      this.statistics = solverWithStatistics.statistics;
+    } else {
       const agentEnvironment = new DQNEnv(width, height, stateCount, actionCount);
       const agentOptions = new DQNOpt();
       this.solver = new DQNSolver(agentEnvironment, agentOptions);
-      agents[this.id] = this.solver;
 
       const agentData = loadDQNAgent(this.id);
       if (agentData) {
@@ -68,6 +74,11 @@ export class DQNReinforcedAgent implements ReinforcedAgent {
           wins: agentData.wins,
         };
       }
+
+      agents[this.id] = {
+        solver: this.solver,
+        statistics: this.statistics,
+      };
 
       this.persist();
     }
