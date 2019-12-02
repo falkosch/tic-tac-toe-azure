@@ -86,7 +86,6 @@ export class DefaultMenaceAgent implements MenaceAgent {
   }
 
   rememberDraw(): void {
-    // Manifest the learned outcomes of the completed game in the long term memory
     this.menaceMemory.draws += 1;
     this.menaceMemory.longTermMatchboxes = cloneMatchboxes(this.menaceMemory.matchboxes);
     this.menaceMemory.matchboxes = {};
@@ -101,7 +100,6 @@ export class DefaultMenaceAgent implements MenaceAgent {
         beads.splice(beads.indexOf(bead), 1);
       },
     );
-    // Manifest the learned outcomes of the completed game in the long term memory
     this.menaceMemory.losses += 1;
     this.menaceMemory.longTermMatchboxes = cloneMatchboxes(this.menaceMemory.matchboxes);
     this.menaceMemory.matchboxes = {};
@@ -113,7 +111,6 @@ export class DefaultMenaceAgent implements MenaceAgent {
     this.menaceMemory.playedMoves.forEach(
       ({ boardAsString, bead }) => this.menaceMemory.matchboxes[boardAsString].unshift(bead, bead),
     );
-    // Manifest the learned outcomes of the completed game in the long term memory
     this.menaceMemory.wins += 1;
     this.menaceMemory.longTermMatchboxes = cloneMatchboxes(this.menaceMemory.matchboxes);
     this.menaceMemory.matchboxes = {};
