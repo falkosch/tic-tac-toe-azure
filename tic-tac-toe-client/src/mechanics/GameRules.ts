@@ -8,45 +8,34 @@ export function countPoints(
   board: Readonly<Board>,
   consecutiveness: ReadonlyArray<Consecutiveness>,
 ): Points {
-  return consecutiveness.reduce(
-    (pointsTrackingAcc, { cellsAt }) => {
-      const cellOwner = board.cells[cellsAt[0]];
-      if (cellOwner === CellOwner.None) {
-        return pointsTrackingAcc;
-      }
-
-      return {
-        ...pointsTrackingAcc,
-        [cellOwner]: pointsTrackingAcc[cellOwner] + cellsAt.length,
-      };
-    },
-    {
-      [CellOwner.O]: 0,
-      [CellOwner.X]: 0,
-    },
-  );
+  const pointsTracking = {
+    [CellOwner.O]: 0,
+    [CellOwner.X]: 0,
+  };
+  consecutiveness.forEach(({ cellsAt }) => {
+    const cellOwner = board.cells[cellsAt[0]];
+    if (cellOwner !== CellOwner.None) {
+      pointsTracking[cellOwner] += cellsAt.length;
+    }
+  });
+  return pointsTracking;
 }
 
 export function pointsLeader(points: Readonly<Points>): SpecificCellOwner | undefined {
-  interface WinnerTracking {
-    winner?: SpecificCellOwner;
-    points: number;
-  }
+  let winnerPoints = 0;
+  let winner: SpecificCellOwner | undefined;
 
-  return Object.entries(points)
-    .reduce<WinnerTracking>(
-      (winnerTrackingAcc, [cellOwner, value]) => {
-        if (winnerTrackingAcc.points < value) {
-          return {
-            winner: cellOwner as SpecificCellOwner,
-            points: value,
-          };
-        }
-        return winnerTrackingAcc;
-      },
-      { points: 0 },
-    )
-    .winner;
+  Object.keys(points)
+    .forEach((cellOwnerKey) => {
+      const cellOwner = cellOwnerKey as SpecificCellOwner;
+      const value = points[cellOwner];
+      if (winnerPoints < value) {
+        winnerPoints = value;
+        winner = cellOwner;
+      }
+    });
+
+  return winner;
 }
 
 export function remainingMoves(cells: ReadonlyArray<CellOwner>): number {
