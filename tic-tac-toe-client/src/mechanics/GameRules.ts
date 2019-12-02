@@ -28,8 +28,13 @@ export function countPoints(
 }
 
 export function pointsLeader(points: Readonly<Points>): SpecificCellOwner | undefined {
+  interface WinnerTracking {
+    winner?: SpecificCellOwner;
+    points: number;
+  }
+
   return Object.entries(points)
-    .reduce(
+    .reduce<WinnerTracking>(
       (winnerTrackingAcc, [cellOwner, value]) => {
         if (winnerTrackingAcc.points < value) {
           return {
@@ -39,12 +44,7 @@ export function pointsLeader(points: Readonly<Points>): SpecificCellOwner | unde
         }
         return winnerTrackingAcc;
       },
-      {
-        points: Number.NEGATIVE_INFINITY,
-      } as {
-        winner?: SpecificCellOwner;
-        points: number;
-      },
+      { points: 0 },
     )
     .winner;
 }
