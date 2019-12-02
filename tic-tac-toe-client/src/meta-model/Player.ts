@@ -11,12 +11,15 @@ export interface Player {
   takeTurn(playerTurn: Readonly<PlayerTurn>): Promise<AttackGameAction>;
   onGameStart?(
     cellOwner: Readonly<SpecificCellOwner>,
-    gameView: Readonly<GameView>
-  ): void;
-  onGameViewUpdate?(cellOwner: Readonly<SpecificCellOwner>, gameView: Readonly<GameView>): void;
+    gameView: Readonly<GameView>,
+  ): Promise<void>;
+  onGameViewUpdate?(
+    cellOwner: Readonly<SpecificCellOwner>,
+    gameView: Readonly<GameView>,
+  ): Promise<void>;
   onGameEnd?(
     cellOwner: Readonly<SpecificCellOwner>,
     gameView: Readonly<GameView>,
     endState: Readonly<GameEndState>,
-  ): void;
+  ): Promise<void>;
 }

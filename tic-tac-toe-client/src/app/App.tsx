@@ -63,7 +63,10 @@ export const App: React.FC<{}> = () => {
   }
 
   async function makeNewGame(): Promise<void> {
-    const updateGameView = (newGameView: Readonly<ModelGameView>): void => setGameView(newGameView);
+    const updateGameView = async (
+      newGameView: Readonly<ModelGameView>,
+    ): Promise<void> => setGameView(newGameView);
+
     await runNewGame(
       {
         [CellOwner.X]: players[configuration.playerTypes[CellOwner.X]],

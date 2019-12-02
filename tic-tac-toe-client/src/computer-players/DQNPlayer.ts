@@ -19,11 +19,11 @@ export class DQNPlayer implements Player {
     };
   }
 
-  onGameEnd(
+  async onGameEnd(
     cellOwner: Readonly<SpecificCellOwner>,
     gameView: Readonly<GameView>,
     endState: Readonly<GameEndState>,
-  ): void {
+  ): Promise<void> {
     const agent = new DQNReinforcedAgent(
       cellOwner,
       gameView.board.dimensions,
