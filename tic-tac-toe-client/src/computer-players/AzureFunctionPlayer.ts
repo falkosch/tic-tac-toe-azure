@@ -19,9 +19,8 @@ export class AzureFunctionPlayer implements Player {
     try {
       return (await this.axiosInstance.post('/api/takeTurn', playerTurn)).data;
     } catch (e) {
-      console.error('Azure player encountered error', e);
-      // errors result in skip actions for now
-      return { affectedCellsAt: [] };
+      console.error('Azure backend is not reachable', e);
+      throw e;
     }
   }
 }

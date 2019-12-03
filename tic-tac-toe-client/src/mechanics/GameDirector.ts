@@ -143,6 +143,7 @@ export async function runNewGame(
   let actionHistory = emptyActionHistory();
   let gameView = newGameView();
   let turn = 0;
+  let endState: GameEndState = {};
 
   await notifyGameStart(gameView, joinedPlayers, onGameStart);
 
@@ -150,8 +151,15 @@ export async function runNewGame(
   while (turn < turnsLimit) {
     const [cellOwner, playerWithTurn] = playerOfTurn(joinedPlayers, turn);
 
-    // eslint-disable-next-line
-    const action = await playerWithTurn.takeTurn({ cellOwner, gameView: gameView, actionHistory });
+    let action;
+    try {
+      // eslint-disable-next-line
+      action = await playerWithTurn.takeTurn({ cellOwner, gameView: gameView, actionHistory });
+    } catch (e) {
+      endState = { winner: e };
+      break;
+    }
+
     actionHistory = { action, previous: actionHistory };
 
     const boardModifier = buildBoardModifier(action, cellOwner);
@@ -163,16 +171,13 @@ export async function runNewGame(
     await notifyGameViewUpdate(gameView, joinedPlayers, onGameViewUpdate);
 
     if (isEnding(gameView)) {
-      const endState: GameEndState = { winner: pointsLeader(points) };
-      // eslint-disable-next-line
-      await notifyGameEnd(gameView, endState, joinedPlayers, onGameEnd);
-      return endState;
+      endState = { winner: pointsLeader(points) };
+      break;
     }
 
     turn += 1;
   }
 
-  const endState: GameEndState = {};
   await notifyGameEnd(gameView, endState, joinedPlayers, onGameEnd);
   return endState;
 }
