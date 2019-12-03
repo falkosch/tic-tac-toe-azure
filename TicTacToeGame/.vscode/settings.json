@@ -1,0 +1,3 @@
+{
+    "azureFunctions.deploySubpath": "TicTacToeGame/bin/Release/netcoreapp2.2/publish"
+}
