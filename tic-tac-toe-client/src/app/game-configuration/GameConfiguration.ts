@@ -21,6 +21,6 @@ export const GameConfiguration = React.createContext<GameConfigurationType>({
   autoNewGame: false,
   playerTypes: {
     [CellOwner.X]: PlayerType.Human,
-    [CellOwner.O]: PlayerType.Azure,
+    [CellOwner.O]: PlayerType.Menace,
   },
 });
