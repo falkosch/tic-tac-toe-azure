@@ -1,6 +1,6 @@
 import { findDecisionForStateSpace, AIAgent } from '../ai-agent/AIAgent';
+import { findFreeCellIndices, takeAny, Decision } from '../ai-agent/Decision';
 import { CellOwner } from '../../meta-model/CellOwner';
-import { Decision } from '../ai-agent/Decision';
 
 export interface StateSpace {
   boardAsString: string;
@@ -17,13 +17,7 @@ function buildStateSpace(cells: ReadonlyArray<CellOwner>): StateSpace {
 }
 
 export function findFreeBeads({ boardAsCellOwners }: Readonly<StateSpace>): number[] {
-  const freeBeads: number[] = [];
-  boardAsCellOwners.forEach((cellOwner, index) => {
-    if (cellOwner === CellOwner.None) {
-      freeBeads.push(index);
-    }
-  });
-  return freeBeads;
+  return findFreeCellIndices(boardAsCellOwners);
 }
 
 export function multiplyBeads(beads: ReadonlyArray<number>): number[] {
@@ -43,5 +37,5 @@ export function findMenaceDecision(
 }
 
 export function randomBead(beads: ReadonlyArray<number>): number {
-  return beads[Math.floor(Math.random() * beads.length)];
+  return takeAny(beads);
 }
