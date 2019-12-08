@@ -1,8 +1,8 @@
 Do you have too much time available in your life? Do you feel the need to play a childhood or retro game? Here it is. :)
 
-~~Try it out on the [fstictactoe Azure Website](https://fstictactoe.azurewebsites.net).~~ Unfortunately my 30-day free trial subscription of my Azure account expired and both the client and the Azure function app services got disabled for now. [I hosted the client app on another hosting platform](https://tictactoe.iterative-prototyping.com), so that you at least can try out the "offline" version, unfortunately without the Azure function player.
+~~Try it out on the [fstictactoe Azure Website](https://fstictactoe.azurewebsites.net).~~ Unfortunately my 30-day free trial subscription of my Azure account expired and both the client and the Azure function app services got disabled for now. [I hosted the client app on another hosting platform](https://tictactoe.iterative-prototyping.com), so that you at least can try out the "offline" version without the Azure function player.
 
-It is an example application of a Tic Tac Toe game. It provides different player/opponent types for each of the two players:
+The Tic Tac Toe game is an example application. It provides different player/opponent types for each of the two players:
 
 * By default, you play as "Player X" and "Player O" will be played by an AI player.
 
