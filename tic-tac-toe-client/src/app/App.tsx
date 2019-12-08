@@ -163,7 +163,7 @@ export const App: React.FC<{}> = () => {
       );
     }
 
-    return <div>Create a new game first.</div>;
+    return <div className="app-game-view-create-new-game">Create a new game first.</div>;
   }
 
   function selectWinnerView(): JSX.Element {
