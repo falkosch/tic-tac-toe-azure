@@ -77,7 +77,12 @@ export class DQNReinforcedAgent implements ReinforcedAgent {
       const agentData = loadDQNAgent(this.id);
       if (agentData) {
         this.solver.fromJSON(agentData.network);
-        (this.solver as any).learnTick = agentData.learnTick - (agentData.learnTick % agentOptions.get('keepExperienceInterval'));
+
+        // Defy an NPE in the DQN solver when the learn tick is not at an experience 0-offset.
+        // Only concerns persisted DQN brains as their experience stack is not persisted.
+        const experienceOffset = agentData.learnTick % this.solver.getOpt().get('keepExperienceInterval');
+        (this.solver as any).learnTick = agentData.learnTick - experienceOffset;
+
         this.statistics = {
           draws: agentData.draws,
           losses: agentData.losses,
