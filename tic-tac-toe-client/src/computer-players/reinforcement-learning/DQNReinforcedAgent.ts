@@ -28,6 +28,18 @@ function loadDQNAgent(id: string): StorableDQNAgent | undefined {
   return undefined;
 }
 
+function createSolver(
+  width: number,
+  height: number,
+  stateCount: number,
+  actionCount: number,
+): Solver {
+  const agentEnvironment = new DQNEnv(width, height, stateCount, actionCount);
+  const agentOptions = new DQNOpt();
+  agentOptions.setNumberOfHiddenUnits([50]);
+  return new DQNSolver(agentEnvironment, agentOptions);
+}
+
 /**
  * Encapsulates and persists the state of a DQN solver (the "brain") and provides the interface
  * for the decision and reward interaction between {@link DQNPlayer} and this agent. The DQN
@@ -60,9 +72,7 @@ export class DQNReinforcedAgent implements ReinforcedAgent {
       this.solver = solverWithStatistics.solver;
       this.statistics = solverWithStatistics.statistics;
     } else {
-      const agentEnvironment = new DQNEnv(width, height, stateCount, actionCount);
-      const agentOptions = new DQNOpt();
-      this.solver = new DQNSolver(agentEnvironment, agentOptions);
+      this.solver = createSolver(width, height, stateCount, actionCount);
 
       const agentData = loadDQNAgent(this.id);
       if (agentData) {
