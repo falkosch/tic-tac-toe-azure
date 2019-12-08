@@ -6,25 +6,25 @@ import React, {
   useContext, useReducer, useRef,
 } from 'react';
 
+import { createAzureFunctionPlayer } from '../computer-players/AzureFunctionPlayer';
+import { createDQNPlayer } from '../computer-players/DQNPlayer';
+import { createMenacePlayer } from '../computer-players/MenacePlayer';
+import { createMockPlayer } from '../computer-players/MockPlayer';
 import { gameConfigurationReducer, GameConfigurationActionType } from './game-configuration/GameConfigurationReducer';
 import { gameStateReducer, GameStateActionType } from './game-state/GameStateReducer';
 import { runNewGame } from '../mechanics/GameDirector';
 import { AppNavbar } from './app-navbar/AppNavbar';
 import { AttackGameAction } from '../meta-model/GameAction';
-import { AzureFunctionPlayer } from '../computer-players/AzureFunctionPlayer';
 import { CellClickDispatch } from './cell-actions/CellClickDispatch';
 import { CellOwner, SpecificCellOwner } from '../meta-model/CellOwner';
-import { DQNPlayer } from '../computer-players/DQNPlayer';
 import { GameConfiguration, PlayerType } from './game-configuration/GameConfiguration';
 import { GameState } from './game-state/GameState';
 import { GameView } from './game-view/GameView';
-import { MenacePlayer } from '../computer-players/MenacePlayer';
-import { MockPlayer } from '../computer-players/MockPlayer';
-import { Player } from '../meta-model/Player';
+import { Player, PlayerCreator } from '../meta-model/Player';
 
 import './App.css';
 
-type Players = Record<PlayerType, Readonly<Player>>;
+type Players = Record<PlayerType, PlayerCreator>;
 
 export const App: React.FC<{}> = () => {
   const initialGameConfiguration = useContext(GameConfiguration);
@@ -43,13 +43,19 @@ export const App: React.FC<{}> = () => {
   gameRef.current = { gameState, configuration };
 
   const players: Readonly<Players> = {
-    [PlayerType.Human]: { takeTurn: () => letPlayerTakeTurn() },
-    [PlayerType.Mock]: new MockPlayer(),
-    [PlayerType.DQN]: new DQNPlayer(),
-    [PlayerType.Menace]: new MenacePlayer(),
-    [PlayerType.Azure]: new AzureFunctionPlayer(),
+    [PlayerType.Human]: createHumanPlayer,
+    [PlayerType.Mock]: createMockPlayer,
+    [PlayerType.DQN]: createDQNPlayer,
+    [PlayerType.Menace]: createMenacePlayer,
+    [PlayerType.Azure]: createAzureFunctionPlayer,
   };
   const playerKeys = Object.keys(players);
+
+  function createHumanPlayer(): Player {
+    return {
+      takeTurn: () => letPlayerTakeTurn(),
+    };
+  }
 
   function letPlayerTakeTurn(): Promise<AttackGameAction> {
     return new Promise((resolve, reject) => {

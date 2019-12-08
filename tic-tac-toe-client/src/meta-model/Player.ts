@@ -4,6 +4,10 @@ import { GameView } from './GameView';
 import { PlayerTurn } from './PlayerTurn';
 import { SpecificCellOwner } from './CellOwner';
 
+export interface PlayerCreator {
+  (): Player;
+}
+
 /**
  * Enables players to interact with the game.
  */

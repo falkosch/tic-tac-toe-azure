@@ -36,7 +36,7 @@ function createSolver(
 ): Solver {
   const agentEnvironment = new DQNEnv(width, height, stateCount, actionCount);
   const agentOptions = new DQNOpt();
-  agentOptions.setNumberOfHiddenUnits([50]);
+  agentOptions.setNumberOfHiddenUnits([500]);
   return new DQNSolver(agentEnvironment, agentOptions);
 }
 
