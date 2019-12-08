@@ -1,6 +1,6 @@
 {
-  "name": "FSTicTacToe",
-  "short_name": "Tic Tac Toe Game with Azure",
+  "name": "TicTacToe",
+  "short_name": "Tic Tac Toe with Azure",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
