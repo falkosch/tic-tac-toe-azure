@@ -1,13 +1,12 @@
 import {
   DQNEnv, DQNOpt, DQNSolver, Solver,
 } from 'reinforce-js';
+import { AIAgentCreator } from '../ai-agent/AIAgent';
 
 import { loadAgent, persistAgent, BrainStatistics } from '../ai-agent/StorableAgent';
-import { BoardDimensions } from '../../meta-model/Board';
 import { Brains } from './DQNPretrainedBrain';
 import { Decision } from '../ai-agent/Decision';
-import { ReinforcedAgent, StateSpace } from './ReinforcedAgent';
-import { SpecificCellOwner } from '../../meta-model/CellOwner';
+import { ReinforcedAgent } from './ReinforcedAgent';
 import { StorableDQNAgent } from './StorableDQNAgent';
 
 interface SolverWithStatistics {
@@ -17,15 +16,10 @@ interface SolverWithStatistics {
 
 const agents: Record<string, SolverWithStatistics> = {};
 
-function loadDQNAgent(id: string): StorableDQNAgent | undefined {
-  const agentData = loadAgent<StorableDQNAgent>(id, DQNReinforcedAgent.ObjectVersion);
-  if (agentData) {
-    return agentData;
-  }
-  if (id in Brains) {
-    return Brains[id];
-  }
-  return undefined;
+const dqnObjectVersion = 2;
+
+async function loadDQNAgent(id: string): Promise<StorableDQNAgent | undefined> {
+  return loadAgent<StorableDQNAgent>(id, dqnObjectVersion, Brains[id]);
 }
 
 function createSolver(
@@ -37,100 +31,101 @@ function createSolver(
   const agentEnvironment = new DQNEnv(width, height, stateCount, actionCount);
   const agentOptions = new DQNOpt();
   agentOptions.setNumberOfHiddenUnits([500]);
+  agentOptions.setEpsilonDecay(1, 0.1, 255168);
   return new DQNSolver(agentEnvironment, agentOptions);
 }
 
-/**
- * Encapsulates and persists the state of a DQN solver (the "brain") and provides the interface
- * for the decision and reward interaction between {@link DQNPlayer} and this agent. The DQN
- * solver is implemented by the package {@link 'reinforce-js'}.
- */
-export class DQNReinforcedAgent implements ReinforcedAgent {
-  static ObjectVersion = 2;
-
-  private id: string;
-
-  private solver: Solver;
-
-  private statistics: BrainStatistics = {
-    draws: 0,
-    losses: 0,
-    wins: 0,
-  };
-
-  constructor(
-    public cellOwner: SpecificCellOwner,
-    { width, height }: Readonly<BoardDimensions>,
-  ) {
-    const cellCount = width * height;
-    const actionCount = cellCount;
-    const stateCount = cellCount;
-    this.id = `dqn-${this.cellOwner}-${width}x${height}-${stateCount}-${actionCount}`;
-
-    if (this.id in agents) {
-      const solverWithStatistics = agents[this.id];
-      this.solver = solverWithStatistics.solver;
-      this.statistics = solverWithStatistics.statistics;
-    } else {
-      this.solver = createSolver(width, height, stateCount, actionCount);
-
-      const agentData = loadDQNAgent(this.id);
-      if (agentData) {
-        this.solver.fromJSON(agentData.network);
-
-        // Defy an NPE in the DQN solver when the learn tick is not at an experience 0-offset.
-        // Only concerns persisted DQN brains as their experience stack is not persisted.
-        const experienceOffset = agentData.learnTick % this.solver.getOpt().get('keepExperienceInterval');
-        (this.solver as any).learnTick = agentData.learnTick - experienceOffset;
-
-        this.statistics = {
-          draws: agentData.draws,
-          losses: agentData.losses,
-          wins: agentData.wins,
-        };
-      }
-
-      agents[this.id] = {
-        solver: this.solver,
-        statistics: this.statistics,
-      };
-
-      this.persist();
-    }
-  }
-
-  decide(prior: Readonly<StateSpace>): Decision {
-    const action = this.solver.decide(prior.states);
+async function loadBrainAndStatistics(id: string, solver: Solver): Promise<BrainStatistics> {
+  const agentData = await loadDQNAgent(id);
+  if (!agentData) {
     return {
-      cellsAtToAttack: [action],
+      draws: 0,
+      losses: 0,
+      wins: 0,
     };
   }
 
-  reward(value: number): void {
-    this.solver.learn(value);
-    this.persist();
-  }
+  solver.fromJSON(agentData.network);
 
-  rememberDraw(): void {
-    this.statistics.draws += 1;
-    this.persist();
-  }
+  // Defy an NPE in the DQN solver when the learn tick is not at an experience 0-offset.
+  // Only concerns persisted DQN brains as their experience stack is not persisted.
+  const experienceOffset = agentData.wins % solver.getOpt().get('keepExperienceInterval');
+  // eslint-disable-next-line no-param-reassign
+  (solver as any).learnTick = agentData.wins - experienceOffset;
 
-  rememberLoss(): void {
-    this.statistics.losses += 1;
-    this.persist();
-  }
-
-  rememberWin(): void {
-    this.statistics.wins += 1;
-    this.persist();
-  }
-
-  private persist(): void {
-    persistAgent<StorableDQNAgent>(this.id, DQNReinforcedAgent.ObjectVersion, {
-      ...this.statistics,
-      learnTick: (this.solver as any).learnTick,
-      network: this.solver.toJSON(),
-    });
-  }
+  return {
+    draws: agentData.draws,
+    losses: agentData.losses,
+    wins: agentData.wins,
+  };
 }
+
+export const getDQNReinforcedAgent: AIAgentCreator<ReinforcedAgent> = async (
+  cellOwner,
+  boardDimensions,
+) => {
+  const { height, width } = boardDimensions;
+  const cellCount = width * height;
+  const actionCount = cellCount;
+  const stateCount = cellCount;
+  const id = `dqn-${cellOwner}-${width}x${height}-${stateCount}-${actionCount}`;
+
+  let solver: Solver;
+  let statistics: BrainStatistics;
+
+  const persist = async (): Promise<void> => persistAgent<StorableDQNAgent>(
+    id,
+    dqnObjectVersion,
+    {
+      ...statistics,
+      network: solver.toJSON(),
+    },
+  );
+
+  if (id in agents) {
+    const solverWithStatistics = agents[id];
+    solver = solverWithStatistics.solver;
+    statistics = solverWithStatistics.statistics;
+  } else {
+    solver = createSolver(width, height, stateCount, actionCount);
+    statistics = await loadBrainAndStatistics(id, solver);
+    agents[id] = { solver, statistics };
+    await persist();
+  }
+
+  /**
+   * Encapsulates and persists the state of a DQN solver (the "brain") and provides the interface
+   * for the decision and reward interaction between {@link DQNPlayer} and this agent. The DQN
+   * solver is implemented by the package {@link 'reinforce-js'}.
+   */
+  return {
+    cellOwner,
+
+    async decide(prior): Promise<Decision> {
+      const action = solver.decide(prior.states);
+      return {
+        cellsAtToAttack: [action],
+      };
+    },
+
+    async reward(value: number): Promise<void> {
+      solver.learn(value);
+      await persist();
+    },
+
+    async rememberDraw(): Promise<void> {
+      statistics.draws += 1;
+      await persist();
+    },
+
+    async rememberLoss(): Promise<void> {
+      statistics.losses += 1;
+      await persist();
+    },
+
+    async rememberWin(): Promise<void> {
+      statistics.wins += 1;
+      await persist();
+    },
+  };
+};

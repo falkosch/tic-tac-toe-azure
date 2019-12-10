@@ -5,7 +5,7 @@ import { PlayerTurn } from './PlayerTurn';
 import { SpecificCellOwner } from './CellOwner';
 
 export interface PlayerCreator {
-  (): Player;
+  (): Promise<Player>;
 }
 
 /**

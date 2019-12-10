@@ -6,25 +6,25 @@ import { Board } from '../../meta-model/Board';
 import { CellOwner, SpecificCellOwner } from '../../meta-model/CellOwner';
 import { Decision } from '../ai-agent/Decision';
 
-export interface StateSpace {
+export interface ReinforcedStateSpace {
   states: ReadonlyArray<number>;
 }
 
-export interface ReinforcedAgent extends AIAgent<StateSpace> {
+export interface ReinforcedAgent extends AIAgent<ReinforcedStateSpace> {
   reward(value: number): void;
 }
 
 function buildStateSpace(
   agentCellOwner: Readonly<SpecificCellOwner>,
   cells: ReadonlyArray<CellOwner>,
-): StateSpace {
+): ReinforcedStateSpace {
   return {
     states: cells.map((cellOwner) => {
       if (cellOwner === CellOwner.None) {
-        return 1.0;
+        return 0.0;
       }
       if (cellOwner === agentCellOwner) {
-        return 0.0;
+        return 1.0;
       }
       return -1.0;
     }),
@@ -48,15 +48,15 @@ function rewardOfDecision(
   return 2 * points[agentCellOwner] - sumAgentsPoints;
 }
 
-export function findReinforcedDecision(
+export async function findReinforcedDecision(
   agent: ReinforcedAgent,
   board: Readonly<Board>,
-): Decision | null {
+): Promise<Decision | null> {
   return findDecisionForStateSpace(
     agent,
     board.cells,
     buildStateSpace(agent.cellOwner, board.cells),
-    (decision) => {
+    async (decision) => {
       const value = rewardOfDecision(agent.cellOwner, board, decision);
       agent.reward(value);
     },

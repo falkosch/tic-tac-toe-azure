@@ -2,22 +2,28 @@ import { findDecisionForStateSpace, AIAgent } from '../ai-agent/AIAgent';
 import { findFreeCellIndices, takeAny, Decision } from '../ai-agent/Decision';
 import { CellOwner } from '../../meta-model/CellOwner';
 
-export interface StateSpace {
+export interface MenaceStateSpace {
   boardAsString: string;
   boardAsCellOwners: ReadonlyArray<CellOwner>;
 }
 
-export type MenaceAgent = AIAgent<StateSpace>;
+export interface MenaceAgent extends AIAgent<MenaceStateSpace> {
+  startNewGame(): Promise<void>;
+}
 
-function buildStateSpace(cells: ReadonlyArray<CellOwner>): StateSpace {
+function buildStateSpace(cells: ReadonlyArray<CellOwner>): MenaceStateSpace {
   return {
     boardAsString: cells.reduce((stateString, cellOwner) => `${stateString}${cellOwner}`, ''),
     boardAsCellOwners: cells,
   };
 }
 
-export function findFreeBeads({ boardAsCellOwners }: Readonly<StateSpace>): number[] {
+export function findFreeBeads({ boardAsCellOwners }: Readonly<MenaceStateSpace>): number[] {
   return findFreeCellIndices(boardAsCellOwners);
+}
+
+export function randomBead(beads: ReadonlyArray<number>): number[] {
+  return takeAny(beads);
 }
 
 export function multiplyBeads(beads: ReadonlyArray<number>): number[] {
@@ -29,13 +35,9 @@ export function multiplyBeads(beads: ReadonlyArray<number>): number[] {
   return multipliedBeads;
 }
 
-export function findMenaceDecision(
+export async function findMenaceDecision(
   agent: MenaceAgent,
   cells: ReadonlyArray<CellOwner>,
-): Decision | null {
-  return findDecisionForStateSpace(agent, cells, buildStateSpace(cells), () => {});
-}
-
-export function randomBead(beads: ReadonlyArray<number>): number {
-  return takeAny(beads);
+): Promise<Decision | null> {
+  return findDecisionForStateSpace(agent, cells, buildStateSpace(cells), async () => {});
 }
