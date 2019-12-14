@@ -23,6 +23,7 @@ describe(`${CellView.name}`, () => {
       boardDimensions={boardDimensions}
       cellAt={0}
       cellOwner={cellOwner}
+      consecutiveness={[]}
     />, div);
     ReactDOM.unmountComponentAtNode(div);
   });

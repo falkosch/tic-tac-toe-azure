@@ -2,10 +2,12 @@ import React, { useContext } from 'react';
 
 import { cellCoordinates } from '../../mechanics/CellCoordinates';
 import { cellEdgeClassifiers, EdgeClassifier } from '../../mechanics/CellEdgeClassifiers';
-import { mapCellOwnerToImage } from '../../mechanics/MapCellOwnerToImage';
+import { coveredConsecutivenessDirections } from '../../mechanics/Consecutiveness';
+import { mapCellOwnerToImage, mapConsecutivenessDirectionToImage } from '../../mechanics/MapToImage';
 import { BoardDimensions } from '../../meta-model/Board';
 import { CellClickDispatch } from '../cell-actions/CellClickDispatch';
 import { CellOwner } from '../../meta-model/CellOwner';
+import { Consecutiveness } from '../../meta-model/GameView';
 
 import './CellView.css';
 
@@ -27,14 +29,18 @@ export const CellView: React.FC<{
   boardDimensions: Readonly<BoardDimensions>;
   cellAt: number;
   cellOwner: Readonly<CellOwner>;
+  consecutiveness: ReadonlyArray<Consecutiveness>;
 }> = ({
   boardDimensions,
   cellAt,
   cellOwner,
+  consecutiveness,
 }) => {
   const cellActionsDispatch = useContext(CellClickDispatch);
 
   const cellOwnerImage = mapCellOwnerToImage(cellOwner);
+  const consecutivenessDirectionImages = coveredConsecutivenessDirections(cellAt, consecutiveness)
+    .map((d) => mapConsecutivenessDirectionToImage(d));
 
   const edgeClassifiers = cellEdgeClassifiers(
     cellCoordinates(cellAt, boardDimensions),
@@ -50,7 +56,7 @@ export const CellView: React.FC<{
 
   return (
     <button
-      className="cell-view bg-light border-secondary"
+      className="cell-view position-relative bg-light border-secondary"
       onClick={() => cellActionsDispatch && cellActionsDispatch(cellAt)}
       style={gridStyle}
       type="button"
@@ -58,6 +64,25 @@ export const CellView: React.FC<{
       {
         cellOwnerImage && (
           <img className="d-block h-100 w-100" src={cellOwnerImage} alt={cellOwner} />
+        )
+      }
+      {
+        consecutivenessDirectionImages.map(
+          (imageSrc, index) => {
+            if (imageSrc === undefined) {
+              return <></>;
+            }
+
+            const strikeKey = `d${index}`;
+            return (
+              <img
+                key={strikeKey}
+                className="d-block position-absolute cell-view-strike h-100 w-100"
+                src={imageSrc}
+                alt="Strike"
+              />
+            );
+          },
         )
       }
     </button>

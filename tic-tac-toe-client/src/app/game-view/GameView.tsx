@@ -9,6 +9,6 @@ export const GameView: React.FC<{
   gameView,
 }) => (
   <div className="d-flex justify-content-center align-items-center">
-    <BoardView board={gameView.board} />
+    <BoardView board={gameView.board} consecutiveness={gameView.consecutiveness} />
   </div>
 );
