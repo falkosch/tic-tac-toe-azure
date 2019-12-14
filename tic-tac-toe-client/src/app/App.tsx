@@ -180,7 +180,7 @@ export const App: React.FC<{}> = () => {
     if ((gameState.winner as any).isAxiosError) {
       return (
         <div className="app-game-view-error">
-          Azure player is not available, because the backend is not reachable, please try another
+          Azure player is not available, because the backend is not reachable. Please try another
           player type.
         </div>
       );
