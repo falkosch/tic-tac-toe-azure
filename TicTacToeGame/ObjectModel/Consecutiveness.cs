@@ -12,5 +12,7 @@ namespace Edu.Schwabe.TicTacToe.ObjectModel
     public Consecutiveness(IEnumerable<int> cellsAt) => CellsAt = new List<int>(cellsAt);
 
     public IList<int> CellsAt { get; private set; }
+
+    public ConsecutivenessDirection Direction { get; set; }
   }
 }
