@@ -22,9 +22,9 @@ The Tic Tac Toe game is an example application. It provides different player/opp
 
 ## Status
 
-[![Build Status (TicTacToeGame)](https://falko-schwabe.visualstudio.com/tic-tac-toe-azure/_apis/build/status/falkosch.tic-tac-toe-azure%20TicTacToeGame?branchName=master)](https://falko-schwabe.visualstudio.com/tic-tac-toe-azure/_build/latest?definitionId=1&branchName=master)
+Build Status (TicTacToeGame) [![TicTacToeGame](https://falko-schwabe.visualstudio.com/tic-tac-toe-azure/_apis/build/status/falkosch.tic-tac-toe-azure%20TicTacToeGame?branchName=master)](https://falko-schwabe.visualstudio.com/tic-tac-toe-azure/_build/latest?definitionId=1&branchName=master)
 
-[![Build Status (tic-tac-toe-client)](https://falko-schwabe.visualstudio.com/tic-tac-toe-azure/_apis/build/status/falkosch.tic-tac-toe-azure%20tic-tac-toe-client?branchName=master)](https://falko-schwabe.visualstudio.com/tic-tac-toe-azure/_build/latest?definitionId=2&branchName=master)
+Build Status (tic-tac-toe-client) [![tic-tac-toe-client](https://falko-schwabe.visualstudio.com/tic-tac-toe-azure/_apis/build/status/falkosch.tic-tac-toe-azure%20tic-tac-toe-client?branchName=master)](https://falko-schwabe.visualstudio.com/tic-tac-toe-azure/_build/latest?definitionId=2&branchName=master)
 
 ## Implementation
 
