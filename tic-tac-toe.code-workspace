@@ -33,32 +33,13 @@
       "editor.defaultFormatter": "dbaeumer.vscode-eslint"
     },
     "eslint.alwaysShowStatus": true,
-    "eslint.autoFixOnSave": true,
     "eslint.validate": [
-      {
-        "language": "markdown",
-        "autoFix": true
-      },
-      {
-        "language": "html",
-        "autoFix": true
-      },
-      {
-        "language": "javascript",
-        "autoFix": true
-      },
-      {
-        "language": "javascriptreact",
-        "autoFix": true
-      },
-      {
-        "language": "typescript",
-        "autoFix": true
-      },
-      {
-        "language": "typescriptreact",
-        "autoFix": true
-      }
+      "markdown",
+      "html",
+      "javascript",
+      "javascriptreact",
+      "typescript",
+      "typescriptreact"
     ],
     "eslint.workingDirectories": [
       {
@@ -66,9 +47,13 @@
         "changeProcessCWD": true
       }
     ],
-    "css.lint.unknownAtRules": "ignore"
+    "css.lint.unknownAtRules": "ignore",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    }
   },
   "tasks": {
+    "version": "2.0.0",
     "tasks": [
       {
         "label": "clean",
