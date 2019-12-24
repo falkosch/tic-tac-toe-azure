@@ -1,20 +1,9 @@
-import { cellAtCoordinate, CellCoordinates } from './CellCoordinates';
+import {
+  cellAtCoordinate, LineDimensions, LineIteratorsToCoordinates, LineIteratorToCoordinates,
+} from './CellCoordinates';
 import { Board } from '../meta-model/Board';
 import { CellOwner } from '../meta-model/CellOwner';
 import { Consecutiveness, ConsecutivenessDirection } from '../meta-model/GameView';
-
-interface IteratorToCoordinates {
-  (i: number): CellCoordinates;
-}
-
-interface IteratorsToCoordinates {
-  (j: number, i: number): CellCoordinates;
-}
-
-interface LineDimensions {
-  j: number;
-  i: (atJ: number) => number;
-}
 
 interface ConsecutivenessConsumer {
   (nextConsecutiveness: Consecutiveness): void;
@@ -26,7 +15,7 @@ function findInCellOwnerSpans(
   board: Readonly<Board>,
   lineDimension: number,
   minimumSpan: number,
-  iteratorToCoordinates: IteratorToCoordinates,
+  iteratorToCoordinates: LineIteratorToCoordinates,
 ): void {
   // there are consecutiveness only if line dimension is big enough
   if (lineDimension < minimumSpan) {
@@ -40,26 +29,24 @@ function findInCellOwnerSpans(
   let cellsAt = [pivotCellAt];
   let ownerOfSpan = board.cells[pivotCellAt];
 
-  Array.from({ length: lineDimension - 1 })
-    .forEach((__, i) => {
-      const index = i + 1;
-      const iAsCellAt = cellAtCoordinate(iteratorToCoordinates(index), board.dimensions);
-      const ownerAtCell = board.cells[iAsCellAt];
+  for (let i = 1; i < lineDimension; i += 1) {
+    const iAsCellAt = cellAtCoordinate(iteratorToCoordinates(i), board.dimensions);
+    const ownerAtCell = board.cells[iAsCellAt];
 
-      // when the CellOwner changes, a span ends
-      if (ownerOfSpan !== ownerAtCell) {
-        // add span as consecutiveness if it exceeds the minimum span length
-        if (cellsAt.length >= minimumSpan && ownerOfSpan !== CellOwner.None) {
-          consecutivenessConsumer({ cellsAt, direction });
-        }
-        // start next span
-        cellsAt = [iAsCellAt];
-        ownerOfSpan = ownerAtCell;
-        return;
+    // when the CellOwner changes, a span ends
+    if (ownerOfSpan !== ownerAtCell) {
+      // add span as consecutiveness if it exceeds the minimum span length
+      if (cellsAt.length >= minimumSpan && ownerOfSpan !== CellOwner.None) {
+        consecutivenessConsumer({ cellsAt, direction });
       }
+      // start next span
+      cellsAt = [iAsCellAt];
+      ownerOfSpan = ownerAtCell;
+      return;
+    }
 
-      cellsAt.push(iAsCellAt);
-    });
+    cellsAt.push(iAsCellAt);
+  }
 
   // don't forget to check the last started span
   if (cellsAt.length >= minimumSpan && ownerOfSpan !== CellOwner.None) {
@@ -73,21 +60,18 @@ function findForEachLine(
   board: Readonly<Board>,
   lineDimensions: Readonly<LineDimensions>,
   minimumSpan: number,
-  coordinatesFromIterators: IteratorsToCoordinates,
+  coordinatesFromIterators: LineIteratorsToCoordinates,
 ): void {
-  Array.from({ length: lineDimensions.j })
-    .forEach((__, j: number) => {
-      const dimensionJForI = lineDimensions.i(j);
-      const iteratorToCoordinates: IteratorToCoordinates = (i) => coordinatesFromIterators(j, i);
-      findInCellOwnerSpans(
-        consecutivenessConsumer,
-        direction,
-        board,
-        dimensionJForI,
-        minimumSpan,
-        iteratorToCoordinates,
-      );
-    });
+  for (let j = 0; j < lineDimensions.j; j += 1) {
+    findInCellOwnerSpans(
+      consecutivenessConsumer,
+      direction,
+      board,
+      lineDimensions.i(j),
+      minimumSpan,
+      (i) => coordinatesFromIterators(j, i),
+    );
+  }
 }
 
 export function findConsecutiveness(board: Readonly<Board>, minimumSpan = 3): Consecutiveness[] {

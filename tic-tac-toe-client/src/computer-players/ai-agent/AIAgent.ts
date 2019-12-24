@@ -1,3 +1,5 @@
+import { cellAtCoordinate, cellCoordinates } from '../../mechanics/CellCoordinates';
+import { transformCoordinates, BoardNormalization } from '../../mechanics/BoardNormalization';
 import { validateDecision, Decision } from './Decision';
 import { BoardDimensions } from '../../meta-model/Board';
 import { CellOwner, SpecificCellOwner } from '../../meta-model/CellOwner';
@@ -10,7 +12,13 @@ export interface AIAgentCreator<AIAgentType> {
   ): Promise<AIAgentType>;
 }
 
-export interface AIAgent<StateSpaceType> {
+export interface NormalizedStateSpace {
+  dimensions: Readonly<BoardDimensions>;
+  normalization: Readonly<BoardNormalization>;
+  inverseNormalization: Readonly<BoardNormalization>;
+}
+
+export interface AIAgent<StateSpaceType extends NormalizedStateSpace> {
   readonly cellOwner: Readonly<SpecificCellOwner>;
   decide(prior: Readonly<StateSpaceType>): Promise<Decision>;
   rememberDraw(): Promise<void>;
@@ -18,7 +26,7 @@ export interface AIAgent<StateSpaceType> {
   rememberWin(): Promise<void>;
 }
 
-export async function findDecisionForStateSpace<StateSpaceType>(
+export async function findDecisionForStateSpace<StateSpaceType extends NormalizedStateSpace>(
   agent: AIAgent<StateSpaceType>,
   cells: ReadonlyArray<CellOwner>,
   stateSpace: Readonly<StateSpaceType>,
@@ -29,12 +37,25 @@ export async function findDecisionForStateSpace<StateSpaceType>(
 
   for (let i = 0; i < maxRetries; i += 1) {
     // eslint-disable-next-line no-await-in-loop
-    const decision = await agent.decide(stateSpace);
+    const decisionForNormalizedStateSpace = await agent.decide(stateSpace);
+    const denormalizedDecision: Decision = {
+      ...decisionForNormalizedStateSpace,
+      cellsAtToAttack: decisionForNormalizedStateSpace.cellsAtToAttack.map(
+        (cellAtForNormalizedStateSpace) => cellAtCoordinate(
+          transformCoordinates(
+            cellCoordinates(cellAtForNormalizedStateSpace, stateSpace.dimensions),
+            stateSpace.dimensions,
+            stateSpace.inverseNormalization,
+          ),
+          stateSpace.dimensions,
+        ),
+      ),
+    };
 
-    if (validateDecision(cells, decision)) {
+    if (validateDecision(cells, denormalizedDecision)) {
       // eslint-disable-next-line no-await-in-loop
-      await evaluateDecision(decision);
-      return decision;
+      await evaluateDecision(denormalizedDecision);
+      return denormalizedDecision;
     }
   }
 

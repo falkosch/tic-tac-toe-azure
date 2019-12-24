@@ -1,12 +1,13 @@
 import { buildBoardModifier } from '../../mechanics/Actions';
 import { countPoints } from '../../mechanics/GameRules';
+import { determineBoardNormalization, inverseNormalization, transformBoardCells } from '../../mechanics/BoardNormalization';
 import { findConsecutiveness } from '../../mechanics/Consecutiveness';
-import { findDecisionForStateSpace, AIAgent } from '../ai-agent/AIAgent';
+import { findDecisionForStateSpace, AIAgent, NormalizedStateSpace } from '../ai-agent/AIAgent';
 import { Board } from '../../meta-model/Board';
 import { CellOwner, SpecificCellOwner } from '../../meta-model/CellOwner';
 import { Decision } from '../ai-agent/Decision';
 
-export interface ReinforcedStateSpace {
+export interface ReinforcedStateSpace extends NormalizedStateSpace {
   states: ReadonlyArray<number>;
 }
 
@@ -16,18 +17,23 @@ export interface ReinforcedAgent extends AIAgent<ReinforcedStateSpace> {
 
 function buildStateSpace(
   agentCellOwner: Readonly<SpecificCellOwner>,
-  cells: ReadonlyArray<CellOwner>,
+  board: Readonly<Board>,
 ): ReinforcedStateSpace {
+  const normalization = determineBoardNormalization(board);
   return {
-    states: cells.map((cellOwner) => {
-      if (cellOwner === CellOwner.None) {
-        return 0.0;
-      }
-      if (cellOwner === agentCellOwner) {
-        return 1.0;
-      }
-      return -1.0;
-    }),
+    dimensions: board.dimensions,
+    normalization,
+    inverseNormalization: inverseNormalization(normalization),
+    states: transformBoardCells(board, normalization)
+      .map((cellOwner) => {
+        if (cellOwner === CellOwner.None) {
+          return 0.0;
+        }
+        if (cellOwner === agentCellOwner) {
+          return 1.0;
+        }
+        return -1.0;
+      }),
   };
 }
 
@@ -55,7 +61,7 @@ export async function findReinforcedDecision(
   return findDecisionForStateSpace(
     agent,
     board.cells,
-    buildStateSpace(agent.cellOwner, board.cells),
+    buildStateSpace(agent.cellOwner, board),
     async (decision) => {
       const value = rewardOfDecision(agent.cellOwner, board, decision);
       agent.reward(value);
