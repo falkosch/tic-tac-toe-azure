@@ -19,7 +19,7 @@ export const createMenacePlayer: PlayerCreator = async () => (
         playerTurn.cellOwner,
         playerTurn.gameView.board.dimensions,
       );
-      const decision = await findMenaceDecision(agent, playerTurn.gameView.board.cells);
+      const decision = await findMenaceDecision(agent, playerTurn.gameView.board);
       return {
         affectedCellsAt: decision ? decision.cellsAtToAttack : [],
       };
