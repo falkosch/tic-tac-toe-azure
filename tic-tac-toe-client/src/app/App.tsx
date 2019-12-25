@@ -13,12 +13,12 @@ import { createMockPlayer } from '../computer-players/MockPlayer';
 import { gameConfigurationReducer, GameConfigurationActionType } from './game-configuration/GameConfigurationReducer';
 import { gameStateReducer, GameStateActionType } from './game-state/GameStateReducer';
 import { runNewGame } from '../mechanics/GameDirector';
+import { ActionToken, GameState } from './game-state/GameState';
 import { AppNavbar } from './app-navbar/AppNavbar';
 import { AttackGameAction } from '../meta-model/GameAction';
 import { CellClickDispatch } from './cell-actions/CellClickDispatch';
 import { CellOwner, SpecificCellOwner } from '../meta-model/CellOwner';
 import { GameConfiguration, PlayerType } from './game-configuration/GameConfiguration';
-import { GameState } from './game-state/GameState';
 import { GameView } from './game-view/GameView';
 import { Player, PlayerCreator } from '../meta-model/Player';
 
@@ -59,66 +59,55 @@ export const App: React.FC<{}> = () => {
 
   function letPlayerTakeTurn(): Promise<AttackGameAction> {
     return new Promise((resolve, reject) => {
+      const actionToken: ActionToken = (affectedCellsAt, error) => {
+        gameStateDispatch({
+          type: GameStateActionType.SetActionToken,
+          payload: { },
+        });
+
+        if (error) {
+          reject(error);
+        } else {
+          resolve({ affectedCellsAt });
+        }
+      };
+
       gameStateDispatch({
         type: GameStateActionType.SetActionToken,
-        payload: {
-          actionToken: (affectedCellsAt, error) => {
-            gameStateDispatch({
-              type: GameStateActionType.SetActionToken,
-              payload: { actionToken: undefined },
-            });
-            if (error) {
-              reject(error);
-            } else {
-              resolve({ affectedCellsAt });
-            }
-          },
-        },
+        payload: { actionToken },
       });
     });
   }
 
   function makeNewGame(): void {
     const { playerTypes } = gameRef.current.configuration;
+    const joiningPlayers = {
+      [CellOwner.X]: players[playerTypes[CellOwner.X]],
+      [CellOwner.O]: players[playerTypes[CellOwner.O]],
+    };
 
     runNewGame(
-      {
-        [CellOwner.X]: players[playerTypes[CellOwner.X]],
-        [CellOwner.O]: players[playerTypes[CellOwner.O]],
-      },
+      joiningPlayers,
       async (newGameView) => {
-        gameStateDispatch({ type: GameStateActionType.SetInProgress, payload: { value: true } });
-        gameStateDispatch({ type: GameStateActionType.SetWinner, payload: { value: undefined } });
         gameStateDispatch({
-          type: GameStateActionType.SetGameView,
+          type: GameStateActionType.StartNewGame,
           payload: { gameView: newGameView },
         });
       },
       async (newGameView) => {
         gameStateDispatch({
-          type: GameStateActionType.SetGameView,
+          type: GameStateActionType.UpdateGame,
           payload: { gameView: newGameView },
         });
       },
       async (newGameView, endState) => {
         gameStateDispatch({
-          type: GameStateActionType.SetGameView,
-          payload: { gameView: newGameView },
+          type: GameStateActionType.EndGame,
+          payload: { gameView: newGameView, endState },
         });
-        gameStateDispatch({
-          type: GameStateActionType.SetWinner,
-          payload: { value: endState.winner || CellOwner.None },
-        });
-        if (!(endState.winner instanceof Error)) {
-          gameStateDispatch({
-            type: GameStateActionType.AddWin,
-            payload: { player: endState.winner },
-          });
-        }
+
         if (gameRef.current.configuration.autoNewGame && !(endState.winner instanceof Error)) {
           setTimeout(makeNewGame, 0);
-        } else {
-          gameStateDispatch({ type: GameStateActionType.SetInProgress, payload: { value: false } });
         }
       },
     );
