@@ -5,9 +5,9 @@ import {
   transformCoordinates,
   BoardNormalization,
 } from '../../mechanics/BoardNormalization';
-import { validateDecision, Decision } from './Decision';
 import { Board, BoardDimensions } from '../../meta-model/Board';
 import { CellOwner, SpecificCellOwner } from '../../meta-model/CellOwner';
+import { Decision } from './Decision';
 import { GameEndState } from '../../meta-model/GameEndState';
 
 export interface AIAgentCreator<AIAgentType> {
@@ -60,26 +60,10 @@ function transformDecision<StateSpaceType extends NormalizedStateSpace>(
 
 export async function findDecisionForStateSpace<StateSpaceType extends NormalizedStateSpace>(
   agent: Readonly<AIAgent<StateSpaceType>>,
-  cells: ReadonlyArray<CellOwner>,
   stateSpace: Readonly<StateSpaceType>,
-  evaluateDecision: (decision: Readonly<Decision>) => Promise<void> = async () => {},
-  invalidDecisionMaxRetries = 100,
 ): Promise<Decision | null> {
-  const maxRetries = Math.max(1, invalidDecisionMaxRetries);
-
-  for (let i = 0; i < maxRetries; i += 1) {
-    // eslint-disable-next-line no-await-in-loop
-    const decisionForNormalizedStateSpace = await agent.decide(stateSpace);
-    const decision = transformDecision(decisionForNormalizedStateSpace, stateSpace);
-
-    if (validateDecision(cells, decision)) {
-      // eslint-disable-next-line no-await-in-loop
-      await evaluateDecision(decision);
-      return decision;
-    }
-  }
-
-  return null;
+  const decisionForNormalizedStateSpace = await agent.decide(stateSpace);
+  return transformDecision(decisionForNormalizedStateSpace, stateSpace);
 }
 
 export async function notifyEndState<StateSpaceType extends NormalizedStateSpace>(

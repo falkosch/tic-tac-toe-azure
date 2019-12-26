@@ -108,22 +108,20 @@ export const getDQNReinforcedAgent: AIAgentCreator<ReinforcedAgent> = async (
       };
     },
 
-    async reward(value: number): Promise<void> {
-      solver.learn(value);
-      await persist();
-    },
-
     async rememberDraw(): Promise<void> {
+      solver.learn(0.0);
       statistics.draws += 1;
       await persist();
     },
 
     async rememberLoss(): Promise<void> {
+      solver.learn(-1.0);
       statistics.losses += 1;
       await persist();
     },
 
     async rememberWin(): Promise<void> {
+      solver.learn(1.0);
       statistics.wins += 1;
       await persist();
     },
