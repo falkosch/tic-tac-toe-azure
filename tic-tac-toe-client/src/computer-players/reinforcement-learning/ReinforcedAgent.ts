@@ -1,9 +1,12 @@
 import { buildBoardModifier } from '../../mechanics/Actions';
+import {
+  buildNormalizedStateSpace,
+  findDecisionForStateSpace,
+  AIAgent,
+  NormalizedStateSpace,
+} from '../ai-agent/AIAgent';
 import { countPoints } from '../../mechanics/GameRules';
 import { findConsecutiveness } from '../../mechanics/Consecutiveness';
-import {
-  buildNormalizedStateSpace, findDecisionForStateSpace, AIAgent, NormalizedStateSpace,
-} from '../ai-agent/AIAgent';
 import { transformBoardCells } from '../../mechanics/BoardNormalization';
 import { Board } from '../../meta-model/Board';
 import { CellOwner, SpecificCellOwner } from '../../meta-model/CellOwner';
@@ -55,7 +58,7 @@ function rewardOfDecision(
 }
 
 export async function findReinforcedDecision(
-  agent: ReinforcedAgent,
+  agent: Readonly<ReinforcedAgent>,
   board: Readonly<Board>,
 ): Promise<Decision | null> {
   return findDecisionForStateSpace(

@@ -23,20 +23,19 @@ export interface OnGameEnd {
   (gameView: Readonly<GameView>, endState: Readonly<GameEndState>): Promise<void>;
 }
 
-type JoinedPlayer = [SpecificCellOwner, Readonly<Player>];
+type JoinedPlayer = [Readonly<SpecificCellOwner>, Readonly<Player>];
 
-const DefaultDimensions = Object.freeze({
+const DefaultDimensions: Readonly<BoardDimensions> = {
   height: 3,
   width: 3,
-});
+};
 
-function newBoard({ height, width }: Readonly<BoardDimensions>): Board {
+function newBoard(boardDimensions: Readonly<BoardDimensions>): Board {
+  const { height, width } = boardDimensions;
   return {
-    cells: Array.from({ length: height * width }).map(() => CellOwner.None),
-    dimensions: {
-      height,
-      width,
-    },
+    cells: Array.from({ length: height * width })
+      .map(() => CellOwner.None),
+    dimensions: boardDimensions,
   };
 }
 
@@ -53,7 +52,9 @@ function newGameView(): GameView {
 
 function emptyActionHistory(): GameActionHistory {
   return {
-    action: { affectedCellsAt: [] },
+    action: {
+      affectedCellsAt: [],
+    },
   };
 }
 
@@ -132,7 +133,7 @@ async function notifyGameEnd(
   );
 }
 
-function effectiveMaxTurns(dimensions: BoardDimensions, maxTurns: number): number {
+function effectiveMaxTurns(dimensions: Readonly<BoardDimensions>, maxTurns: number): number {
   const minTurnsRequired = dimensions.width * dimensions.height;
   return Math.max(minTurnsRequired, maxTurns);
 }

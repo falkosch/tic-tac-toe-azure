@@ -4,13 +4,13 @@ import { CellOwner } from '../meta-model/CellOwner';
 import { Consecutiveness, ConsecutivenessDirection } from '../meta-model/GameView';
 
 interface ConsecutivenessConsumer {
-  (nextConsecutiveness: Consecutiveness): void;
+  (nextConsecutiveness: Readonly<Consecutiveness>): void;
 }
 
 function findInCellOwnerSpans(
   consecutivenessConsumer: ConsecutivenessConsumer,
-  direction: ConsecutivenessDirection,
-  { cells, dimensions }: Readonly<Board>,
+  direction: Readonly<ConsecutivenessDirection>,
+  board: Readonly<Board>,
   lineDimension: number,
   minimumSpan: number,
   iteratorToCoordinates: LineIteratorToCoordinates,
@@ -19,6 +19,8 @@ function findInCellOwnerSpans(
   if (lineDimension < minimumSpan) {
     return;
   }
+
+  const { cells, dimensions } = board;
 
   // first cell is our pivot cell for the first span
   const pivotCellAt = cellAtCoordinate(iteratorToCoordinates(0), dimensions);

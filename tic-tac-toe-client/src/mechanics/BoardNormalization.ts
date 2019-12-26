@@ -21,8 +21,9 @@ function transformOnAxis(value: number, dimension: number, mirrored: boolean): n
 export function transformCoordinates(
   coordinates: Readonly<CellCoordinates>,
   boardDimensions: Readonly<BoardDimensions>,
-  { mirroring }: Readonly<BoardNormalization>,
+  normalization: Readonly<BoardNormalization>,
 ): CellCoordinates {
+  const { mirroring } = normalization;
   return {
     x: transformOnAxis(coordinates.x, boardDimensions.width, mirroring.x),
     y: transformOnAxis(coordinates.y, boardDimensions.height, mirroring.y),
@@ -124,9 +125,10 @@ export function inverseNormalization(
 }
 
 export function transformBoardCells(
-  { cells, dimensions }: Readonly<Board>,
+  board: Readonly<Board>,
   normalization: Readonly<BoardNormalization>,
 ): CellOwner[] {
+  const { cells, dimensions } = board;
   const transformedCells = Array.from<CellOwner>({ length: cells.length });
 
   forEachLine(

@@ -1,6 +1,9 @@
 import { cloneMatchboxes, StorableMenaceAgent } from './StorableMenaceAgent';
 import {
-  findFreeBeads, multiplyBeads, randomBead, MenaceAgent,
+  findFreeBeads,
+  multiplyBeads,
+  randomBead,
+  MenaceAgent,
 } from './MenaceAgent';
 import { loadAgent, persistAgent } from '../ai-agent/StorableAgent';
 import { AIAgentCreator } from '../ai-agent/AIAgent';
@@ -27,7 +30,9 @@ async function loadMenaceAgent(id: string): Promise<StorableMenaceAgent> {
       playedMoves: [],
     },
   ) as StorableMenaceAgent;
+
   menaceAgents[id] = agent;
+
   await persistAgent<StorableMenaceAgent>(id, menaceObjectVersion, agent);
   return agent;
 }
