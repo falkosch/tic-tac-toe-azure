@@ -8,7 +8,7 @@ import logo from './logo.svg';
 export const AppNavbar: React.FC<{}> = ({ children }) => (
   <div className="app-navbar">
     <Navbar expand="lg" bg="light" variant="light">
-      <Navbar.Brand href="/">
+      <Navbar.Brand href="https://github.com/falkosch/tic-tac-toe-azure">
         <img className="app-logo d-inline-block align-top" src={logo} alt="logo" />
         <span> Tic Tac Toe with Azure</span>
       </Navbar.Brand>
