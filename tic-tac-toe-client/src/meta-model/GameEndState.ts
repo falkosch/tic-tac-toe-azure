@@ -1,5 +1,5 @@
-import { SpecificCellOwner } from './CellOwner';
+import { CellOwner } from './CellOwner';
 
 export interface GameEndState {
-  winner?: SpecificCellOwner | Error;
+  winner: Readonly<CellOwner> | Readonly<Error>;
 }
