@@ -1,7 +1,7 @@
 import { findMenaceDecision } from './menace-match-boxes/MenaceAgent';
+import { getMenaceAgent } from './menace-match-boxes/DefaultMenaceAgent';
 import { notifyEndState } from './ai-agent/AIAgent';
 import { AttackGameAction } from '../meta-model/GameAction';
-import { getMenaceAgent } from './menace-match-boxes/DefaultMenaceAgent';
 import { GameEndState } from '../meta-model/GameEndState';
 import { GameView } from '../meta-model/GameView';
 import { PlayerCreator } from '../meta-model/Player';

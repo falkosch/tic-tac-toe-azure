@@ -2,13 +2,14 @@ import { GameStateType } from './GameState';
 import { SpecificCellOwner } from '../../meta-model/CellOwner';
 
 export interface AddWinActionPayload {
-  player: SpecificCellOwner | undefined;
+  player: Readonly<SpecificCellOwner> | undefined;
 }
 
 export function addWin(
-  prevState: GameStateType,
-  { player }: AddWinActionPayload,
+  prevState: Readonly<GameStateType>,
+  payload: Readonly<AddWinActionPayload>,
 ): GameStateType {
+  const { player } = payload;
   if (player === undefined) {
     return { ...prevState };
   }

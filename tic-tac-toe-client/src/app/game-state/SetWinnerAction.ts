@@ -6,9 +6,10 @@ export interface SetWinnerActionPayload {
 }
 
 export function setWinner(
-  prevState: GameStateType,
-  { value }: SetWinnerActionPayload,
+  prevState: Readonly<GameStateType>,
+  payload: Readonly<SetWinnerActionPayload>,
 ): GameStateType {
+  const { value } = payload;
   return {
     ...prevState,
     winner: value,
