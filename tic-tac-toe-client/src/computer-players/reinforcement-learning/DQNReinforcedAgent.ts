@@ -1,11 +1,12 @@
+import { Mat } from 'recurrent-js';
 import {
   DQNEnv, DQNOpt, DQNSolver, Solver,
 } from 'reinforce-js';
 
 import { loadAgent, persistAgent, BrainStatistics } from '../ai-agent/StorableAgent';
+import { takeAny, Decision } from '../ai-agent/Decision';
 import { AIAgentCreator } from '../ai-agent/AIAgent';
 import { Brains } from './DQNPretrainedBrain';
-import { Decision } from '../ai-agent/Decision';
 import { ReinforcedAgent } from './ReinforcedAgent';
 import { StorableDQNAgent } from './StorableDQNAgent';
 
@@ -22,6 +23,20 @@ async function loadDQNAgent(id: string): Promise<StorableDQNAgent | undefined> {
   return loadAgent<StorableDQNAgent>(id, dqnObjectVersion, Brains[id]);
 }
 
+function validOnlyArgMax(stateVector: Readonly<Mat>, actionVector: Readonly<Mat>): number {
+  let maxValidValue = Number.NEGATIVE_INFINITY;
+  let maxValidIndex = -1;
+  actionVector.w.forEach((v: number, i: number) => {
+    const cellState = stateVector.w[i];
+    const cellIsFree = cellState === 0;
+    if (cellIsFree && v > maxValidValue) {
+      maxValidValue = v;
+      maxValidIndex = i;
+    }
+  });
+  return maxValidIndex;
+}
+
 function createSolver(
   width: number,
   height: number,
@@ -30,9 +45,38 @@ function createSolver(
 ): Solver {
   const agentEnvironment = new DQNEnv(width, height, stateCount, actionCount);
   const agentOptions = new DQNOpt();
-  agentOptions.setNumberOfHiddenUnits([500]);
-  agentOptions.setEpsilonDecay(1, 0.1, 255168);
-  return new DQNSolver(agentEnvironment, agentOptions);
+  agentOptions.setEpsilon(0.05);
+  agentOptions.setEpsilonDecay(0.95, 0.1, 100000);
+  agentOptions.setNumberOfHiddenUnits([40]);
+
+  const solver = new DQNSolver(agentEnvironment, agentOptions);
+
+  // We need to patch the action policy to only select valid actions.
+  // TODO: propose a pull request for extending the decide function in reinforce-js.
+  {
+    const solverAsAny: any = solver;
+
+    solverAsAny.epsilonGreedyActionPolicy = (stateVector: Mat) => {
+      if (Math.random() < solverAsAny.currentEpsilon()) {
+        return takeAny(
+          stateVector.w
+            .map((v: number, i: number): number => (v === 0 ? i : -1))
+            .filter((v: number) => v >= 0) as ReadonlyArray<number>,
+        )[0];
+      }
+
+      return validOnlyArgMax(stateVector, solverAsAny.forwardQ(stateVector));
+    };
+
+    solverAsAny.getTargetQ = (s1: Mat, r0: number) => {
+      const targetActionVector = solverAsAny.forwardQ(s1);
+      const targetActionIndex = validOnlyArgMax(s1, targetActionVector);
+      const qMax = r0 + solverAsAny.gamma * targetActionVector.w[targetActionIndex];
+      return qMax;
+    };
+  }
+
+  return solver;
 }
 
 async function loadBrainAndStatistics(id: string, solver: Solver): Promise<BrainStatistics> {
