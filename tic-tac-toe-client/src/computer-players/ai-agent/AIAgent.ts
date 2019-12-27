@@ -6,7 +6,7 @@ import {
   BoardNormalization,
 } from '../../mechanics/BoardNormalization';
 import { Board, BoardDimensions } from '../../meta-model/Board';
-import { CellOwner, SpecificCellOwner } from '../../meta-model/CellOwner';
+import { SpecificCellOwner } from '../../meta-model/CellOwner';
 import { Decision } from './Decision';
 import { GameEndState } from '../../meta-model/GameEndState';
 
@@ -70,12 +70,21 @@ export async function notifyEndState<StateSpaceType extends NormalizedStateSpace
   endState: Readonly<GameEndState>,
   agent: Readonly<AIAgent<StateSpaceType>>,
 ): Promise<void> {
-  const { winner } = endState;
-  if (winner === CellOwner.None || winner instanceof Error) {
-    await agent.rememberDraw();
-  } else if (winner === agent.cellOwner) {
-    await agent.rememberWin();
-  } else if (winner !== agent.cellOwner) {
-    await agent.rememberLoss();
-  }
+  let promise: Promise<any> = Promise.resolve();
+  endState.visitee({
+    drawEndState() {
+      promise = agent.rememberDraw();
+    },
+    erroneousEndState() {
+      promise = Promise.resolve();
+    },
+    oneWinnerEndState(winner) {
+      if (winner === agent.cellOwner) {
+        promise = agent.rememberWin();
+      } else {
+        promise = agent.rememberLoss();
+      }
+    },
+  });
+  return promise;
 }
