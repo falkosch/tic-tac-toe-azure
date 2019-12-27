@@ -23,7 +23,6 @@ export interface Player {
   ): Promise<void>;
   onGameEnd?(
     cellOwner: Readonly<SpecificCellOwner>,
-    gameView: Readonly<GameView>,
     endState: Readonly<GameEndState>,
   ): Promise<void>;
 }
