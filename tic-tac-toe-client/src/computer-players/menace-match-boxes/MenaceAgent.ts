@@ -51,8 +51,6 @@ export async function findMenaceDecision(
 ): Promise<Decision | null> {
   return findDecisionForStateSpace(
     agent,
-    board.cells,
     buildMenaceStateSpace(board),
-    async () => {},
   );
 }
