@@ -1,0 +1,6 @@
+@import '../../scss/abstracts';
+
+.view {
+  @extend %hintText;
+  @extend %hintColorNeutral;
+}

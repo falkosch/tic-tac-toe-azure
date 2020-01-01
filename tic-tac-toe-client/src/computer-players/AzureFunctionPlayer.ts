@@ -11,17 +11,12 @@ const axiosInstance = axios.create({
 export const createAzureFunctionPlayer: PlayerCreator = async () => (
   {
     /**
-     * Posts the current game state to the Azure Function fstictactoegame. The function can analyse
-     * the sent game state like the other AI player implementations would do. It can so decide for a
-     * a valuable action and return it as response.
+     * Posts the current game state in {@code playerTurn} to the Azure Function
+     * {@code fstictactoegame}. The Azure function reacts on the game state by deciding for a
+     * valuable action.
      */
     async takeTurn(playerTurn: Readonly<PlayerTurn>): Promise<AttackGameAction> {
-      try {
-        return (await axiosInstance.post('/api/takeTurn', playerTurn)).data;
-      } catch (e) {
-        console.error('Azure backend is not reachable', e);
-        throw e;
-      }
+      return (await axiosInstance.post('/api/takeTurn', playerTurn)).data;
     },
   }
 );

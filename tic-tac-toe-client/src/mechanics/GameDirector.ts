@@ -186,8 +186,8 @@ async function notifyGameEnd(
 async function runTurns(
   joinedPlayers: ReadonlyArray<JoinedPlayer>,
   initialGameView: Readonly<GameView>,
-  onGameViewUpdate: OnGameViewUpdate = async () => {},
-  maxTurns: number,
+  onGameViewUpdate?: OnGameViewUpdate,
+  maxTurns = 100,
 ): Promise<GameEndState> {
   let actionHistory = emptyActionHistory();
   let gameView = initialGameView;
@@ -231,10 +231,10 @@ async function runTurns(
 
 export async function runNewGame(
   joiningPlayers: Readonly<JoiningPlayers>,
-  onGameStart: OnGameStart = async () => {},
-  onGameViewUpdate: OnGameViewUpdate = async () => {},
-  onGameEnd: OnGameEnd = async () => {},
-  maxTurns = 100,
+  onGameStart?: OnGameStart,
+  onGameViewUpdate?: OnGameViewUpdate,
+  onGameEnd?: OnGameEnd,
+  maxTurns?: number,
 ): Promise<GameEndState> {
   const joinedPlayers = await joinPlayers(joiningPlayers);
 

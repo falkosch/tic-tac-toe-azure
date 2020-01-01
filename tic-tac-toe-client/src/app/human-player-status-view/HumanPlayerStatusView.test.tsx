@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { AppNavbar } from './AppNavbar';
+import { HumanPlayerStatusView } from './HumanPlayerStatusView';
 
-describe(`${AppNavbar.name}`, () => {
+describe(`${HumanPlayerStatusView.name}`, () => {
   it('renders without crashing', () => {
     const div = document.createElement('div');
-    ReactDOM.render(<AppNavbar />, div);
+    ReactDOM.render(<HumanPlayerStatusView />, div);
     ReactDOM.unmountComponentAtNode(div);
   });
 });

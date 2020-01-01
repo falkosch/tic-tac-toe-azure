@@ -1,7 +1,0 @@
-.board-view {
-  border: 0.5rem solid;
-  border-radius: 1rem;
-  flex: 0 0 calc(75vmin - 60px);
-  height: calc(75vmin - 60px);
-  width: calc(75vmin - 60px);
-}
