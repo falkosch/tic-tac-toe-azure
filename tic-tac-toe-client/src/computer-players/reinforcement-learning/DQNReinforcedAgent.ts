@@ -134,7 +134,6 @@ export const getDQNReinforcedAgent: AIAgentCreator<ReinforcedAgent> = async (
     solver = createSolver(width, height, stateCount, actionCount);
     statistics = await loadBrainAndStatistics(id, solver);
     agents[id] = { solver, statistics };
-    await persist();
   }
 
   /**
