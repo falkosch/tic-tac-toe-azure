@@ -44,7 +44,7 @@ export const WinnerView: FC<{
     <div className={styles.winner}>
       {
         representsDraw(winner) && (
-          'It&apos;s a draw!'
+          <>It&apos;s a draw!</>
         )
       }
       {

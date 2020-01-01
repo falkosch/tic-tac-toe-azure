@@ -1,17 +1,2 @@
-%hintText {
-  font-size: 2rem;
-  line-height: 3rem;
-  max-width: 70vw;
-}
-
-%hintColorNeutral {
-  color: darkgrey;
-}
-
-%hintColorAttention {
-  color: darkseagreen;
-}
-
-%hintColorAlert {
-  color: darkred;
-}
+@import './abstracts/variables';
+@import './abstracts/hints';
