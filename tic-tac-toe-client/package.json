@@ -33,23 +33,18 @@
     ],
     "plugins": [
       "stylelint-no-unsupported-browser-features",
+      "stylelint-scss",
       "stylelint-react-native"
     ],
     "rules": {
-      "at-rule-no-unknown": [
-        true,
-        {
-          "ignoreAtRules": [
-            "import-normalize"
-          ]
-        }
-      ],
+      "at-rule-no-unknown": null,
       "plugin/no-unsupported-browser-features": [
         true,
         {
           "severity": "warning"
         }
-      ]
+      ],
+      "scss/at-rule-no-unknown": true
     }
   },
   "browserslist": [
@@ -90,12 +85,14 @@
     "eslint-plugin-react-hooks": "^1.7.0",
     "husky": "^3.0.9",
     "lint-staged": "^9.4.3",
+    "node-sass": "^4.13.0",
     "prettier": "^1.19.1",
     "react-scripts": "^3.3.0",
     "stylelint": "^10.1.0",
     "stylelint-config-standard": "^19.0.0",
     "stylelint-no-unsupported-browser-features": "^3.0.2",
     "stylelint-react-native": "^2.1.1",
+    "stylelint-scss": "^3.13.0",
     "typescript": "^3.7.2"
   }
 }

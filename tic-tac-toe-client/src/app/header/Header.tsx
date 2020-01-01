@@ -1,22 +1,20 @@
-import Form from 'react-bootstrap/Form';
 import Navbar from 'react-bootstrap/Navbar';
-import React from 'react';
+import React, { FC } from 'react';
 
-import './AppNavbar.css';
 import logo from './logo.svg';
 
-export const AppNavbar: React.FC<{}> = ({ children }) => (
-  <div className="app-navbar">
+import styles from './Header.module.scss';
+
+export const Header: FC<{}> = ({ children }) => (
+  <div className={styles.header}>
     <Navbar expand="lg" bg="light" variant="light">
       <Navbar.Brand href="https://github.com/falkosch/tic-tac-toe-azure">
-        <img className="app-logo d-inline-block align-top" src={logo} alt="logo" />
+        <img className={`${styles.logo} d-inline-block align-top`} src={logo} alt="logo" />
         <span> Tic Tac Toe Game</span>
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
-        <Form inline>
-          { children }
-        </Form>
+        { children }
       </Navbar.Collapse>
     </Navbar>
   </div>
