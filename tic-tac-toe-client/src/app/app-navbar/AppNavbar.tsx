@@ -10,7 +10,7 @@ export const AppNavbar: React.FC<{}> = ({ children }) => (
     <Navbar expand="lg" bg="light" variant="light">
       <Navbar.Brand href="https://github.com/falkosch/tic-tac-toe-azure">
         <img className="app-logo d-inline-block align-top" src={logo} alt="logo" />
-        <span> Tic Tac Toe with Azure</span>
+        <span> Tic Tac Toe Game</span>
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
