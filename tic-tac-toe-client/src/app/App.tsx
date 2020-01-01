@@ -1,7 +1,6 @@
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
 import { DropdownItemProps } from 'react-bootstrap/DropdownItem';
 import Form from 'react-bootstrap/Form';
 import React, {
@@ -153,25 +152,30 @@ export const App: FC<{}> = () => {
   function createDropdownViewForCellOwner(cellOwner: SpecificCellOwner): JSX.Element {
     const dropdownId = `d${cellOwner}`;
     return (
-      <Col key={dropdownId}>
-        <DropdownButton id={dropdownId} title={`Player ${cellOwner}`}>
-          {
-            playerKeys.map(
-              (playerKey) => {
-                const active = playerKey === configuration.playerTypes[cellOwner];
-                const itemId = `d${cellOwner}${playerKey}`;
-                const onClick: MouseEventHandler<DropdownItemProps> = () => {
-                  changePlayerType(cellOwner, playerKey);
-                };
-                return (
-                  <Dropdown.Item active={active} key={itemId} onClick={onClick}>
-                    { playerKey }
-                  </Dropdown.Item>
-                );
-              },
-            )
-          }
-        </DropdownButton>
+      <Col key={dropdownId} xs="12" sm="4" md="auto">
+        <Dropdown className="mt-2 mt-md-0">
+          <Dropdown.Toggle className="w-100" id={dropdownId} variant="secondary">
+            {`Player ${cellOwner}`}
+          </Dropdown.Toggle>
+          <Dropdown.Menu alignRight popperConfig={{ placement: 'auto' }}>
+            {
+              playerKeys.map(
+                (playerKey) => {
+                  const active = playerKey === configuration.playerTypes[cellOwner];
+                  const itemId = `d${cellOwner}${playerKey}`;
+                  const onClick: MouseEventHandler<DropdownItemProps> = () => {
+                    changePlayerType(cellOwner, playerKey);
+                  };
+                  return (
+                    <Dropdown.Item active={active} key={itemId} onClick={onClick}>
+                      { playerKey }
+                    </Dropdown.Item>
+                  );
+                },
+              )
+            }
+          </Dropdown.Menu>
+        </Dropdown>
       </Col>
     );
   }
@@ -181,8 +185,8 @@ export const App: FC<{}> = () => {
       <Header>
         <Form>
           <Form.Row>
-            <Col>
-              <Button block onClick={createNewGame} disabled={canCreateNewGame()}>
+            <Col xs="12" sm="4" md="auto">
+              <Button className="mt-2 mt-md-0" block disabled={canCreateNewGame()} onClick={createNewGame}>
                 New game
               </Button>
             </Col>
@@ -191,11 +195,13 @@ export const App: FC<{}> = () => {
                 (cellOwnerKey) => createDropdownViewForCellOwner(cellOwnerKey as SpecificCellOwner),
               )
             }
-            <Col>
-              <Form.Check inline checked={configuration.autoNewGame}>
-                <Form.Check.Input onChange={toggleAutoNewGame} />
-                <Form.Check.Label>Auto new game</Form.Check.Label>
-              </Form.Check>
+            <Col xs="12" md="auto">
+              <div className="d-flex flex-row h-100 pt-2 pt-md-0">
+                <Form.Check id="autoNewGame" inline checked={configuration.autoNewGame}>
+                  <Form.Check.Input onChange={toggleAutoNewGame} />
+                  <Form.Check.Label>Auto new game</Form.Check.Label>
+                </Form.Check>
+              </div>
             </Col>
           </Form.Row>
         </Form>
