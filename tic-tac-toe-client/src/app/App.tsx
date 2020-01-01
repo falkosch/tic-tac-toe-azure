@@ -21,6 +21,8 @@ import { GameStateView } from './game-state-view/GameStateView';
 import { Header } from './header/Header';
 import { Player, PlayerCreator } from '../meta-model/Player';
 
+import styles from './App.module.scss';
+
 type Players = Record<PlayerType, PlayerCreator>;
 
 export const App: FC<{}> = () => {
@@ -181,7 +183,7 @@ export const App: FC<{}> = () => {
   }
 
   return (
-    <div className="d-flex flex-column h-100">
+    <div className={`${styles.view} d-flex flex-column h-100`}>
       <Header>
         <Form>
           <Form.Row>
