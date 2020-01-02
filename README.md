@@ -12,7 +12,7 @@ The Tic Tac Toe game provides different player/opponent types for each of the tw
 
 * You can play against different types of AI players: A DQN agent (a reinforcement learning supported neural network), a Menace Matchboxes agent or a reactive agent based on simple rules implemented as Azure Function.
   
-  * ~~DQN and Menace players must be trained first.~~ For DQN and Menace, pretrained agents are loaded. To train them even further, you can let them play against each other. Just select DQN or Menace for both players.
+  * ~~DQN and Menace players must be trained first.~~ For DQN and Menace, pretrained agent data is loaded. To train them even further, you can let them play against each other. Just select DQN or Menace for both players.
   
   * The reactive agent must not be trained at all as it is stateless anyway. Though, you can still have it as an opponent for the DQN or the Menace agent to train them. However, you need access to the internet and cannot play offline against the Azure Player.
 
@@ -28,7 +28,9 @@ Build Status (tic-tac-toe-client) [![tic-tac-toe-client](https://falko-schwabe.v
 
 ## Implementation
 
-The UI of the [client](./tic-tac-toe-client) is implemented with ReactJS. However, the game logic is implemented as being independent of that, so that it is easy to port to other application frameworks as well.  
+The UI of the [client](./tic-tac-toe-client) is implemented with ReactJS. However, the game logic and the agents are implemented as being independent of React, so that it is easy to port it to other application frameworks as well.
+
+The AI agents learn while you play with them. On a completed game, the altered state is persisted. Either the IndexedDB or the local storage of the web browser is selected as target storage. When you leave the website and return later on, the persisted state is loaded. When there is no persisted state for an agent, then the pretrained agent data is loaded.
 
 The [Azure Function player type](./TicTacToeGame) is implemented in C# and .Net Core 2.2.
 
