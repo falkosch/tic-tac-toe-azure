@@ -28,7 +28,7 @@ Build Status (tic-tac-toe-client) [![tic-tac-toe-client](https://falko-schwabe.v
 
 ## Implementation
 
-The [client](./tic-tac-toe-client) is implemented with ReactJS.
+The UI of the [client](./tic-tac-toe-client) is implemented with ReactJS. However, the game logic is implemented as being independent of that, so that it is easy to port to other application frameworks as well.  
 
 The [Azure Function player type](./TicTacToeGame) is implemented in C# and .Net Core 2.2.
 
@@ -36,4 +36,4 @@ The [Azure Function player type](./TicTacToeGame) is implemented in C# and .Net 
 
 The DQN player is implemented using [mvrahden's reinforce-js](https://github.com/mvrahden/reinforce-js).
 
-The implementation of the Menace Matchboxes Engine is based upon [andrewmccarthy's Python version](https://github.com/andrewmccarthy/menace).
+The implementation of the Menace Agent is based upon [andrewmccarthy's Python version](https://github.com/andrewmccarthy/menace).
