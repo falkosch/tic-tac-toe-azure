@@ -37,6 +37,31 @@ function validOnlyArgMax(stateVector: Readonly<Mat>, actionVector: Readonly<Mat>
   return maxValidIndex;
 }
 
+// We need to patch the action policy to only select valid actions.
+// TODO: propose a pull request for extending the decide function in reinforce-js.
+function patchSolver(getSolver: () => any): void {
+  // The getSolver is only used to avoid the "parameter assignment" warning
+  const solverAsAny = getSolver();
+
+  solverAsAny.epsilonGreedyActionPolicy = (stateVector: Mat) => {
+    if (Math.random() < solverAsAny.currentEpsilon()) {
+      const freeStates = Array.from(stateVector.w)
+        .map((v, i) => (v === 0 ? i : -1))
+        .filter((v) => v >= 0);
+      return takeAny(freeStates)[0];
+    }
+
+    return validOnlyArgMax(stateVector, solverAsAny.forwardQ(stateVector));
+  };
+
+  solverAsAny.getTargetQ = (s1: Mat, r0: number) => {
+    const targetActionVector = solverAsAny.forwardQ(s1);
+    const targetActionIndex = validOnlyArgMax(s1, targetActionVector);
+    const qMax = r0 + solverAsAny.gamma * targetActionVector.w[targetActionIndex];
+    return qMax;
+  };
+}
+
 function createSolver(
   width: number,
   height: number,
@@ -46,36 +71,11 @@ function createSolver(
   const agentEnvironment = new DQNEnv(width, height, stateCount, actionCount);
   const agentOptions = new DQNOpt();
   agentOptions.setEpsilon(0.05);
-  agentOptions.setEpsilonDecay(1, 0.1, 255168);
+  agentOptions.setEpsilonDecay(0.1, 0.05, 1000000);
   agentOptions.setNumberOfHiddenUnits([Math.floor((1 + actionCount / 2) * stateCount)]);
 
   const solver = new DQNSolver(agentEnvironment, agentOptions);
-
-  // We need to patch the action policy to only select valid actions.
-  // TODO: propose a pull request for extending the decide function in reinforce-js.
-  {
-    const solverAsAny: any = solver;
-
-    solverAsAny.epsilonGreedyActionPolicy = (stateVector: Mat) => {
-      if (Math.random() < solverAsAny.currentEpsilon()) {
-        return takeAny(
-          stateVector.w
-            .map((v: number, i: number): number => (v === 0 ? i : -1))
-            .filter((v: number) => v >= 0) as ReadonlyArray<number>,
-        )[0];
-      }
-
-      return validOnlyArgMax(stateVector, solverAsAny.forwardQ(stateVector));
-    };
-
-    solverAsAny.getTargetQ = (s1: Mat, r0: number) => {
-      const targetActionVector = solverAsAny.forwardQ(s1);
-      const targetActionIndex = validOnlyArgMax(s1, targetActionVector);
-      const qMax = r0 + solverAsAny.gamma * targetActionVector.w[targetActionIndex];
-      return qMax;
-    };
-  }
-
+  patchSolver(() => solver);
   return solver;
 }
 
