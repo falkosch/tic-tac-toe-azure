@@ -1,7 +1,6 @@
 pipeline {
   agent any
   options {
-    disableConcurrentBuilds()
     skipStagesAfterUnstable()
     timeout(time: 1, unit: 'HOURS')
   }
@@ -12,9 +11,8 @@ pipeline {
     stage('build client') {
       agent {
         dockerfile {
-          filename './tic-tac-toe-client/Dockerfile.build'
+          filename './Dockerfile.build'
           dir './tic-tac-toe-client'
-          label 'localdocker'
         }
       }
       stages {
