@@ -146,6 +146,7 @@ export const getDQNReinforcedAgent: AIAgentCreator<ReinforcedAgent> = async (
 
     async decide(prior): Promise<Decision> {
       const action = solver.decide(prior.states);
+      solver.learn(-0.1);
       return {
         cellsAtToAttack: [action],
       };
