@@ -2,23 +2,23 @@ Do you have too much time available in your life? Do you feel the need to play a
 
 ~~Try it out on the [fstictactoe Azure Website](https://fstictactoe.azurewebsites.net).~~ Unfortunately my 30-day free trial subscription of my Azure account expired and both the client and the Azure function app services got disabled for now. [I hosted the client app on another hosting platform](https://tictactoe.iterative-prototyping.com), so that you can at least try out the "offline" version without the Azure function player.
 
-The Tic Tac Toe game is an example application. It provides different player/opponent types for each of the two players:
+The Tic Tac Toe game provides different player/opponent types for each of the two players:
 
 * By default, you play as "Player X" and "Player O" will be played by an AI player.
 
-* You can play against a second human player. Just select "Human player" for "Player X" and "Player O". With the other player, you rotate in making the noughts and crosses. You will have to share your mouse unfortunately. But that mode provides the good feeling and enjoyable experience of multiplayer mode the very old way.
+* You can play against a second human player. Just select "Human player" for "Player X" and "Player O". With the other player, you both take turns in making the noughts and crosses. You will have to share your mouse unfortunately. However, this way provides you with the good feeling and enjoyable multiplayer experience the very old way.
 
-* If you do not want to play with humans, you can still choose what player ("X" or "O") you want to control. Select "Human player" for the one that you want to control. Tip: Mathematically "Player X" has a big win-ratio advantage. Just saying.
+* If you do not want to play with humans, you can still choose what player ("X" or "O") you want to control and set the other to an AI player. Tip: Mathematically "Player X" has a big win-ratio advantage. Just saying.
 
-* You can play against different types of AI players: Currently it is a DQN agent (a reinforcement learning supported neural network), a Menace Matchboxes agent or a reactive agent implemented as Azure Function.
+* You can play against different types of AI players: A DQN agent (a reinforcement learning supported neural network), a Menace Matchboxes agent or a reactive agent based on simple rules implemented as Azure Function.
   
-  * DQN and Menace players must be trained first. You can let them play against each other. Just select DQN or Menace for both players.
+  * ~~DQN and Menace players must be trained first.~~ For DQN and Menace, pretrained agents are loaded. To train them even further, you can let them play against each other. Just select DQN or Menace for both players.
   
   * The reactive agent must not be trained at all as it is stateless anyway. Though, you can still have it as an opponent for the DQN or the Menace agent to train them. However, you need access to the internet and cannot play offline against the Azure Player.
 
   * Use the "Auto new game" option and start a new game to speed up training. Turn off the "Auto new game" option to stop training.
 
-* There is another player type called `Mock computer player (local)`. That player randomly selects any free cell when it has turn.
+* There is another player type called `Random AI (local)`. That player randomly selects any free cell when it has turn.
 
 ## Status
 
