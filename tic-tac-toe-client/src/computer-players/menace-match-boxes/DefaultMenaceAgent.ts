@@ -1,4 +1,3 @@
-import { cloneMatchboxes, StorableMenaceAgent } from './StorableMenaceAgent';
 import {
   findFreeBeads,
   multiplyBeads,
@@ -8,10 +7,21 @@ import {
 import { loadAgent, persistAgent } from '../ai-agent/StorableAgent';
 import { AIAgentCreator } from '../ai-agent/AIAgent';
 import { Decision } from '../ai-agent/Decision';
+import { StorableMenaceAgent } from './StorableMenaceAgent';
 
 const menaceAgents: Record<string, StorableMenaceAgent> = {};
 
 const menaceObjectVersion = 2;
+
+function initialStorableMenaceAgent(): StorableMenaceAgent {
+  return {
+    draws: 0,
+    losses: 0,
+    wins: 0,
+    matchboxes: {},
+    playedMoves: [],
+  };
+}
 
 async function loadMenaceAgent(id: string): Promise<StorableMenaceAgent> {
   if (id in menaceAgents) {
@@ -21,19 +31,10 @@ async function loadMenaceAgent(id: string): Promise<StorableMenaceAgent> {
   const agent = await loadAgent<StorableMenaceAgent>(
     id,
     menaceObjectVersion,
-    {
-      draws: 0,
-      losses: 0,
-      wins: 0,
-      longTermMatchboxes: {},
-      matchboxes: {},
-      playedMoves: [],
-    },
+    initialStorableMenaceAgent(),
   ) as StorableMenaceAgent;
 
   menaceAgents[id] = agent;
-
-  await persistAgent<StorableMenaceAgent>(id, menaceObjectVersion, agent);
   return agent;
 }
 
@@ -54,9 +55,6 @@ export const getMenaceAgent: AIAgentCreator<MenaceAgent> = async (
     cellOwner,
 
     async startNewGame(): Promise<void> {
-      // Clone the long term memory so that we can safely persist a running game for each move,
-      // but do not poison the long term memory with never completed games
-      menaceMemory.matchboxes = cloneMatchboxes(menaceMemory.longTermMatchboxes);
       menaceMemory.playedMoves = [];
     },
 
@@ -86,8 +84,6 @@ export const getMenaceAgent: AIAgentCreator<MenaceAgent> = async (
 
     async rememberDraw(): Promise<void> {
       menaceMemory.draws += 1;
-      menaceMemory.longTermMatchboxes = cloneMatchboxes(menaceMemory.matchboxes);
-      menaceMemory.matchboxes = {};
       menaceMemory.playedMoves = [];
       await persistAgent<StorableMenaceAgent>(id, menaceObjectVersion, menaceMemory);
     },
@@ -100,8 +96,6 @@ export const getMenaceAgent: AIAgentCreator<MenaceAgent> = async (
         },
       );
       menaceMemory.losses += 1;
-      menaceMemory.longTermMatchboxes = cloneMatchboxes(menaceMemory.matchboxes);
-      menaceMemory.matchboxes = {};
       menaceMemory.playedMoves = [];
       await persistAgent<StorableMenaceAgent>(id, menaceObjectVersion, menaceMemory);
     },
@@ -112,8 +106,6 @@ export const getMenaceAgent: AIAgentCreator<MenaceAgent> = async (
           .unshift(bead, bead),
       );
       menaceMemory.wins += 1;
-      menaceMemory.longTermMatchboxes = cloneMatchboxes(menaceMemory.matchboxes);
-      menaceMemory.matchboxes = {};
       menaceMemory.playedMoves = [];
       await persistAgent<StorableMenaceAgent>(id, menaceObjectVersion, menaceMemory);
     },
