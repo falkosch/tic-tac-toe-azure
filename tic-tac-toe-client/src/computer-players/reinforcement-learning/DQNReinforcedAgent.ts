@@ -19,10 +19,6 @@ const agents: Record<string, SolverWithStatistics> = {};
 
 const dqnObjectVersion = 4;
 
-async function loadDQNAgent(id: string): Promise<StorableDQNAgent | undefined> {
-  return loadAgent<StorableDQNAgent>(id, dqnObjectVersion, Brains[id]);
-}
-
 function validOnlyArgMax(stateVector: Readonly<Mat>, actionVector: Readonly<Mat>): number {
   let maxValidValue = Number.NEGATIVE_INFINITY;
   let maxValidIndex = -1;
@@ -79,29 +75,46 @@ function createSolver(
   return solver;
 }
 
-async function loadBrainAndStatistics(id: string, solver: Solver): Promise<BrainStatistics> {
-  const agentData = await loadDQNAgent(id);
-  if (!agentData) {
-    return {
-      draws: 0,
-      losses: 0,
-      wins: 0,
-    };
+function newBrainStatistics(): BrainStatistics {
+  return {
+    draws: 0,
+    losses: 0,
+    wins: 0,
+  };
+}
+
+async function loadBrainAndStatistics(
+  id: string,
+  solverCreator: () => Solver,
+): Promise<SolverWithStatistics> {
+  if (id in agents) {
+    return agents[id];
   }
 
-  solver.fromJSON(agentData.network);
+  let statistics: BrainStatistics;
+  const solver = solverCreator();
+  const loadedAgentData = await loadAgent<StorableDQNAgent>(id, dqnObjectVersion, Brains[id]);
 
-  // Defy an NPE in the DQN solver when the learn tick is not at an experience 0-offset.
-  // Only concerns persisted DQN brains as their experience stack is not persisted.
-  const experienceOffset = agentData.wins % solver.getOpt().get('keepExperienceInterval');
-  // eslint-disable-next-line no-param-reassign
-  (solver as any).learnTick = agentData.wins - experienceOffset;
+  if (loadedAgentData) {
+    solver.fromJSON(loadedAgentData.network);
+    statistics = {
+      draws: loadedAgentData.draws,
+      losses: loadedAgentData.losses,
+      wins: loadedAgentData.wins,
+    };
 
-  return {
-    draws: agentData.draws,
-    losses: agentData.losses,
-    wins: agentData.wins,
-  };
+    // Defy an NPE in the DQN solver when the learn tick is not at an experience 0-offset.
+    // Only concerns persisted DQN brains as their experience stack is not persisted.
+    const keepExperienceInterval = solver.getOpt().get('keepExperienceInterval');
+    const experienceOffset = loadedAgentData.wins % keepExperienceInterval;
+    (solver as any).learnTick = loadedAgentData.wins - experienceOffset;
+  } else {
+    statistics = newBrainStatistics();
+  }
+
+  const agent = { solver, statistics };
+  agents[id] = agent;
+  return agent;
 }
 
 export const getDQNReinforcedAgent: AIAgentCreator<ReinforcedAgent> = async (
@@ -110,30 +123,16 @@ export const getDQNReinforcedAgent: AIAgentCreator<ReinforcedAgent> = async (
 ) => {
   const { height, width } = boardDimensions;
   const cellCount = width * height;
-  const actionCount = cellCount;
-  const stateCount = cellCount;
-  const id = `dqn-${cellOwner}-${width}x${height}-${stateCount}-${actionCount}`;
-
-  let solver: Solver;
-  let statistics: BrainStatistics;
-
-  const persist = async (): Promise<void> => persistAgent<StorableDQNAgent>(
+  const id = `dqn-${cellOwner}-${width}x${height}-${cellCount}-${cellCount}`;
+  const agentData = await loadBrainAndStatistics(
     id,
-    dqnObjectVersion,
-    {
-      ...statistics,
-      network: solver.toJSON(),
-    },
+    () => createSolver(width, height, cellCount, cellCount),
   );
 
-  if (id in agents) {
-    const solverWithStatistics = agents[id];
-    solver = solverWithStatistics.solver;
-    statistics = solverWithStatistics.statistics;
-  } else {
-    solver = createSolver(width, height, stateCount, actionCount);
-    statistics = await loadBrainAndStatistics(id, solver);
-    agents[id] = { solver, statistics };
+  async function persist(): Promise<void> {
+    const network = agentData.solver.toJSON();
+    const brain = { ...agentData.statistics, network };
+    await persistAgent<StorableDQNAgent>(id, dqnObjectVersion, brain);
   }
 
   /**
@@ -145,28 +144,28 @@ export const getDQNReinforcedAgent: AIAgentCreator<ReinforcedAgent> = async (
     cellOwner,
 
     async decide(prior): Promise<Decision> {
-      const action = solver.decide(prior.states);
-      solver.learn(-0.1);
+      const action = agentData.solver.decide(prior.states);
+      agentData.solver.learn(-0.1);
       return {
         cellsAtToAttack: [action],
       };
     },
 
     async rememberDraw(): Promise<void> {
-      solver.learn(0.25);
-      statistics.draws += 1;
+      agentData.solver.learn(0.25);
+      agentData.statistics.draws += 1;
       await persist();
     },
 
     async rememberLoss(): Promise<void> {
-      solver.learn(-1.0);
-      statistics.losses += 1;
+      agentData.solver.learn(-1.0);
+      agentData.statistics.losses += 1;
       await persist();
     },
 
     async rememberWin(): Promise<void> {
-      solver.learn(1.0);
-      statistics.wins += 1;
+      agentData.solver.learn(1.0);
+      agentData.statistics.wins += 1;
       await persist();
     },
   };

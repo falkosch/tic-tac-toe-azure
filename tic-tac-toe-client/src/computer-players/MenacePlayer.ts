@@ -1,5 +1,5 @@
 import { findMenaceDecision } from './menace-match-boxes/MenaceAgent';
-import { getMenaceAgent } from './menace-match-boxes/DefaultMenaceAgent';
+import { getMenaceAgent } from './menace-match-boxes/EpsilonGreedyMenaceAgent';
 import { notifyEndState } from './ai-agent/AIAgent';
 import { AttackGameAction } from '../meta-model/GameAction';
 import { GameEndState } from '../meta-model/GameEndState';
