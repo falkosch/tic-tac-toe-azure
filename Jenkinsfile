@@ -13,6 +13,7 @@ pipeline {
         dockerfile {
           filename './Dockerfile.build'
           dir './tic-tac-toe-client'
+          label 'docker && linux'
         }
       }
       stages {
