@@ -31,7 +31,7 @@ pipeline {
         stage('build') {
           steps {
             dir('tic-tac-toe-client') {
-              sh 'npm install'
+              sh 'npm ci'
               sh 'npm run lint'
               sh 'npm test'
             }
