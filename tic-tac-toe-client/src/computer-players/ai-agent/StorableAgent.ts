@@ -29,20 +29,18 @@ const indexedDBConfiguration = {
   version: 1,
 };
 
-const persisterInitialization = new Promise<Persister>((resolve) => {
-  initializeDatabase(
-    (database, error) => {
-      if (database === undefined || error) {
-        if (localStorageIsAccessible()) {
-          resolve(createLocalStoragePersister());
-        } else {
-          resolve(createTransientInMemoryPersister());
-        }
+const persisterInitialization = new Promise<Persister>(resolve => {
+  initializeDatabase((database, error) => {
+    if (database === undefined || error) {
+      if (localStorageIsAccessible()) {
+        resolve(createLocalStoragePersister());
       } else {
-        resolve(createIndexedDBPersister(database));
+        resolve(createTransientInMemoryPersister());
       }
-    },
-  );
+    } else {
+      resolve(createIndexedDBPersister(database));
+    }
+  });
 });
 
 function createTransaction(
@@ -118,7 +116,7 @@ function initializeDatabase(callback: DatabaseInitializationCallback): void {
     callback(undefined, new Error(dbOpenRequest.error?.message));
   };
 
-  dbOpenRequest.onupgradeneeded = (event) => {
+  dbOpenRequest.onupgradeneeded = event => {
     if (event.oldVersion < 1) {
       dbOpenRequest.result.createObjectStore(indexedDBConfiguration.objectStore);
     }

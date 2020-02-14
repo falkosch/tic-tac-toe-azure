@@ -13,9 +13,7 @@ export const Header: FC<{}> = ({ children }) => (
         <span> Tic Tac Toe Game</span>
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
-      <Navbar.Collapse id="basic-navbar-nav">
-        { children }
-      </Navbar.Collapse>
+      <Navbar.Collapse id="basic-navbar-nav">{children}</Navbar.Collapse>
     </Navbar>
   </div>
 );

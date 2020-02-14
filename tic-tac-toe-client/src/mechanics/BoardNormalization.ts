@@ -15,7 +15,7 @@ export interface BoardNormalization {
 }
 
 function transformOnAxis(value: number, dimension: number, mirrored: boolean): number {
-  return mirrored ? (dimension - value - 1) : value;
+  return mirrored ? dimension - value - 1 : value;
 }
 
 export function transformCoordinates(
@@ -37,19 +37,12 @@ function countFreeCellsInRegion(
 ): number {
   let freeCells = 0;
 
-  forEachLine(
-    lineDimensions,
-    iteratorsToCoordinates,
-    (lineDimension, iteratorToCoordinates) => forEachCellInLine(
-      board.dimensions,
-      lineDimension,
-      iteratorToCoordinates,
-      (cellAt) => {
-        if (board.cells[cellAt] === CellOwner.None) {
-          freeCells += 1;
-        }
-      },
-    ),
+  forEachLine(lineDimensions, iteratorsToCoordinates, (lineDimension, iteratorToCoordinates) =>
+    forEachCellInLine(board.dimensions, lineDimension, iteratorToCoordinates, cellAt => {
+      if (board.cells[cellAt] === CellOwner.None) {
+        freeCells += 1;
+      }
+    }),
   );
 
   return freeCells;
@@ -70,7 +63,7 @@ function determineFreeCellsBalanceByDirection(
     board,
     {
       j: halfLengths,
-      i: (atJ) => lineDimensions.i(atJ),
+      i: atJ => lineDimensions.i(atJ),
     },
     (j, i) => iteratorsToCoordinates(j, i),
   );
@@ -79,7 +72,7 @@ function determineFreeCellsBalanceByDirection(
     board,
     {
       j: halfLengths,
-      i: (atJ) => lineDimensions.i(atJ + distinctMiddleOffset),
+      i: atJ => lineDimensions.i(atJ + distinctMiddleOffset),
     },
     (j, i) => iteratorsToCoordinates(j + distinctMiddleOffset, i),
   );
@@ -87,14 +80,12 @@ function determineFreeCellsBalanceByDirection(
   return first - second;
 }
 
-export function determineBoardNormalization(
-  board: Readonly<Board>,
-): BoardNormalization {
+export function determineBoardNormalization(board: Readonly<Board>): BoardNormalization {
   const balanceHorizontal = determineFreeCellsBalanceByDirection(
     board,
     {
       j: board.dimensions.width,
-      i: (__) => board.dimensions.height,
+      i: __ => board.dimensions.height,
     },
     (j, i) => ({ x: j, y: i }),
   );
@@ -103,7 +94,7 @@ export function determineBoardNormalization(
     board,
     {
       j: board.dimensions.height,
-      i: (__) => board.dimensions.width,
+      i: __ => board.dimensions.width,
     },
     (j, i) => ({ x: i, y: j }),
   );
@@ -134,19 +125,15 @@ export function transformBoardCells(
   forEachLine(
     {
       j: dimensions.height,
-      i: (__) => dimensions.width,
+      i: __ => dimensions.width,
     },
     (j, i) => ({ x: i, y: j }),
-    (lineDimension, iteratorToCoordinates) => forEachCellInLine(
-      dimensions,
-      lineDimension,
-      iteratorToCoordinates,
-      (cellAt, coordinates) => {
+    (lineDimension, iteratorToCoordinates) =>
+      forEachCellInLine(dimensions, lineDimension, iteratorToCoordinates, (cellAt, coordinates) => {
         const transformedCoordinates = transformCoordinates(coordinates, dimensions, normalization);
         const transformedCellAt = cellAtCoordinate(transformedCoordinates, dimensions);
         transformedCells[transformedCellAt] = cells[cellAt];
-      },
-    ),
+      }),
   );
 
   return transformedCells;

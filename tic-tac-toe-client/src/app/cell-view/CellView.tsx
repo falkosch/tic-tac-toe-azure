@@ -3,7 +3,10 @@ import React, { useContext, FC } from 'react';
 import { cellCoordinates } from '../../mechanics/CellCoordinates';
 import { cellEdgeClassifiers, EdgeClassifier } from '../../mechanics/CellEdgeClassifiers';
 import { coveredConsecutivenessDirections } from '../../mechanics/Consecutiveness';
-import { mapCellOwnerToImage, mapConsecutivenessDirectionToImage } from '../../mechanics/MapToImage';
+import {
+  mapCellOwnerToImage,
+  mapConsecutivenessDirectionToImage,
+} from '../../mechanics/MapToImage';
 import { ActionTokenDispatch } from '../game-state/ActionTokenDispatch';
 import { BoardDimensions } from '../../meta-model/Board';
 import { CellOwner } from '../../meta-model/CellOwner';
@@ -31,17 +34,14 @@ export const CellView: FC<{
   cellAt: number;
   cellOwner: Readonly<CellOwner>;
   consecutiveness: ReadonlyArray<Consecutiveness>;
-}> = ({
-  boardDimensions,
-  cellAt,
-  cellOwner,
-  consecutiveness,
-}) => {
+}> = ({ boardDimensions, cellAt, cellOwner, consecutiveness }) => {
   const actionTokenDispatch = useContext(ActionTokenDispatch);
 
   const cellOwnerImage = mapCellOwnerToImage(cellOwner);
-  const consecutivenessDirectionImages = coveredConsecutivenessDirections(cellAt, consecutiveness)
-    .map((d) => mapConsecutivenessDirectionToImage(d));
+  const consecutivenessDirectionImages = coveredConsecutivenessDirections(
+    cellAt,
+    consecutiveness,
+  ).map(d => mapConsecutivenessDirectionToImage(d));
 
   const edgeClassifiers = cellEdgeClassifiers(
     cellCoordinates(cellAt, boardDimensions),

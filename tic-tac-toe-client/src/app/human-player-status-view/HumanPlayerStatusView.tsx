@@ -9,11 +9,7 @@ export const HumanPlayerStatusView: FC<{}> = () => {
 
   return (
     <div className={styles.view}>
-      {
-        actionTokenDispatch
-          ? <>It&apos;s your turn!</>
-          : <>Other player is serving...</>
-      }
+      {actionTokenDispatch ? <>It&apos;s your turn!</> : <>Other player is serving...</>}
     </div>
   );
 };

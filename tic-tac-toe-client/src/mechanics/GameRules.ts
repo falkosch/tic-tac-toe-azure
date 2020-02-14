@@ -25,15 +25,14 @@ export function pointsLeader(points: Readonly<Points>): SpecificCellOwner | unde
   let winnerPoints = 0;
   let winner;
 
-  Object.keys(points)
-    .forEach((cellOwnerKey) => {
-      const cellOwner = cellOwnerKey as SpecificCellOwner;
-      const value = points[cellOwner];
-      if (winnerPoints < value) {
-        winnerPoints = value;
-        winner = cellOwner;
-      }
-    });
+  Object.keys(points).forEach(cellOwnerKey => {
+    const cellOwner = cellOwnerKey as SpecificCellOwner;
+    const value = points[cellOwner];
+    if (winnerPoints < value) {
+      winnerPoints = value;
+      winner = cellOwner;
+    }
+  });
 
   return winner;
 }
@@ -48,6 +47,5 @@ export function isOneWinnerEnding(gameView: Readonly<GameView>): boolean {
 }
 
 export function isDrawEnding(gameView: Readonly<GameView>): boolean {
-  return !isOneWinnerEnding(gameView)
-    && remainingMoves(gameView.board.cells) === 0;
+  return !isOneWinnerEnding(gameView) && remainingMoves(gameView.board.cells) === 0;
 }

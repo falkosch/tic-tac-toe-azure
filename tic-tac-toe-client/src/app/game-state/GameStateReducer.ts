@@ -21,7 +21,8 @@ export enum GameStateActionType {
   UpdateGame,
 }
 
-export type GameStateActionPayload = AddWinActionPayload
+export type GameStateActionPayload =
+  | AddWinActionPayload
   | EndGameActionPayload
   | ResetWinsActionPayload
   | SetActionTokenActionPayload
@@ -40,37 +41,29 @@ interface ActionDelegate {
 }
 
 const typeToAction: Readonly<Record<GameStateActionType, ActionDelegate>> = {
-  [GameStateActionType.AddWin]: (
-    prevState, payload,
-  ) => addWin(prevState, payload as AddWinActionPayload),
+  [GameStateActionType.AddWin]: (prevState, payload) =>
+    addWin(prevState, payload as AddWinActionPayload),
 
-  [GameStateActionType.EndGame]: (
-    prevState, payload,
-  ) => endGame(prevState, payload as EndGameActionPayload),
+  [GameStateActionType.EndGame]: (prevState, payload) =>
+    endGame(prevState, payload as EndGameActionPayload),
 
-  [GameStateActionType.ResetWins]: (
-    prevState, payload,
-  ) => resetWins(prevState, payload as ResetWinsActionPayload),
+  [GameStateActionType.ResetWins]: (prevState, payload) =>
+    resetWins(prevState, payload as ResetWinsActionPayload),
 
-  [GameStateActionType.SetActionToken]: (
-    prevState, payload,
-  ) => setActionToken(prevState, payload as SetActionTokenActionPayload),
+  [GameStateActionType.SetActionToken]: (prevState, payload) =>
+    setActionToken(prevState, payload as SetActionTokenActionPayload),
 
-  [GameStateActionType.SetGameView]: (
-    prevState, payload,
-  ) => setGameView(prevState, payload as SetGameViewActionPayload),
+  [GameStateActionType.SetGameView]: (prevState, payload) =>
+    setGameView(prevState, payload as SetGameViewActionPayload),
 
-  [GameStateActionType.SetWinner]: (
-    prevState, payload,
-  ) => setWinner(prevState, payload as SetWinnerActionPayload),
+  [GameStateActionType.SetWinner]: (prevState, payload) =>
+    setWinner(prevState, payload as SetWinnerActionPayload),
 
-  [GameStateActionType.StartNewGame]: (
-    prevState, payload,
-  ) => startNewGame(prevState, payload as StartNewGameActionPayload),
+  [GameStateActionType.StartNewGame]: (prevState, payload) =>
+    startNewGame(prevState, payload as StartNewGameActionPayload),
 
-  [GameStateActionType.UpdateGame]: (
-    prevState, payload,
-  ) => updateGame(prevState, payload as UpdateGameActionPayload),
+  [GameStateActionType.UpdateGame]: (prevState, payload) =>
+    updateGame(prevState, payload as UpdateGameActionPayload),
 };
 
 export type GameStateReducer = Reducer<GameStateType, GameStateAction>;

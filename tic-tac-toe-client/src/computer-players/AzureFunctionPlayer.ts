@@ -8,15 +8,13 @@ const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_NOT_SECRET_CODE,
 });
 
-export const createAzureFunctionPlayer: PlayerCreator = async () => (
-  {
-    /**
-     * Posts the current game state in {@code playerTurn} to the Azure Function
-     * {@code fstictactoegame}. The Azure function reacts on the game state by deciding for a
-     * valuable action.
-     */
-    async takeTurn(playerTurn: Readonly<PlayerTurn>): Promise<AttackGameAction> {
-      return (await axiosInstance.post('/api/takeTurn', playerTurn)).data;
-    },
-  }
-);
+export const createAzureFunctionPlayer: PlayerCreator = async () => ({
+  /**
+   * Posts the current game state in {@code playerTurn} to the Azure Function
+   * {@code fstictactoegame}. The Azure function reacts on the game state by deciding for a
+   * valuable action.
+   */
+  async takeTurn(playerTurn: Readonly<PlayerTurn>): Promise<AttackGameAction> {
+    return (await axiosInstance.post('/api/takeTurn', playerTurn)).data;
+  },
+});

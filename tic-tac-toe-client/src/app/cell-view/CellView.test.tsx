@@ -19,12 +19,15 @@ describe(`${CellView.name}`, () => {
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
-    ReactDOM.render(<CellView
-      boardDimensions={boardDimensions}
-      cellAt={0}
-      cellOwner={cellOwner}
-      consecutiveness={[]}
-    />, div);
+    ReactDOM.render(
+      <CellView
+        boardDimensions={boardDimensions}
+        cellAt={0}
+        cellOwner={cellOwner}
+        consecutiveness={[]}
+      />,
+      div,
+    );
     ReactDOM.unmountComponentAtNode(div);
   });
 });

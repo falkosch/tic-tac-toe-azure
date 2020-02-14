@@ -22,16 +22,15 @@ function buildReinforcedStateSpace(
   const normalizedStateSpace = buildNormalizedStateSpace(board);
   return {
     ...normalizedStateSpace,
-    states: transformBoardCells(board, normalizedStateSpace.normalization)
-      .map((cellOwner) => {
-        if (cellOwner === CellOwner.None) {
-          return 0.0;
-        }
-        if (cellOwner === agentCellOwner) {
-          return 1.0;
-        }
-        return -1.0;
-      }),
+    states: transformBoardCells(board, normalizedStateSpace.normalization).map(cellOwner => {
+      if (cellOwner === CellOwner.None) {
+        return 0.0;
+      }
+      if (cellOwner === agentCellOwner) {
+        return 1.0;
+      }
+      return -1.0;
+    }),
   };
 }
 
@@ -39,8 +38,5 @@ export async function findReinforcedDecision(
   agent: Readonly<ReinforcedAgent>,
   board: Readonly<Board>,
 ): Promise<Decision | null> {
-  return findDecisionForStateSpace(
-    agent,
-    buildReinforcedStateSpace(agent.cellOwner, board),
-  );
+  return findDecisionForStateSpace(agent, buildReinforcedStateSpace(agent.cellOwner, board));
 }
