@@ -1,6 +1,9 @@
 build/
 node_modules/
+coverage/
+reports/
 package*.json
+sonar-project.properties
 Dockerfile*
 *.config
 *.css
