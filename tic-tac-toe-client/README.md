@@ -1,3 +1,9 @@
+# tic-tac-toe-client
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=tic-tac-toe&metric=alert_status)](https://sonarcloud.io/dashboard?id=tic-tac-toe)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=tic-tac-toe&metric=coverage)](https://sonarcloud.io/dashboard?id=tic-tac-toe)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=tic-tac-toe&metric=ncloc)](https://sonarcloud.io/dashboard?id=tic-tac-toe)
+
 React-based client of the Tic Tac Toe game example.
 
 ## Status

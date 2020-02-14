@@ -11,9 +11,9 @@ The Tic Tac Toe game provides different player/opponent types for each of the tw
 * If you do not want to play with humans, you can still choose what player ("X" or "O") you want to control and set the other to an AI player. Tip: Mathematically "Player X" has a big win-ratio advantage. Just saying.
 
 * You can play against different types of AI players: A DQN agent (a reinforcement learning supported neural network), a Menace Matchboxes agent or a reactive agent based on simple rules implemented as Azure Function.
-  
+
   * ~~DQN and Menace players must be trained first.~~ For DQN and Menace, pretrained agent data is loaded. To train them even further, you can let them play against each other. Just select DQN or Menace for both players.
-  
+
   * The reactive agent must not be trained at all as it is stateless anyway. Though, you can still have it as an opponent for the DQN or the Menace agent to train them. However, you need access to the internet and cannot play offline against the Azure Player.
 
   * Use the "Auto new game" option and start a new game to speed up training. Turn off the "Auto new game" option to stop training.
@@ -22,9 +22,11 @@ The Tic Tac Toe game provides different player/opponent types for each of the tw
 
 ## Status
 
-Build Status (TicTacToeGame) [![TicTacToeGame](https://falko-schwabe.visualstudio.com/tic-tac-toe-azure/_apis/build/status/falkosch.tic-tac-toe-azure%20TicTacToeGame?branchName=master)](https://falko-schwabe.visualstudio.com/tic-tac-toe-azure/_build/latest?definitionId=1&branchName=master)
 
-Build Status (tic-tac-toe-client) [![tic-tac-toe-client](https://falko-schwabe.visualstudio.com/tic-tac-toe-azure/_apis/build/status/falkosch.tic-tac-toe-azure%20tic-tac-toe-client?branchName=master)](https://falko-schwabe.visualstudio.com/tic-tac-toe-azure/_build/latest?definitionId=2&branchName=master)
+Component | Status
+--- | ---
+**tic-tac-toe-client** | [![tic-tac-toe-client](https://falko-schwabe.visualstudio.com/tic-tac-toe-azure/_apis/build/status/falkosch.tic-tac-toe-azure%20tic-tac-toe-client?branchName=master)](https://falko-schwabe.visualstudio.com/tic-tac-toe-azure/_build/latest?definitionId=2&branchName=master) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=tic-tac-toe&metric=alert_status)](https://sonarcloud.io/dashboard?id=tic-tac-toe) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=tic-tac-toe&metric=coverage)](https://sonarcloud.io/dashboard?id=tic-tac-toe) [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=tic-tac-toe&metric=ncloc)](https://sonarcloud.io/dashboard?id=tic-tac-toe)
+**TicTacToeGame** | [![TicTacToeGame](https://falko-schwabe.visualstudio.com/tic-tac-toe-azure/_apis/build/status/falkosch.tic-tac-toe-azure%20TicTacToeGame?branchName=master)](https://falko-schwabe.visualstudio.com/tic-tac-toe-azure/_build/latest?definitionId=1&branchName=master)
 
 ## Implementation
 
