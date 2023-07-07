@@ -102,7 +102,7 @@
     "react-scripts": "3.4.0",
     "rimraf": "3.0.2",
     "sonarqube-scanner": "2.5.0",
-    "stylelint": "13.2.0",
+    "stylelint": "15.10.1",
     "stylelint-config-standard": "20.0.0",
     "stylelint-no-unsupported-browser-features": "4.0.0",
     "stylelint-react-native": "2.1.1",
