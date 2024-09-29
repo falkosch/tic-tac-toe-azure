@@ -22,8 +22,8 @@ export function endGame(
   let nextGameState = prevState;
 
   nextGameState = setGameView(nextGameState, { gameView });
-  nextGameState = setInProgress(prevState, { value: false });
-  nextGameState = setWinner(prevState, { value: endState.winner || CellOwner.None });
+  nextGameState = setInProgress(nextGameState, { value: false });
+  nextGameState = setWinner(nextGameState, { value: endState.winner || CellOwner.None });
 
   if (!(endState.winner instanceof Error)) {
     nextGameState = addWin(nextGameState, { player: endState.winner });
