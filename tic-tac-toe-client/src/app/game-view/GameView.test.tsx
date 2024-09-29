@@ -1,13 +1,11 @@
+import fpTimes from 'lodash/fp/times';
 import React from 'react';
 import ReactDOM from 'react-dom';
-
-// @ts-ignore
-import fpTimes from 'lodash/fp/times';
 
 import GameView from './GameView';
 
 import { Game } from '../../meta-model/Game';
-import { NoCellOwner } from '../../meta-model/Cell';
+import { NoCellOwner, AnyCellOwner } from '../../meta-model/Cell';
 
 describe(`${GameView.name}`, () => {
   let game: Game;
@@ -15,7 +13,7 @@ describe(`${GameView.name}`, () => {
   beforeEach(() => {
     game = {
       board: {
-        cells: fpTimes(() => NoCellOwner)(9),
+        cells: fpTimes<AnyCellOwner>(() => NoCellOwner)(9),
         height: 3,
         width: 3,
       },
