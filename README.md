@@ -18,6 +18,8 @@ It is an example application of a Tic Tac Toe game. It provides different player
 
   * Use the "Auto new game" option and start a new game to speed up training. Turn off the "Auto new game" option to stop training.
 
+* There is another player type called `Mock computer player (local)`. That player randomly selects any free cell when it has turn.
+
 ## Status
 
 [![Build Status](https://falko-schwabe.visualstudio.com/tic-tac-toe-azure/_apis/build/status/falkosch.tic-tac-toe-azure%20TicTacToeGame?branchName=master)](https://falko-schwabe.visualstudio.com/tic-tac-toe-azure/_build/latest?definitionId=1&branchName=master)

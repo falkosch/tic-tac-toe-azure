@@ -18,3 +18,17 @@ export function validateDecision(
     true,
   );
 }
+
+export function findFreeCellIndices(cells: ReadonlyArray<CellOwner>): number[] {
+  const freeCellIndices: number[] = [];
+  cells.forEach((cellOwner, index) => {
+    if (cellOwner === CellOwner.None) {
+      freeCellIndices.push(index);
+    }
+  });
+  return freeCellIndices;
+}
+
+export function takeAny(freeCellIndices: ReadonlyArray<number>): number {
+  return freeCellIndices[Math.floor(Math.random() * freeCellIndices.length)];
+}
