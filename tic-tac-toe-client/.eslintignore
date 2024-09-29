@@ -1,0 +1,14 @@
+build/
+node_modules/
+package*.json
+*.config
+*.css
+*.ico
+*.odg
+*.png
+*.scss
+*.svg
+*.txt
+*.webmanifest
+*.xml
+*.yml
