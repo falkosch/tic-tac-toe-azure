@@ -11,8 +11,8 @@ export const HumanPlayerStatusView: FC<{}> = () => {
     <div className={styles.view}>
       {
         actionTokenDispatch
-          ? 'It is your turn! Select a free cell.'
-          : 'Other player is serving...'
+          ? <>It&apos;s your turn!</>
+          : <>Other player is serving...</>
       }
     </div>
   );

@@ -24,13 +24,19 @@ export const GameStateView: FC<{
     {
       gameState.gameView && (
         <ActionTokenDispatch.Provider value={gameState.actionToken}>
-          <GameView gameView={gameState.gameView} />
-          <WinnerView winner={gameState.winner} wins={gameState.wins} />
-          {
-            !gameState.winner && (
-              <HumanPlayerStatusView />
-            )
-          }
+          <div className="d-flex flex-column h-100">
+            <div className="d-flex flex-fill justify-content-center align-items-center">
+              <GameView gameView={gameState.gameView} />
+            </div>
+            <div className={`${styles.status} d-flex justify-content-center align-items-center`}>
+              <WinnerView winner={gameState.winner} wins={gameState.wins} />
+              {
+                !gameState.winner && (
+                  <HumanPlayerStatusView />
+                )
+              }
+            </div>
+          </div>
         </ActionTokenDispatch.Provider>
       )
     }

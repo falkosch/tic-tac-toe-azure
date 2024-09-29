@@ -10,24 +10,22 @@ export const GameView: FC<{
 }> = ({
   gameView,
 }) => (
-  <div className="d-flex justify-content-center align-items-center">
-    <div className={`${styles.view} d-flex flex-row flex-wrap border-secondary bg-light p-2`}>
-      {
-        gameView.board.cells.map(
-          (cellOwner, cellAt) => {
-            const key = `c${cellAt}`;
-            return (
-              <CellView
-                key={key}
-                boardDimensions={gameView.board.dimensions}
-                cellAt={cellAt}
-                cellOwner={cellOwner}
-                consecutiveness={gameView.consecutiveness}
-              />
-            );
-          },
-        )
-      }
-    </div>
+  <div className={`${styles.view} d-flex flex-row flex-wrap border-secondary bg-light p-2`}>
+    {
+      gameView.board.cells.map(
+        (cellOwner, cellAt) => {
+          const key = `c${cellAt}`;
+          return (
+            <CellView
+              key={key}
+              boardDimensions={gameView.board.dimensions}
+              cellAt={cellAt}
+              cellOwner={cellOwner}
+              consecutiveness={gameView.consecutiveness}
+            />
+          );
+        },
+      )
+    }
   </div>
 );
