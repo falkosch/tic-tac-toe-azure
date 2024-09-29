@@ -7,7 +7,9 @@
     "plugin:jest/recommended",
     "plugin:jest/style",
     "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended"
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
+    "prettier/react"
   ],
   "env": {
     "commonjs": true,
@@ -17,7 +19,6 @@
   "parser": "@typescript-eslint/parser",
   "plugins": [
     "@typescript-eslint",
-    "prettier",
     "html",
     "jest",
     "json",
@@ -25,7 +26,10 @@
   ],
   "settings": {
     "import/parsers": {
-      "@typescript-eslint/parser": [".ts", ".tsx"]
+      "@typescript-eslint/parser": [
+        ".ts",
+        ".tsx"
+      ]
     },
     "import/resolver": {
       "typescript": {}
@@ -34,6 +38,7 @@
   "rules": {
     "class-methods-use-this": "off",
     "import/prefer-default-export": "off",
+    "import/extensions": "off",
     "linebreak-style": "off",
     "no-use-before-define": [
       "error",
@@ -46,7 +51,10 @@
     "react/jsx-filename-extension": [
       "error",
       {
-        "extensions": [".jsx", ".tsx"]
+        "extensions": [
+          ".jsx",
+          ".tsx"
+        ]
       }
     ],
     "react/prop-types": "off",
@@ -77,25 +85,33 @@
   },
   "overrides": [
     {
-      "files": ["src/**/*.d.ts"],
+      "files": [
+        "src/**/*.d.ts"
+      ],
       "rules": {
         "spaced-comment": "off"
       }
     },
     {
-      "files": ["src/**/*.ts{,x}"],
+      "files": [
+        "src/**/*.ts{,x}"
+      ],
       "globals": {
         "process": true
       }
     },
     {
-      "files": ["src/**/*.test.ts{,x}"],
+      "files": [
+        "src/**/*.test.ts{,x}"
+      ],
       "env": {
         "jest/globals": true
       }
     },
     {
-      "files": ["src/serviceWorker.ts"],
+      "files": [
+        "src/serviceWorker.ts"
+      ],
       "env": {
         "serviceworker": true
       },

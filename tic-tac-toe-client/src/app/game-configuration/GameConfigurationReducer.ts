@@ -9,7 +9,8 @@ export enum GameConfigurationActionType {
   SetPlayerType,
 }
 
-export type GameConfigurationActionPayload = SetAutoNewGameActionPayload
+export type GameConfigurationActionPayload =
+  | SetAutoNewGameActionPayload
   | SetPlayerTypeActionPayload;
 
 export interface GameConfigurationAction {
@@ -25,13 +26,11 @@ interface ActionDelegate {
 }
 
 const typeToAction: Readonly<Record<GameConfigurationActionType, ActionDelegate>> = {
-  [GameConfigurationActionType.SetAutoNewGame]: (
-    prevState, payload,
-  ) => setAutoNewGame(prevState, payload as SetAutoNewGameActionPayload),
+  [GameConfigurationActionType.SetAutoNewGame]: (prevState, payload) =>
+    setAutoNewGame(prevState, payload as SetAutoNewGameActionPayload),
 
-  [GameConfigurationActionType.SetPlayerType]: (
-    prevState, payload,
-  ) => setPlayerType(prevState, payload as SetPlayerTypeActionPayload),
+  [GameConfigurationActionType.SetPlayerType]: (prevState, payload) =>
+    setPlayerType(prevState, payload as SetPlayerTypeActionPayload),
 };
 
 export type GameConfigurationReducer = Reducer<GameConfigurationType, GameConfigurationAction>;

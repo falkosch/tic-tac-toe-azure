@@ -3,15 +3,16 @@ import Col from 'react-bootstrap/Col';
 import Dropdown from 'react-bootstrap/Dropdown';
 import { DropdownItemProps } from 'react-bootstrap/DropdownItem';
 import Form from 'react-bootstrap/Form';
-import React, {
-  useReducer, useRef, useState, FC, MouseEventHandler,
-} from 'react';
+import React, { useReducer, useRef, useState, FC, MouseEventHandler } from 'react';
 
 import { createAzureFunctionPlayer } from '../computer-players/AzureFunctionPlayer';
 import { createDQNPlayer } from '../computer-players/DQNPlayer';
 import { createMenacePlayer } from '../computer-players/MenacePlayer';
 import { createMockPlayer } from '../computer-players/MockPlayer';
-import { gameConfigurationReducer, GameConfigurationActionType } from './game-configuration/GameConfigurationReducer';
+import {
+  gameConfigurationReducer,
+  GameConfigurationActionType,
+} from './game-configuration/GameConfigurationReducer';
 import { gameStateReducer, GameStateActionType } from './game-state/GameStateReducer';
 import { initialGameConfiguration, PlayerType } from './game-configuration/GameConfiguration';
 import { initialGameState } from './game-state/GameState';
@@ -26,18 +27,12 @@ import styles from './App.module.scss';
 type Players = Record<PlayerType, PlayerCreator>;
 
 export const App: FC<{}> = () => {
-  const [
-    runningGame,
-    setRunningGame,
-  ] = useState<Promise<any>>(Promise.resolve());
-  const [
-    configuration,
-    configurationDispatch,
-  ] = useReducer(gameConfigurationReducer, initialGameConfiguration);
-  const [
-    gameState,
-    gameStateDispatch,
-  ] = useReducer(gameStateReducer, initialGameState);
+  const [runningGame, setRunningGame] = useState<Promise<any>>(Promise.resolve());
+  const [configuration, configurationDispatch] = useReducer(
+    gameConfigurationReducer,
+    initialGameConfiguration,
+  );
+  const [gameState, gameStateDispatch] = useReducer(gameStateReducer, initialGameState);
 
   const game = { gameState, configuration, runningGame };
   const gameRef = useRef(game);
@@ -54,27 +49,28 @@ export const App: FC<{}> = () => {
 
   async function createHumanPlayer(): Promise<Player> {
     return {
-      takeTurn: () => new Promise((resolve, reject) => {
-        const actionToken = (affectedCellsAt?: ReadonlyArray<number>, error?: Error): void => {
+      takeTurn: () =>
+        new Promise((resolve, reject) => {
+          const actionToken = (affectedCellsAt?: ReadonlyArray<number>, error?: Error): void => {
+            gameStateDispatch({
+              type: GameStateActionType.SetActionToken,
+              payload: { actionToken: undefined },
+            });
+
+            if (error) {
+              reject(error);
+            } else if (affectedCellsAt) {
+              resolve({ affectedCellsAt });
+            } else {
+              resolve({ affectedCellsAt: [] });
+            }
+          };
+
           gameStateDispatch({
             type: GameStateActionType.SetActionToken,
-            payload: { actionToken: undefined },
+            payload: { actionToken },
           });
-
-          if (error) {
-            reject(error);
-          } else if (affectedCellsAt) {
-            resolve({ affectedCellsAt });
-          } else {
-            resolve({ affectedCellsAt: [] });
-          }
-        };
-
-        gameStateDispatch({
-          type: GameStateActionType.SetActionToken,
-          payload: { actionToken },
-        });
-      }),
+        }),
     };
   }
 
@@ -96,34 +92,41 @@ export const App: FC<{}> = () => {
 
     const newRunningGame = runNewGame(
       joiningPlayers,
-      async (newGameView) => gameStateDispatch({
-        type: GameStateActionType.StartNewGame,
-        payload: { gameView: newGameView },
-      }),
-      async (newGameView) => gameStateDispatch({
-        type: GameStateActionType.UpdateGame,
-        payload: { gameView: newGameView },
-      }),
-      async (endState) => gameStateDispatch({
-        type: GameStateActionType.EndGame,
-        payload: { endState },
-      }),
+      async newGameView =>
+        gameStateDispatch({
+          type: GameStateActionType.StartNewGame,
+          payload: { gameView: newGameView },
+        }),
+      async newGameView =>
+        gameStateDispatch({
+          type: GameStateActionType.UpdateGame,
+          payload: { gameView: newGameView },
+        }),
+      async endState =>
+        gameStateDispatch({
+          type: GameStateActionType.EndGame,
+          payload: { endState },
+        }),
     );
     setRunningGame(newRunningGame);
 
     await newRunningGame;
-    if (gameRef.current.runningGame === newRunningGame
-      && gameRef.current.configuration.autoNewGame
-      && !(gameRef.current.gameState.winner instanceof Error)) {
+    if (
+      gameRef.current.runningGame === newRunningGame &&
+      gameRef.current.configuration.autoNewGame &&
+      !(gameRef.current.gameState.winner instanceof Error)
+    ) {
       setTimeout(createNewGame, 0);
     }
   }
 
   function canCreateNewGame(): boolean {
-    return configuration.autoNewGame
-      && gameState.gameView !== undefined
-      && gameState.actionToken === undefined
-      && gameState.winner === undefined;
+    return (
+      configuration.autoNewGame &&
+      gameState.gameView !== undefined &&
+      gameState.actionToken === undefined &&
+      gameState.winner === undefined
+    );
   }
 
   function toggleAutoNewGame(): void {
@@ -160,22 +163,18 @@ export const App: FC<{}> = () => {
             {`Player ${cellOwner}`}
           </Dropdown.Toggle>
           <Dropdown.Menu alignRight popperConfig={{ placement: 'auto' }}>
-            {
-              playerKeys.map(
-                (playerKey) => {
-                  const active = playerKey === configuration.playerTypes[cellOwner];
-                  const itemId = `d${cellOwner}${playerKey}`;
-                  const onClick: MouseEventHandler<DropdownItemProps> = () => {
-                    changePlayerType(cellOwner, playerKey);
-                  };
-                  return (
-                    <Dropdown.Item active={active} key={itemId} onClick={onClick}>
-                      { playerKey }
-                    </Dropdown.Item>
-                  );
-                },
-              )
-            }
+            {playerKeys.map(playerKey => {
+              const active = playerKey === configuration.playerTypes[cellOwner];
+              const itemId = `d${cellOwner}${playerKey}`;
+              const onClick: MouseEventHandler<DropdownItemProps> = () => {
+                changePlayerType(cellOwner, playerKey);
+              };
+              return (
+                <Dropdown.Item active={active} key={itemId} onClick={onClick}>
+                  {playerKey}
+                </Dropdown.Item>
+              );
+            })}
           </Dropdown.Menu>
         </Dropdown>
       </Col>
@@ -188,15 +187,18 @@ export const App: FC<{}> = () => {
         <Form>
           <Form.Row>
             <Col xs="12" sm="4" md="auto">
-              <Button className="mt-2 mt-md-0" block disabled={canCreateNewGame()} onClick={createNewGame}>
+              <Button
+                className="mt-2 mt-md-0"
+                block
+                disabled={canCreateNewGame()}
+                onClick={createNewGame}
+              >
                 New game
               </Button>
             </Col>
-            {
-              Object.keys(configuration.playerTypes).map(
-                (cellOwnerKey) => createDropdownViewForCellOwner(cellOwnerKey as SpecificCellOwner),
-              )
-            }
+            {Object.keys(configuration.playerTypes).map(cellOwnerKey =>
+              createDropdownViewForCellOwner(cellOwnerKey as SpecificCellOwner),
+            )}
             <Col xs="12" md="auto">
               <div className="d-flex flex-row h-100 pt-2 pt-md-0">
                 <Form.Check id="autoNewGame" inline checked={configuration.autoNewGame}>

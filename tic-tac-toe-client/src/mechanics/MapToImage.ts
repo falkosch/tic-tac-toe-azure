@@ -9,22 +9,18 @@ import strikeVertical from './assets/strike-vertical.svg';
 import strokeO from './assets/stroke-o.svg';
 import strokeX from './assets/stroke-x.svg';
 
-const cellOwnerToImage = Object.freeze(
-  {
-    [CellOwner.None]: undefined,
-    [CellOwner.O]: strokeO,
-    [CellOwner.X]: strokeX,
-  },
-);
+const cellOwnerToImage = Object.freeze({
+  [CellOwner.None]: undefined,
+  [CellOwner.O]: strokeO,
+  [CellOwner.X]: strokeX,
+});
 
-const consecutivenessDirectionToImage = Object.freeze(
-  {
-    [ConsecutivenessDirection.Horizontal]: strikeHorizontal,
-    [ConsecutivenessDirection.Vertical]: strikeVertical,
-    [ConsecutivenessDirection.DiagonalTL2BR]: strikeTL2BR,
-    [ConsecutivenessDirection.DiagonalTR2BL]: strikeTR2BL,
-  },
-);
+const consecutivenessDirectionToImage = Object.freeze({
+  [ConsecutivenessDirection.Horizontal]: strikeHorizontal,
+  [ConsecutivenessDirection.Vertical]: strikeVertical,
+  [ConsecutivenessDirection.DiagonalTL2BR]: strikeTL2BR,
+  [ConsecutivenessDirection.DiagonalTR2BL]: strikeTR2BL,
+});
 
 export function mapCellOwnerToImage(cellOwner: Readonly<CellOwner>): string | undefined {
   return cellOwnerToImage[cellOwner];

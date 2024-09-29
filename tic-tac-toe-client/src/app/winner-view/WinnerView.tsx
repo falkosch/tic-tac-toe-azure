@@ -24,34 +24,20 @@ function representsSpecificWinner(value: any): boolean {
 export const WinnerView: FC<{
   winner?: Readonly<CellOwner> | Error;
   wins: Readonly<Points>;
-}> = ({
-  winner,
-  wins,
-}) => (
+}> = ({ winner, wins }) => (
   <div className={styles.view}>
     <div className={styles.error}>
-      {
-        representsError(winner) && representsAxiosError(winner) && (
-          'Azure player is not available, because the backend is not reachable. Please try another player type.'
-        )
-      }
-      {
-        representsError(winner) && !representsAxiosError(winner) && (
-          `Something unexpected happened: ${winner}`
-        )
-      }
+      {representsError(winner) &&
+        representsAxiosError(winner) &&
+        'Azure player is not available, because the backend is not reachable. Please try another player type.'}
+      {representsError(winner) &&
+        !representsAxiosError(winner) &&
+        `Something unexpected happened: ${winner}`}
     </div>
     <div className={styles.winner}>
-      {
-        representsDraw(winner) && (
-          <>It&apos;s a draw!</>
-        )
-      }
-      {
-        representsSpecificWinner(winner) && (
-          `Winner is ${winner} and has ${wins[winner as SpecificCellOwner]} wins so far.`
-        )
-      }
+      {representsDraw(winner) && <>It&apos;s a draw!</>}
+      {representsSpecificWinner(winner) &&
+        `Winner is ${winner} and has ${wins[winner as SpecificCellOwner]} wins so far.`}
     </div>
   </div>
 );

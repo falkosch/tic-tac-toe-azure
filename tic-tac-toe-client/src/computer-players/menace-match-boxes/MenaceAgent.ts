@@ -40,7 +40,10 @@ function buildMenaceStateSpace(board: Readonly<Board>): MenaceStateSpace {
   const normalizedCells = transformBoardCells(board, normalizedStateSpace.normalization);
   return {
     ...normalizedStateSpace,
-    boardAsString: normalizedCells.reduce((stateString, cellOwner) => `${stateString}${cellOwner}`, ''),
+    boardAsString: normalizedCells.reduce(
+      (stateString, cellOwner) => `${stateString}${cellOwner}`,
+      '',
+    ),
     boardAsCellOwners: normalizedCells,
   };
 }
@@ -49,8 +52,5 @@ export async function findMenaceDecision(
   agent: Readonly<MenaceAgent>,
   board: Readonly<Board>,
 ): Promise<Decision | null> {
-  return findDecisionForStateSpace(
-    agent,
-    buildMenaceStateSpace(board),
-  );
+  return findDecisionForStateSpace(agent, buildMenaceStateSpace(board));
 }

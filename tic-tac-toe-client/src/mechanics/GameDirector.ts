@@ -1,7 +1,5 @@
 import { buildBoardModifier } from './Actions';
-import {
-  countPoints, isDrawEnding, isOneWinnerEnding, pointsLeader,
-} from './GameRules';
+import { countPoints, isDrawEnding, isOneWinnerEnding, pointsLeader } from './GameRules';
 import { findConsecutiveness } from './Consecutiveness';
 import { AttackGameAction } from '../meta-model/GameAction';
 import { Board, BoardDimensions } from '../meta-model/Board';
@@ -35,8 +33,7 @@ const DefaultDimensions: Readonly<BoardDimensions> = {
 function newBoard(boardDimensions: Readonly<BoardDimensions>): Board {
   const { height, width } = boardDimensions;
   return {
-    cells: Array.from({ length: height * width })
-      .map(() => CellOwner.None),
+    cells: Array.from({ length: height * width }).map(() => CellOwner.None),
     dimensions: boardDimensions,
   };
 }
@@ -72,10 +69,9 @@ function playerOfTurn(joinedPlayers: ReadonlyArray<JoinedPlayer>, turn: number):
 
 async function joinPlayers(joiningPlayers: Readonly<JoiningPlayers>): Promise<JoinedPlayer[]> {
   const joiningPlayersEntries = Object.entries(joiningPlayers);
-  const createPromises = joiningPlayersEntries
-    .map<Promise<[SpecificCellOwner, Player]>>(
-      async ([cellOwner, playerCreator]) => [cellOwner as SpecificCellOwner, await playerCreator()],
-    );
+  const createPromises = joiningPlayersEntries.map<Promise<[SpecificCellOwner, Player]>>(
+    async ([cellOwner, playerCreator]) => [cellOwner as SpecificCellOwner, await playerCreator()],
+  );
   return Promise.all(createPromises);
 }
 
@@ -130,14 +126,12 @@ async function notifyGameViewUpdate(
   }
 
   await Promise.all(
-    joinedPlayers.map(
-      async ([cellOwner, player]) => {
-        const { onGameViewUpdate: playerOnGameViewUpdate } = player;
-        if (playerOnGameViewUpdate) {
-          await playerOnGameViewUpdate(cellOwner, gameView);
-        }
-      },
-    ),
+    joinedPlayers.map(async ([cellOwner, player]) => {
+      const { onGameViewUpdate: playerOnGameViewUpdate } = player;
+      if (playerOnGameViewUpdate) {
+        await playerOnGameViewUpdate(cellOwner, gameView);
+      }
+    }),
   );
 }
 
@@ -151,14 +145,12 @@ async function notifyGameStart(
   }
 
   await Promise.all(
-    joinedPlayers.map(
-      async ([cellOwner, player]) => {
-        const { onGameStart: playerOnGameStart } = player;
-        if (playerOnGameStart) {
-          await playerOnGameStart(cellOwner, gameView);
-        }
-      },
-    ),
+    joinedPlayers.map(async ([cellOwner, player]) => {
+      const { onGameStart: playerOnGameStart } = player;
+      if (playerOnGameStart) {
+        await playerOnGameStart(cellOwner, gameView);
+      }
+    }),
   );
 }
 
@@ -172,14 +164,12 @@ async function notifyGameEnd(
   }
 
   await Promise.all(
-    joinedPlayers.map(
-      async ([cellOwner, player]) => {
-        const { onGameEnd: playerOnGameEnd } = player;
-        if (playerOnGameEnd) {
-          await playerOnGameEnd(cellOwner, endState);
-        }
-      },
-    ),
+    joinedPlayers.map(async ([cellOwner, player]) => {
+      const { onGameEnd: playerOnGameEnd } = player;
+      if (playerOnGameEnd) {
+        await playerOnGameEnd(cellOwner, endState);
+      }
+    }),
   );
 }
 

@@ -1,7 +1,5 @@
 import { Mat } from 'recurrent-js';
-import {
-  DQNEnv, DQNOpt, DQNSolver, Solver,
-} from 'reinforce-js';
+import { DQNEnv, DQNOpt, DQNSolver, Solver } from 'reinforce-js';
 
 import { loadAgent, persistAgent, BrainStatistics } from '../ai-agent/StorableAgent';
 import { takeAny, Decision } from '../ai-agent/Decision';
@@ -43,7 +41,7 @@ function patchSolver(getSolver: () => any): void {
     if (Math.random() < solverAsAny.currentEpsilon()) {
       const freeStates = Array.from(stateVector.w)
         .map((v, i) => (v === 0 ? i : -1))
-        .filter((v) => v >= 0);
+        .filter(v => v >= 0);
       return takeAny(freeStates)[0];
     }
 
@@ -124,9 +122,8 @@ export const getDQNReinforcedAgent: AIAgentCreator<ReinforcedAgent> = async (
   const { height, width } = boardDimensions;
   const cellCount = width * height;
   const id = `dqn-${cellOwner}-${width}x${height}-${cellCount}-${cellCount}`;
-  const agentData = await loadBrainAndStatistics(
-    id,
-    () => createSolver(width, height, cellCount, cellCount),
+  const agentData = await loadBrainAndStatistics(id, () =>
+    createSolver(width, height, cellCount, cellCount),
   );
 
   async function persist(): Promise<void> {

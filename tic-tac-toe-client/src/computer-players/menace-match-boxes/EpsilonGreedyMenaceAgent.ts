@@ -55,7 +55,7 @@ function selectEpsilonGreedyAction(
 
   const freeCellsAt = stateSpace.boardAsCellOwners
     .map((v, i) => (v === CellOwner.None ? i : -1))
-    .filter((v) => v >= 0);
+    .filter(v => v >= 0);
   return takeAny(freeCellsAt)[0];
 }
 
@@ -66,29 +66,22 @@ function populateMemory(
   const { boardAsString } = stateSpace;
   const menaceMemory = getMenaceMemory();
   if (!(boardAsString in menaceMemory.matchboxes)) {
-    menaceMemory.matchboxes[boardAsString] = multiplyBeads(
-      findFreeBeads(stateSpace),
-    );
+    menaceMemory.matchboxes[boardAsString] = multiplyBeads(findFreeBeads(stateSpace));
   }
 }
 
 function learn(learnPolicy: LearnPolicy, getMenaceMemory: () => StorableMenaceAgent): void {
   const menaceMemory = getMenaceMemory();
-  menaceMemory.playedMoves.forEach(
-    (playedMove) => {
-      const { boardAsString, bead } = playedMove;
-      const beads = menaceMemory.matchboxes[boardAsString];
-      const learnedBeads = learnPolicy(beads, bead);
-      menaceMemory.matchboxes[boardAsString] = learnedBeads;
-    },
-  );
+  menaceMemory.playedMoves.forEach(playedMove => {
+    const { boardAsString, bead } = playedMove;
+    const beads = menaceMemory.matchboxes[boardAsString];
+    const learnedBeads = learnPolicy(beads, bead);
+    menaceMemory.matchboxes[boardAsString] = learnedBeads;
+  });
   menaceMemory.playedMoves = [];
 }
 
-export const getMenaceAgent: AIAgentCreator<MenaceAgent> = async (
-  cellOwner,
-  boardDimensions,
-) => {
+export const getMenaceAgent: AIAgentCreator<MenaceAgent> = async (cellOwner, boardDimensions) => {
   const id = `menace-${cellOwner}-${boardDimensions.width}x${boardDimensions.height}`;
   const menaceMemory = await loadMenaceAgent(id);
 

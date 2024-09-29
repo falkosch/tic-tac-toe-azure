@@ -13,7 +13,9 @@ export function endGame(
   prevState: Readonly<GameStateType>,
   payload: Readonly<EndGameActionPayload>,
 ): GameStateType {
-  const { endState: { visitee, gameView } } = payload;
+  const {
+    endState: { visitee, gameView },
+  } = payload;
 
   let nextGameState = prevState;
 
@@ -28,10 +30,7 @@ export function endGame(
     },
     oneWinnerEndState(winner) {
       nextGameState = setWinner(nextGameState, { value: winner });
-      nextGameState = addWin(
-        nextGameState,
-        { player: winner },
-      );
+      nextGameState = addWin(nextGameState, { player: winner });
     },
   });
 
