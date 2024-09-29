@@ -14,7 +14,7 @@ The Tic Tac Toe game is an example application. It provides different player/opp
   
   * DQN and Menace players must be trained first. You can let them play against each other. Just select DQN or Menace for both players.
   
-  * The reactive agent must not be trained at all as it is stateless anyway. Though, you can still have it as an opponent for the DQN or the Menace agent to train them. However, you need a access to the internet and cannot play offline against the Azure Player.
+  * The reactive agent must not be trained at all as it is stateless anyway. Though, you can still have it as an opponent for the DQN or the Menace agent to train them. However, you need access to the internet and cannot play offline against the Azure Player.
 
   * Use the "Auto new game" option and start a new game to speed up training. Turn off the "Auto new game" option to stop training.
 
