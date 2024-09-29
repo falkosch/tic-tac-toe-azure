@@ -12,7 +12,7 @@ export class AzureFunctionDefender implements Defender {
     return Promise.reject(new Error('not implemented'));
   }
 
-  defend(__gameAction: GameAction): Promise<GameReaction> {
+  defend(__gameAction: Readonly<GameAction>): Promise<GameReaction> {
     return Promise.reject(new Error('not implemented'));
   }
 }

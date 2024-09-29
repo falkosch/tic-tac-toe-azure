@@ -5,13 +5,12 @@ import React from 'react';
 
 import { CellView } from '../cell-view/CellView';
 import { Board } from '../../meta-model/Board';
-import { CellOwner } from '../../meta-model/CellOwner';
 
 import './BoardView.css';
 
 export const BoardView: React.FC<{
-  board: Board;
-  onCellClick: (event: React.MouseEvent, cellAt: number) => void;
+  board: Readonly<Board>;
+  onCellClick: (event: Readonly<React.MouseEvent>, cellAt: number) => void;
 }> = ({
   board,
   onCellClick,
@@ -21,7 +20,7 @@ export const BoardView: React.FC<{
       fpFlow(
         fpEntries,
         fpMap(
-          ([key, cellOwner]: [string, CellOwner]) => {
+          ([key, cellOwner]) => {
             const cellAt = Number(key);
             return (
               <CellView

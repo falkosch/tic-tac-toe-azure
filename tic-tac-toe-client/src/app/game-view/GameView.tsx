@@ -4,8 +4,8 @@ import { BoardView } from '../board-view/BoardView';
 import { Game } from '../../meta-model/Game';
 
 export const GameView: React.FC<{
-  game: Game;
-  onCellClick: (event: React.MouseEvent, cellAt: number) => void;
+  game: Readonly<Game>;
+  onCellClick: (event: Readonly<React.MouseEvent>, cellAt: number) => void;
 }> = ({
   game,
   onCellClick,

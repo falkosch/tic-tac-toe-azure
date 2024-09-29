@@ -8,7 +8,7 @@ import Form from 'react-bootstrap/Form';
 import Navbar from 'react-bootstrap/Navbar';
 import React, { useState } from 'react';
 
-import { commenceAttack } from '../mechanics/Actions';
+import { prepareAttack } from '../mechanics/Actions';
 import { ClientDefender } from '../defender/ClientDefender';
 import { Defender } from '../meta-model/Defender';
 import { Game } from '../meta-model/Game';
@@ -20,7 +20,7 @@ import logo from './logo.svg';
 import { evaluateReaction } from '../mechanics/Reactions';
 
 const mockDefenderName = 'Mock defender';
-const defenders: Record<string, () => Defender> = {
+const defenders: Readonly<Record<string, () => Defender>> = {
   [mockDefenderName]: () => new MockDefender(),
   'Client-side defender': () => new ClientDefender(),
   'Azure Function defender': () => new MockDefender(),
@@ -44,7 +44,7 @@ export const App: React.FC = () => {
 
   async function commenceAction(cellAt: number): Promise<void> {
     if (!game) return;
-    const action = commenceAttack(game.board, cellAt);
+    const action = prepareAttack(game.board, cellAt);
     const reaction = await defender.defend(action);
     const alteredGame = evaluateReaction(game, action, reaction);
     setGame(alteredGame);
@@ -67,11 +67,11 @@ export const App: React.FC = () => {
                   fpFlow(
                     fpEntries,
                     fpMap(
-                      ([_defenderName]: [string]) => (
+                      ([_defenderName]) => (
                         <Dropdown.Item
                           active={_defenderName === defenderName}
                           key={_defenderName}
-                          onClick={() => { changeDefender(_defenderName); }}
+                          onClick={() => changeDefender(_defenderName)}
                         >
                           {_defenderName}
                         </Dropdown.Item>
