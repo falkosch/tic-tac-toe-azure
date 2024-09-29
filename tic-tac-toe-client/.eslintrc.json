@@ -1,13 +1,13 @@
 {
   "root": true,
   "extends": [
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended",
     "plugin:compat/recommended",
     "airbnb",
     "airbnb/hooks",
     "plugin:jest/recommended",
-    "plugin:jest/style"
+    "plugin:jest/style",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
   ],
   "env": {
     "commonjs": true,
