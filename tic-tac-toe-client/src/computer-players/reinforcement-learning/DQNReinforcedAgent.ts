@@ -54,7 +54,7 @@ export class DQNReinforcedAgent implements ReinforcedAgent {
       const agentData = loadDQNAgent(this.id);
       if (agentData) {
         this.solver.fromJSON(agentData.network);
-        (this.solver as any).learnTick = agentData.learnTick;
+        (this.solver as any).learnTick = agentData.learnTick - (agentData.learnTick % agentOptions.get('keepExperienceInterval'));
       }
 
       this.persist();
