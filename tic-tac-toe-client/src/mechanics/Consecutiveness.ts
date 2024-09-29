@@ -1,5 +1,3 @@
-import fpRange from 'lodash/fp/range';
-
 import { Board } from '../meta-model/Board';
 import { CellOwner } from '../meta-model/CellOwner';
 import { Consecutiveness } from '../meta-model/Game';
@@ -21,11 +19,16 @@ function findConsecutivenessOnLine(
 ): Consecutiveness[] {
   const { dimensions } = board;
   const consecutiveness: Consecutiveness[] = [];
+
+  // first cell is our pivot cell for the first span
   let cellsAt: number[] = [cellAtCoordinate(iteratorToCoordinates(0), dimensions)];
   let ownerOfSpan: CellOwner = board.cells[cellsAt[0]];
 
-  fpRange(1, lineDimensions.i)
-    .forEach((i) => {
+  Array.from({ length: lineDimensions.i })
+    .forEach((__, i) => {
+      // skip pivot cell
+      if (i === 0) return;
+
       const iAsCellAt = cellAtCoordinate(iteratorToCoordinates(i), dimensions);
       const ownerAtCell = board.cells[iAsCellAt];
 
@@ -57,8 +60,8 @@ function findConsecutivenessOnBoard(
 ): Consecutiveness[] {
   let consecutiveness: Consecutiveness[] = [];
 
-  fpRange(0, lineDimensions.j)
-    .forEach((j) => {
+  Array.from({ length: lineDimensions.j })
+    .forEach((__, j) => {
       const iteratorToCoordinates: IteratorToCoordinates = (i) => coordinatesFromIterators(j, i);
 
       consecutiveness = [
