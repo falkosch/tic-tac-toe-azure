@@ -38,7 +38,7 @@ function countFreeCellsInRegion(
   let freeCells = 0;
 
   forEachLine(lineDimensions, iteratorsToCoordinates, (lineDimension, iteratorToCoordinates) =>
-    forEachCellInLine(board.dimensions, lineDimension, iteratorToCoordinates, cellAt => {
+    forEachCellInLine(board.dimensions, lineDimension, iteratorToCoordinates, (cellAt) => {
       if (board.cells[cellAt] === CellOwner.None) {
         freeCells += 1;
       }
@@ -63,7 +63,7 @@ function determineFreeCellsBalanceByDirection(
     board,
     {
       j: halfLengths,
-      i: atJ => lineDimensions.i(atJ),
+      i: (atJ) => lineDimensions.i(atJ),
     },
     (j, i) => iteratorsToCoordinates(j, i),
   );
@@ -72,7 +72,7 @@ function determineFreeCellsBalanceByDirection(
     board,
     {
       j: halfLengths,
-      i: atJ => lineDimensions.i(atJ + distinctMiddleOffset),
+      i: (atJ) => lineDimensions.i(atJ + distinctMiddleOffset),
     },
     (j, i) => iteratorsToCoordinates(j + distinctMiddleOffset, i),
   );
@@ -85,7 +85,7 @@ export function determineBoardNormalization(board: Readonly<Board>): BoardNormal
     board,
     {
       j: board.dimensions.width,
-      i: __ => board.dimensions.height,
+      i: (__) => board.dimensions.height,
     },
     (j, i) => ({ x: j, y: i }),
   );
@@ -94,7 +94,7 @@ export function determineBoardNormalization(board: Readonly<Board>): BoardNormal
     board,
     {
       j: board.dimensions.height,
-      i: __ => board.dimensions.width,
+      i: (__) => board.dimensions.width,
     },
     (j, i) => ({ x: i, y: j }),
   );
@@ -125,7 +125,7 @@ export function transformBoardCells(
   forEachLine(
     {
       j: dimensions.height,
-      i: __ => dimensions.width,
+      i: (__) => dimensions.width,
     },
     (j, i) => ({ x: i, y: j }),
     (lineDimension, iteratorToCoordinates) =>

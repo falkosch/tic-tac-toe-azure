@@ -16,3 +16,4 @@ Dockerfile*
 *.webmanifest
 *.xml
 *.yml
+*.md

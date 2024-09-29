@@ -55,7 +55,7 @@ function selectEpsilonGreedyAction(
 
   const freeCellsAt = stateSpace.boardAsCellOwners
     .map((v, i) => (v === CellOwner.None ? i : -1))
-    .filter(v => v >= 0);
+    .filter((v) => v >= 0);
   return takeAny(freeCellsAt)[0];
 }
 
@@ -72,7 +72,7 @@ function populateMemory(
 
 function learn(learnPolicy: LearnPolicy, getMenaceMemory: () => StorableMenaceAgent): void {
   const menaceMemory = getMenaceMemory();
-  menaceMemory.playedMoves.forEach(playedMove => {
+  menaceMemory.playedMoves.forEach((playedMove) => {
     const { boardAsString, bead } = playedMove;
     const beads = menaceMemory.matchboxes[boardAsString];
     const learnedBeads = learnPolicy(beads, bead);

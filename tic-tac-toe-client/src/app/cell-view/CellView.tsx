@@ -41,7 +41,7 @@ export const CellView: FC<{
   const consecutivenessDirectionImages = coveredConsecutivenessDirections(
     cellAt,
     consecutiveness,
-  ).map(d => mapConsecutivenessDirectionToImage(d));
+  ).map((d) => mapConsecutivenessDirectionToImage(d));
 
   const edgeClassifiers = cellEdgeClassifiers(
     cellCoordinates(cellAt, boardDimensions),

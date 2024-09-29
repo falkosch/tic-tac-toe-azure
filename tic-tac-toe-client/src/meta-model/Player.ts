@@ -4,10 +4,6 @@ import { GameView } from './GameView';
 import { PlayerTurn } from './PlayerTurn';
 import { SpecificCellOwner } from './CellOwner';
 
-export interface PlayerCreator {
-  (): Promise<Player>;
-}
-
 /**
  * Enables players to interact with the game.
  */
@@ -22,4 +18,8 @@ export interface Player {
     cellOwner: Readonly<SpecificCellOwner>,
     endState: Readonly<GameEndState>,
   ): Promise<void>;
+}
+
+export interface PlayerCreator {
+  (): Promise<Player>;
 }

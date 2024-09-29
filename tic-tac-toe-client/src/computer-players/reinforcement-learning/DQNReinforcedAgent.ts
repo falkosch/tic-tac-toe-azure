@@ -41,7 +41,7 @@ function patchSolver(getSolver: () => any): void {
     if (Math.random() < solverAsAny.currentEpsilon()) {
       const freeStates = Array.from(stateVector.w)
         .map((v, i) => (v === 0 ? i : -1))
-        .filter(v => v >= 0);
+        .filter((v) => v >= 0);
       return takeAny(freeStates)[0];
     }
 

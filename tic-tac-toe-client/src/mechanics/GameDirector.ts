@@ -192,7 +192,7 @@ async function runTurns(
       // eslint-disable-next-line no-await-in-loop
       action = await playerWithTurn.takeTurn({ cellOwner, gameView, actionHistory });
     } catch (error) {
-      return makeErroneousEndState(gameView, error);
+      return makeErroneousEndState(gameView, new Error('takeTurn failed', { cause: error }));
     }
 
     actionHistory = { action, previous: actionHistory };

@@ -25,7 +25,7 @@ export function pointsLeader(points: Readonly<Points>): SpecificCellOwner | unde
   let winnerPoints = 0;
   let winner;
 
-  Object.keys(points).forEach(cellOwnerKey => {
+  Object.keys(points).forEach((cellOwnerKey) => {
     const cellOwner = cellOwnerKey as SpecificCellOwner;
     const value = points[cellOwner];
     if (winnerPoints < value) {

@@ -58,7 +58,7 @@ export function findConsecutiveness(board: Readonly<Board>, minimumSpan = 3): Co
   const maxDiagonalLength = Math.min(board.dimensions.height, board.dimensions.width);
 
   const consecutiveness: Consecutiveness[] = [];
-  const consecutivenessConsumer: ConsecutivenessConsumer = c => consecutiveness.push(c);
+  const consecutivenessConsumer: ConsecutivenessConsumer = (c) => consecutiveness.push(c);
 
   // find consecutiveness in each horizontal span
   forEachLine(
@@ -185,7 +185,7 @@ export function coveredConsecutivenessDirections(
 ): ConsecutivenessDirection[] {
   const directions: ConsecutivenessDirection[] = [];
 
-  consecutiveness.forEach(c => {
+  consecutiveness.forEach((c) => {
     if (c.cellsAt.includes(cellAt) && !directions.includes(c.direction)) {
       directions.push(c.direction);
     }

@@ -30,7 +30,7 @@ export function buildBoardModifier(
   newOwner: Readonly<CellOwner>,
 ): BoardModifier {
   const cellModifier = buildCellModifier(attack, newOwner);
-  return board => ({
+  return (board) => ({
     cells: board.cells.map(cellModifier),
     dimensions: board.dimensions,
   });

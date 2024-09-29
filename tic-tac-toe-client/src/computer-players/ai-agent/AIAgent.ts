@@ -11,9 +11,10 @@ import { Decision } from './Decision';
 import { GameEndState } from '../../meta-model/GameEndState';
 
 export interface AIAgentCreator<AIAgentType> {
-  (cellOwner: Readonly<SpecificCellOwner>, boardDimensions: Readonly<BoardDimensions>): Promise<
-    AIAgentType
-  >;
+  (
+    cellOwner: Readonly<SpecificCellOwner>,
+    boardDimensions: Readonly<BoardDimensions>,
+  ): Promise<AIAgentType>;
 }
 
 export interface NormalizedStateSpace {
@@ -44,7 +45,7 @@ function transformDecision<StateSpaceType extends NormalizedStateSpace>(
   stateSpace: Readonly<StateSpaceType>,
 ): Decision {
   const cellsAtToAttack = decisionForNormalizedStateSpace.cellsAtToAttack.map(
-    cellAtForNormalizedStateSpace =>
+    (cellAtForNormalizedStateSpace) =>
       cellAtCoordinate(
         transformCoordinates(
           cellCoordinates(cellAtForNormalizedStateSpace, stateSpace.dimensions),

@@ -61,7 +61,7 @@ export function forEachLine(
 ): void {
   for (let j = 0; j < lineDimensions.j; j += 1) {
     const lineDimension = lineDimensions.i(j);
-    const iteratorToCoordinates: LineIteratorToCoordinates = i => iteratorsToCoordinates(j, i);
+    const iteratorToCoordinates: LineIteratorToCoordinates = (i) => iteratorsToCoordinates(j, i);
     forEachLineCallback(lineDimension, iteratorToCoordinates);
   }
 }

@@ -3,17 +3,13 @@
   "version": "2.0.0",
   "private": true,
   "scripts": {
-    "analyze": "sonar-scanner",
-    "build": "react-scripts build",
-    "clean": "rimraf ./.scannerwork ./reports ./coverage",
-    "eject": "react-scripts eject",
-    "lint": "npm run lint:eslint && npm run lint:tsc && npm run lint:stylelint",
-    "lint:eslint": "eslint \"**/*\" --fix",
-    "lint:tsc": "tsc --noEmit",
-    "lint:stylelint": "stylelint . --fix",
     "start": "react-scripts start",
+    "build": "react-scripts build",
     "test": "react-scripts test",
-    "test:ci": "react-scripts test --watchAll=false --coverage --reporters=default --reporters=jest-junit"
+    "eject": "react-scripts eject",
+    "lint:eslint": "eslint \"**/*\"",
+    "lint:tsc": "tsc --noEmit",
+    "lint:stylelint": "stylelint ."
   },
   "husky": {
     "hooks": {
@@ -40,14 +36,18 @@
       "scss/at-rule-no-unknown": true
     }
   },
-  "browserslist": [
-    "> 1%",
-    "last 1 versions",
-    "not dead",
-    "not IE 9-11",
-    "not ie_mob 11",
-    "not OperaMini all"
-  ],
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
   "jest": {
     "coverageReporters": [
       "text",
@@ -63,19 +63,22 @@
     "uniqueOutputName": "true"
   },
   "dependencies": {
+    "@testing-library/react": "13.4.0",
     "axios": "1.7.7",
-    "bootstrap": "5.3.3",
-    "jquery": "3.7.1",
     "react": "18.3.1",
     "react-app-polyfill": "3.0.0",
     "react-bootstrap": "2.10.5",
     "react-dom": "18.3.1",
     "recurrent-js": "1.7.4",
-    "reinforce-js": "1.5.1"
+    "reinforce-js": "1.5.1",
+    "web-vitals": "2.1.4"
   },
   "devDependencies": {
-    "@types/jest": "29.5.13",
-    "@types/node": "22.7.4",
+    "@babel/plugin-proposal-private-property-in-object": "7.21.11",
+    "@testing-library/jest-dom": "5.17.0",
+    "@testing-library/user-event": "13.5.0",
+    "@types/jest": "27.5.2",
+    "@types/node": "16.18.112",
     "@types/react": "18.3.10",
     "@types/react-dom": "18.3.0",
     "@typescript-eslint/eslint-plugin": "8.7.0",
@@ -94,14 +97,8 @@
     "eslint-plugin-prettier": "5.2.1",
     "eslint-plugin-react": "7.37.0",
     "eslint-plugin-react-hooks": "4.6.2",
-    "husky": "9.1.6",
-    "jest-junit": "16.0.0",
-    "lint-staged": "15.2.10",
-    "sass": "1.79.4",
     "prettier": "3.3.3",
     "react-scripts": "5.0.1",
-    "rimraf": "6.0.1",
-    "sonarqube-scanner": "4.2.3",
     "stylelint": "16.9.0",
     "stylelint-config-standard": "36.0.1",
     "stylelint-no-unsupported-browser-features": "8.0.1",

@@ -92,17 +92,17 @@ export const App: FC<{}> = () => {
 
     const newRunningGame = runNewGame(
       joiningPlayers,
-      async newGameView =>
+      async (newGameView) =>
         gameStateDispatch({
           type: GameStateActionType.StartNewGame,
           payload: { gameView: newGameView },
         }),
-      async newGameView =>
+      async (newGameView) =>
         gameStateDispatch({
           type: GameStateActionType.UpdateGame,
           payload: { gameView: newGameView },
         }),
-      async endState =>
+      async (endState) =>
         gameStateDispatch({
           type: GameStateActionType.EndGame,
           payload: { endState },
@@ -163,7 +163,7 @@ export const App: FC<{}> = () => {
             {`Player ${cellOwner}`}
           </Dropdown.Toggle>
           <Dropdown.Menu alignRight popperConfig={{ placement: 'auto' }}>
-            {playerKeys.map(playerKey => {
+            {playerKeys.map((playerKey) => {
               const active = playerKey === configuration.playerTypes[cellOwner];
               const itemId = `d${cellOwner}${playerKey}`;
               const onClick: MouseEventHandler<DropdownItemProps> = () => {
@@ -196,7 +196,7 @@ export const App: FC<{}> = () => {
                 New game
               </Button>
             </Col>
-            {Object.keys(configuration.playerTypes).map(cellOwnerKey =>
+            {Object.keys(configuration.playerTypes).map((cellOwnerKey) =>
               createDropdownViewForCellOwner(cellOwnerKey as SpecificCellOwner),
             )}
             <Col xs="12" md="auto">

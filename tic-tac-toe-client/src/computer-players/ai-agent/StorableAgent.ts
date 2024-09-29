@@ -29,7 +29,7 @@ const indexedDBConfiguration = {
   version: 1,
 };
 
-const persisterInitialization = new Promise<Persister>(resolve => {
+const persisterInitialization = new Promise<Persister>((resolve) => {
   initializeDatabase((database, error) => {
     if (database === undefined || error) {
       if (localStorageIsAccessible()) {
@@ -62,7 +62,8 @@ function createTransaction(
 
   if (transactionReject) {
     dbTransaction.onerror = () => {
-      transactionReject(new Error(dbTransaction.error.message));
+      const { error } = dbTransaction;
+      transactionReject(new Error('transaction failed', { cause: error }));
     };
   }
 
@@ -116,7 +117,7 @@ function initializeDatabase(callback: DatabaseInitializationCallback): void {
     callback(undefined, new Error(dbOpenRequest.error?.message));
   };
 
-  dbOpenRequest.onupgradeneeded = event => {
+  dbOpenRequest.onupgradeneeded = (event) => {
     if (event.oldVersion < 1) {
       dbOpenRequest.result.createObjectStore(indexedDBConfiguration.objectStore);
     }

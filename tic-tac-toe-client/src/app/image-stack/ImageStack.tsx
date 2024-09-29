@@ -7,7 +7,7 @@ export const ImageStack: FC<{
 }> = ({ imageSources }) => (
   <div className={`${styles.top} position-absolute h-100 w-100`}>
     {imageSources
-      .filter(v => !!v)
+      .filter((v) => !!v)
       .map((imageSource, index) => {
         const strikeKey = `d${index}`;
         return (

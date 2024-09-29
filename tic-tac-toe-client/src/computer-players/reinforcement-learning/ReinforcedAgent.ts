@@ -22,7 +22,7 @@ function buildReinforcedStateSpace(
   const normalizedStateSpace = buildNormalizedStateSpace(board);
   return {
     ...normalizedStateSpace,
-    states: transformBoardCells(board, normalizedStateSpace.normalization).map(cellOwner => {
+    states: transformBoardCells(board, normalizedStateSpace.normalization).map((cellOwner) => {
       if (cellOwner === CellOwner.None) {
         return 0.0;
       }

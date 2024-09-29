@@ -1,11 +1,11 @@
 import Navbar from 'react-bootstrap/Navbar';
-import React, { FC } from 'react';
+import React, { FC, PropsWithChildren } from 'react';
 
 import logo from './logo.svg';
 
 import styles from './Header.module.scss';
 
-export const Header: FC<{}> = ({ children }) => (
+export const Header: FC<PropsWithChildren<{}>> = ({ children }) => (
   <div className={styles.header}>
     <Navbar fixed="top" expand="md" bg="light" variant="light">
       <Navbar.Brand href="https://github.com/falkosch/tic-tac-toe-azure">
