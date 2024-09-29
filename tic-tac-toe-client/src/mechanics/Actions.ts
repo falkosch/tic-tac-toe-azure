@@ -2,20 +2,25 @@ import { AttackAction, GameAction } from '../meta-model/GameAction';
 import { Board } from '../meta-model/Board';
 import { CellOwner } from '../meta-model/CellOwner';
 
-export function prepareAttack(board: Readonly<Board>, cellAt: number): GameAction {
-  return {
-    board,
-    attack: {
-      affectedCellsAt: [cellAt],
-      newOwner: CellOwner.X,
-    },
-  };
-}
-
+export type BoardModifier = (board: Readonly<Board>) => Board;
 export type CellModifier = (
   currentCellOwner: Readonly<CellOwner>,
   currentCellAt: number
 ) => CellOwner;
+
+export function prepareAttack(
+  board: Readonly<Board>,
+  cellAt: number,
+  newOwner: Readonly<CellOwner>,
+): GameAction {
+  return {
+    board,
+    attack: {
+      affectedCellsAt: [cellAt],
+      newOwner,
+    },
+  };
+}
 
 export function buildCellModifier(attack: Readonly<AttackAction>): CellModifier {
   return (currentCellOwner, currentCellAt) => {
@@ -31,11 +36,9 @@ export function buildCellModifier(attack: Readonly<AttackAction>): CellModifier 
   };
 }
 
-export type AttackModifier = (board: Readonly<Board>) => Board;
-
-export function buildAttackModifier(
+export function buildBoardModifier(
   attack: Readonly<AttackAction>,
-): AttackModifier {
+): BoardModifier {
   const cellModifier = buildCellModifier(attack);
 
   return (board) => ({
