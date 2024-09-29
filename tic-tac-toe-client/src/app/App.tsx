@@ -196,7 +196,7 @@ export const App: React.FC<{}> = () => {
 
     return (
       <div className="app-game-view-winner">
-        { `Winner is ${gameState.winner} with ${gameState.wins[gameState.winner]} wins so far.` }
+        { `Winner is ${gameState.winner} and has ${gameState.wins[gameState.winner]} wins so far.` }
       </div>
     );
   }
