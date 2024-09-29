@@ -7,19 +7,20 @@ import { findConsecutiveness } from './Consecutiveness';
 export function prepareReaction(gameAction: Readonly<GameAction>): GameReaction {
   let gameReaction: Readonly<GameReaction> = {
     board: gameAction.board,
-    consecutiveness: findConsecutiveness(gameAction.board),
+    consecutiveness: [],
   };
 
   if (gameAction.attack) {
-    const boardAfterAttack = buildBoardModifier(gameAction.attack)(gameReaction.board);
     gameReaction = {
       ...gameReaction,
-      board: boardAfterAttack,
-      consecutiveness: findConsecutiveness(boardAfterAttack),
+      board: buildBoardModifier(gameAction.attack)(gameReaction.board),
     };
   }
 
-  return gameReaction;
+  return {
+    ...gameReaction,
+    consecutiveness: findConsecutiveness(gameReaction.board),
+  };
 }
 
 export function validate(
