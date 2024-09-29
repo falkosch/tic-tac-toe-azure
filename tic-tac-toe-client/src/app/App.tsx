@@ -144,6 +144,16 @@ export const App: React.FC<{}> = () => {
     }
   }
 
+  function selectHumanPlayerStatusView(): JSX.Element {
+    if (gameState.actionToken) {
+      return (
+        <div className="app-game-view-human-player-status">It is your turn! Select a free cell.</div>
+      );
+    }
+
+    return <></>;
+  }
+
   function selectGameView(): JSX.Element {
     if (gameState.gameView) {
       return (
@@ -171,7 +181,7 @@ export const App: React.FC<{}> = () => {
     }
 
     if (gameState.winner instanceof Error) {
-      return <div className="app-game-view-error">{ `Something unexpected happened: ${gameState.winner}` }</div>;
+      return <div className="app-game-view-error">{ `Something unexpected happened: ${gameState.winner}.` }</div>;
     }
 
     if (gameState.winner === CellOwner.None) {
@@ -180,7 +190,7 @@ export const App: React.FC<{}> = () => {
 
     return (
       <div className="app-game-view-winner">
-        { `Winner is ${gameState.winner} with ${gameState.wins[gameState.winner]} wins` }
+        { `Winner is ${gameState.winner} with ${gameState.wins[gameState.winner]} wins so far.` }
       </div>
     );
   }
@@ -235,6 +245,7 @@ export const App: React.FC<{}> = () => {
       </AppNavbar>
       <div className="app-game-view d-flex flex-column justify-content-center align-items-center">
         { selectGameView() }
+        { selectHumanPlayerStatusView() }
         { selectWinnerView() }
       </div>
     </div>

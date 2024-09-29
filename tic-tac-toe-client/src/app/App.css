@@ -2,15 +2,22 @@
   flex: 1 0 auto;
 }
 
-.app-game-view-winner {
-  color: darkseagreen;
+.app-game-view-human-player-status,
+.app-game-view-winner,
+.app-game-view-error {
   font-size: 2rem;
   line-height: 3rem;
+  max-width: 70vw;
+}
+
+.app-game-view-human-player-status {
+  color: darkgrey;
+}
+
+.app-game-view-winner {
+  color: darkseagreen;
 }
 
 .app-game-view-error {
   color: darkred;
-  font-size: 2rem;
-  line-height: 3rem;
-  max-width: 70vw;
 }
