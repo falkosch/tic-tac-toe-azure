@@ -58,37 +58,30 @@ export const getMenaceAgent: AIAgentCreator<MenaceAgent> = async (
       // but do not poison the long term memory with never completed games
       menaceMemory.matchboxes = cloneMatchboxes(menaceMemory.longTermMatchboxes);
       menaceMemory.playedMoves = [];
-      await persistAgent<StorableMenaceAgent>(id, menaceObjectVersion, menaceMemory);
     },
 
     async decide(stateSpace): Promise<Decision> {
       const { boardAsString } = stateSpace;
-
-      let memoryChanged = false;
 
       // Add first beads for still unknown game states
       if (!(boardAsString in menaceMemory.matchboxes)) {
         menaceMemory.matchboxes[boardAsString] = multiplyBeads(
           findFreeBeads(stateSpace),
         );
-        memoryChanged = true;
       }
-
-      const cellsAtToAttack: number[] = [];
 
       const beads = menaceMemory.matchboxes[boardAsString];
-      if (beads.length > 0) {
-        const bead = randomBead(beads)[0];
-        menaceMemory.playedMoves.push({ boardAsString, bead });
-        memoryChanged = true;
-
-        cellsAtToAttack.push(bead);
+      if (beads.length === 0) {
+        return {
+          cellsAtToAttack: [],
+        };
       }
 
-      if (memoryChanged) {
-        await persistAgent<StorableMenaceAgent>(id, menaceObjectVersion, menaceMemory);
-      }
-      return { cellsAtToAttack };
+      const bead = randomBead(beads)[0];
+      menaceMemory.playedMoves.push({ boardAsString, bead });
+      return {
+        cellsAtToAttack: [bead],
+      };
     },
 
     async rememberDraw(): Promise<void> {
