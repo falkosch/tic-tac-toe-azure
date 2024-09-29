@@ -7,14 +7,64 @@
       "path": "TicTacToeGame"
     },
     {
-	  "name": "tic-tac-toe-azure",
+      "name": "tic-tac-toe-azure",
       "path": "."
     }
   ],
   "settings": {
+    "azureFunctions.deploySubpath": "TicTacToeGame/bin/Release/netcoreapp3.0/publish",
+    "azureFunctions.projectLanguage": "C#",
+    "azureFunctions.projectRuntime": "~2",
+    "azureFunctions.preDeployTask": "publish",
     "jest.disabledWorkspaceFolders": [
       "TicTacToeGame",
       "tic-tac-toe-azure"
+    ],
+    "[javascript]": {
+      "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
+    "[javascriptreact]": {
+      "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
+    "[typescript]": {
+      "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
+    "[typescriptreact]": {
+      "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
+    "eslint.alwaysShowStatus": true,
+    "eslint.autoFixOnSave": true,
+    "eslint.validate": [
+      {
+        "language": "markdown",
+        "autoFix": true
+      },
+      {
+        "language": "html",
+        "autoFix": true
+      },
+      {
+        "language": "javascript",
+        "autoFix": true
+      },
+      {
+        "language": "javascriptreact",
+        "autoFix": true
+      },
+      {
+        "language": "typescript",
+        "autoFix": true
+      },
+      {
+        "language": "typescriptreact",
+        "autoFix": true
+      }
+    ],
+    "eslint.workingDirectories": [
+      {
+        "directory": "./tic-tac-toe-client",
+        "changeProcessCWD": true
+      }
     ]
   }
 }
