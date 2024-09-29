@@ -21,8 +21,8 @@ export class DQNReinforcedAgent implements ReinforcedAgent {
     const actionCount = cellCount;
     const stateCount = cellCount;
     this.id = `dqn-${this.cellOwner}-${width}x${height}-${stateCount}-${actionCount}`;
-
     this.solver = agents[this.id];
+
     if (!this.solver) {
       const agentEnvironment = new DQNEnv(width, height, stateCount, actionCount);
       const agentOptions = new DQNOpt();
@@ -30,13 +30,13 @@ export class DQNReinforcedAgent implements ReinforcedAgent {
       agentOptions.setEpsilonDecay(1.0, 0.1, 1000);
       this.solver = new DQNSolver(agentEnvironment, agentOptions);
       agents[this.id] = this.solver;
-    }
 
-    const storedDQN = localStorage.getItem(this.id);
-    if (storedDQN === undefined || storedDQN === null) {
-      localStorage.setItem(this.id, JSON.stringify(this.solver.toJSON()));
-    } else {
-      this.solver.fromJSON(JSON.parse(storedDQN));
+      const storedDQN = localStorage.getItem(this.id);
+      if (storedDQN === undefined || storedDQN === null) {
+        localStorage.setItem(this.id, JSON.stringify(this.solver.toJSON()));
+      } else {
+        this.solver.fromJSON(JSON.parse(storedDQN));
+      }
     }
   }
 
