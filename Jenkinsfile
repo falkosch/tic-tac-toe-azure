@@ -1,19 +1,24 @@
 pipeline {
-  agent {
-    docker {
-      image 'atlassianlabs:docker-node-jdk-chrome-firefox:2019-12-30'
-    }
-  }
+  agent any
   options {
-    disableConcurrentBuilds()
     skipStagesAfterUnstable()
     timeout(time: 1, unit: 'HOURS')
   }
   triggers {
     pollSCM('H */15 * * *')
   }
+  environment {
+    CI = true
+  }
   stages {
     stage('build client') {
+      agent {
+        dockerfile {
+          filename './Dockerfile.build'
+          dir './tic-tac-toe-client'
+          label 'docker && linux'
+        }
+      }
       stages {
         stage('build') {
           steps {
