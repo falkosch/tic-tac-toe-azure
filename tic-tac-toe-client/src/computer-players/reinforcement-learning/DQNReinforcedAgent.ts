@@ -3,16 +3,12 @@ import {
 } from 'reinforce-js';
 
 import { BoardDimensions } from '../../meta-model/Board';
+import { Brains } from './DQNPretrainedBrain';
 import { Decision, ReinforcedAgent, StateSpace } from './ReinforcedAgent';
 import { SpecificCellOwner } from '../../meta-model/CellOwner';
+import { StorableAgent } from './StorableAgent';
 
 const agents: Record<string, Solver> = {};
-
-interface StorableAgent {
-  version: number;
-  learnTick: number;
-  network: any;
-}
 
 /**
  * Encapsulates and persists the state of a DQN solver (the "brain") and provides the interface
@@ -52,6 +48,13 @@ export class DQNReinforcedAgent implements ReinforcedAgent {
           }
         } catch (e) {
           console.error('could not load agent data for ', this.id, ' due to ', e);
+        }
+      } else if (this.id in Brains) {
+        const brain: StorableAgent = Brains[this.id];
+        if (brain && brain.version === DQNReinforcedAgent.ObjectVersion) {
+          this.solver.fromJSON(brain.network);
+          (this.solver as any).learnTick = brain.learnTick;
+          (this.solver as DQNSolver).setTrainingModeTo(false);
         }
       }
       this.persist();
