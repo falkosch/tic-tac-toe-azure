@@ -9,6 +9,10 @@ import { SpecificCellOwner } from './CellOwner';
  */
 export interface Player {
   takeTurn(playerTurn: Readonly<PlayerTurn>): Promise<AttackGameAction>;
+  onGameStart?(
+    cellOwner: Readonly<SpecificCellOwner>,
+    gameView: Readonly<GameView>
+  ): void;
   onGameViewUpdate?(cellOwner: Readonly<SpecificCellOwner>, gameView: Readonly<GameView>): void;
   onGameEnd?(
     cellOwner: Readonly<SpecificCellOwner>,

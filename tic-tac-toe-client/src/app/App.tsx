@@ -61,12 +61,15 @@ export const App: React.FC<{}> = () => {
   }
 
   async function makeNewGame(): Promise<void> {
+    const updateGameView = (newGameView: Readonly<ModelGameView>): void => setGameView(newGameView);
     await runNewGame(
       {
         [CellOwner.X]: players[configuration.playerTypes[CellOwner.X]],
         [CellOwner.O]: players[configuration.playerTypes[CellOwner.O]],
       },
-      (newGameView) => setGameView(newGameView),
+      updateGameView,
+      updateGameView,
+      updateGameView,
     );
 
     if (configurationRef.current.autoNewGame) {
