@@ -4,9 +4,10 @@ import {
 
 import { BoardDimensions } from '../../meta-model/Board';
 import { Brains } from './DQNPretrainedBrain';
-import { Decision, ReinforcedAgent, StateSpace } from './ReinforcedAgent';
+import { Decision } from '../ai-agent/Decision';
+import { ReinforcedAgent, StateSpace } from './ReinforcedAgent';
 import { SpecificCellOwner } from '../../meta-model/CellOwner';
-import { StorableAgent } from './StorableAgent';
+import { StorableDQNAgent } from './StorableDQNAgent';
 
 const agents: Record<string, Solver> = {};
 
@@ -41,7 +42,7 @@ export class DQNReinforcedAgent implements ReinforcedAgent {
       const stored = localStorage.getItem(this.id);
       if (stored) {
         try {
-          const parsed: StorableAgent = JSON.parse(stored);
+          const parsed: StorableDQNAgent = JSON.parse(stored);
           if (parsed && parsed.version === DQNReinforcedAgent.ObjectVersion) {
             this.solver.fromJSON(parsed.network);
             (this.solver as any).learnTick = parsed.learnTick;
@@ -50,7 +51,7 @@ export class DQNReinforcedAgent implements ReinforcedAgent {
           console.error('could not load agent data for ', this.id, ' due to ', e);
         }
       } else if (this.id in Brains) {
-        const brain: StorableAgent = Brains[this.id];
+        const brain: StorableDQNAgent = Brains[this.id];
         if (brain && brain.version === DQNReinforcedAgent.ObjectVersion) {
           this.solver.fromJSON(brain.network);
           (this.solver as any).learnTick = brain.learnTick;
@@ -74,7 +75,7 @@ export class DQNReinforcedAgent implements ReinforcedAgent {
   }
 
   private persist(): void {
-    const data: StorableAgent = {
+    const data: StorableDQNAgent = {
       version: DQNReinforcedAgent.ObjectVersion,
       learnTick: (this.solver as any).learnTick,
       network: this.solver.toJSON(),
