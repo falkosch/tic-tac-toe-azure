@@ -4,7 +4,7 @@ Do you have too much time available in your life? Do you feel the need to play a
 
 It is an example application of a Tic Tac Toe game. It provides different player/opponent types for each of the two players:
 
-* By default, you play as "Player X" and "Player O" will be played by an Azure Function.
+* By default, you play as "Player X" and "Player O" will be played by an AI player.
 
 * You can play against a second human player. Just select "Human player" for "Player X" and "Player O". With the other player, you rotate in making the noughts and crosses. You will have to share your mouse unfortunately. But that mode provides the good feeling and enjoyable experience of multiplayer mode the very old way.
 
