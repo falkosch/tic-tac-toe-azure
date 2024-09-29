@@ -2,7 +2,19 @@
   "folders": [
     {
       "path": "tic-tac-toe-client"
+    },
+    {
+      "path": "TicTacToeGame"
+    },
+    {
+	  "name": "tic-tac-toe-azure",
+      "path": "."
     }
   ],
-  "settings": {}
+  "settings": {
+    "jest.disabledWorkspaceFolders": [
+      "TicTacToeGame",
+      "tic-tac-toe-azure"
+    ]
+  }
 }
