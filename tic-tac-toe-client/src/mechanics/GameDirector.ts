@@ -6,9 +6,9 @@ import { CellOwner, SpecificCellOwner } from '../meta-model/CellOwner';
 import { GameActionHistory } from '../meta-model/GameActionHistory';
 import { GameEndState } from '../meta-model/GameEndState';
 import { GameView } from '../meta-model/GameView';
-import { Player } from '../meta-model/Player';
+import { Player, PlayerCreator } from '../meta-model/Player';
 
-export type JoiningPlayers = Record<SpecificCellOwner, Readonly<Player>>;
+export type JoiningPlayers = Record<SpecificCellOwner, PlayerCreator>;
 
 export interface OnGameStart {
   (gameView: Readonly<GameView>): Promise<void>;
@@ -57,7 +57,13 @@ function emptyActionHistory(): GameActionHistory {
 }
 
 function joinPlayers(joiningPlayers: Readonly<JoiningPlayers>): ReadonlyArray<JoinedPlayer> {
-  return Object.entries(joiningPlayers) as ReadonlyArray<[SpecificCellOwner, Player]>;
+  return Object.entries(joiningPlayers)
+    .map(
+      ([cellOwner, playerCreator]) => [
+        cellOwner as SpecificCellOwner,
+        playerCreator(),
+      ],
+    );
 }
 
 function playerOfTurn(joinedPlayers: ReadonlyArray<JoinedPlayer>, turn: number): JoinedPlayer {
