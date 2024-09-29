@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.2" width="45.5mm" height="42.58mm" viewBox="0 0 4550 4258" preserveAspectRatio="xMidYMid" fill-rule="evenodd" stroke-width="28.222" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" xmlns:ooo="http://xml.openoffice.org/svg/export" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:presentation="http://sun.com/xmlns/staroffice/presentation" xmlns:smil="http://www.w3.org/2001/SMIL20/" xmlns:anim="urn:oasis:names:tc:opendocument:xmlns:animation:1.0" xml:space="preserve">
+<svg version="1.2" width="50mm" height="50mm" viewBox="0 0 5000 5000" preserveAspectRatio="xMidYMid" fill-rule="evenodd" stroke-width="28.222" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" xmlns:ooo="http://xml.openoffice.org/svg/export" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:presentation="http://sun.com/xmlns/staroffice/presentation" xmlns:smil="http://www.w3.org/2001/SMIL20/" xmlns:anim="urn:oasis:names:tc:opendocument:xmlns:animation:1.0" xml:space="preserve">
  <defs class="ClipPathGroup">
   <clipPath id="presentation_clip_path" clipPathUnits="userSpaceOnUse">
-   <rect x="0" y="0" width="4550" height="4258"/>
+   <rect x="0" y="0" width="5000" height="5000"/>
   </clipPath>
   <clipPath id="presentation_clip_path_shrink" clipPathUnits="userSpaceOnUse">
-   <rect x="4" y="4" width="4541" height="4250"/>
+   <rect x="5" y="5" width="4990" height="4990"/>
   </clipPath>
  </defs>
  <defs class="TextShapeIndex">
@@ -57,47 +57,47 @@
      <g class="Page">
       <g class="com.sun.star.drawing.OpenBezierShape">
        <g id="id3">
-        <rect class="BoundingBox" stroke="none" fill="none" x="1785" y="1535" width="683" height="1165"/>
+        <rect class="BoundingBox" stroke="none" fill="none" x="473" y="260" width="3187" height="4700"/>
         <defs>
          <mask id="mask1">
           <g>
            <defs>
-            <linearGradient id="gradient1" x1="2126" y1="1536" x2="2126" y2="2699" gradientUnits="userSpaceOnUse">
+            <linearGradient id="gradient1" x1="2066" y1="261" x2="2066" y2="4958" gradientUnits="userSpaceOnUse">
              <stop offset="0.5" style="stop-color:rgb(77,77,77)"/>
              <stop offset="0.5" style="stop-color:rgb(77,77,77)"/>
              <stop offset="1" style="stop-color:rgb(77,77,77)"/>
              <stop offset="1" style="stop-color:rgb(77,77,77)"/>
             </linearGradient>
            </defs>
-           <path style="fill:url(#gradient1)" d="M 1785,1536 L 2467,1536 2467,2699 1785,2699 1785,1536 Z"/>
+           <path style="fill:url(#gradient1)" d="M 474,261 L 3659,261 3659,4958 474,4958 474,261 Z"/>
           </g>
          </mask>
         </defs>
         <g style="mask:url(#mask1)">
-         <path fill="none" stroke="rgb(129,212,26)" stroke-width="159" stroke-linejoin="round" d="M 1865,1615 C 1914,1667 1979,1703 2032,1751 2078,1794 2132,1832 2175,1880 2196,1904 2203,1938 2213,1968 2227,2012 2233,2059 2249,2104 2259,2133 2260,2166 2263,2197 2266,2231 2279,2267 2282,2302 2284,2335 2292,2367 2308,2395 2326,2425 2338,2459 2347,2493 2356,2525 2371,2555 2380,2588 L 2387,2612 2387,2619"/>
+         <path fill="none" stroke="rgb(129,212,26)" stroke-width="159" stroke-linejoin="round" d="M 553,340 C 837,575 1214,738 1521,955 1788,1150 2101,1321 2350,1538 2472,1647 2513,1800 2571,1936 2652,2135 2687,2347 2779,2551 2837,2682 2843,2831 2860,2971 2878,3125 2953,3288 2971,3446 2982,3595 3029,3740 3121,3866 3226,4002 3295,4156 3347,4309 3400,4454 3487,4590 3539,4739 L 3579,4847 3579,4879"/>
         </g>
        </g>
       </g>
       <g class="com.sun.star.drawing.OpenBezierShape">
        <g id="id4">
-        <rect class="BoundingBox" stroke="none" fill="none" x="1699" y="1499" width="1241" height="1039"/>
+        <rect class="BoundingBox" stroke="none" fill="none" x="99" y="99" width="4860" height="4129"/>
         <defs>
          <mask id="mask2">
           <g>
            <defs>
-            <linearGradient id="gradient2" x1="2319" y1="1500" x2="2319" y2="2536" gradientUnits="userSpaceOnUse">
+            <linearGradient id="gradient2" x1="2528" y1="99" x2="2528" y2="4226" gradientUnits="userSpaceOnUse">
              <stop offset="0.5" style="stop-color:rgb(77,77,77)"/>
              <stop offset="0.5" style="stop-color:rgb(77,77,77)"/>
              <stop offset="1" style="stop-color:rgb(77,77,77)"/>
              <stop offset="1" style="stop-color:rgb(77,77,77)"/>
             </linearGradient>
            </defs>
-           <path style="fill:url(#gradient2)" d="M 1700,1500 L 2938,1500 2938,2536 1700,2536 1700,1500 Z"/>
+           <path style="fill:url(#gradient2)" d="M 99,99 L 4957,99 4957,4226 99,4226 99,99 Z"/>
           </g>
          </mask>
         </defs>
         <g style="mask:url(#mask2)">
-         <path fill="none" stroke="rgb(129,212,26)" stroke-width="159" stroke-linejoin="round" d="M 1779,2457 C 1822,2404 1869,2353 1920,2309 1981,2256 2023,2186 2087,2135 2152,2083 2206,2017 2273,1968 2360,1905 2439,1826 2535,1772 2581,1747 2629,1721 2673,1691 2709,1666 2749,1642 2790,1622 L 2828,1596 2854,1582 2859,1579"/>
+         <path fill="none" stroke="rgb(129,212,26)" stroke-width="159" stroke-linejoin="round" d="M 179,4147 C 368,3906 570,3678 792,3480 1059,3239 1240,2924 1518,2689 1801,2457 2036,2160 2328,1937 2710,1650 3052,1292 3471,1050 3671,937 3877,821 4070,684 4226,573 4401,462 4580,373 L 4744,255 4857,193 4878,179"/>
         </g>
        </g>
       </g>
