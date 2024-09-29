@@ -186,7 +186,7 @@ export const App: FC = () => {
     <div className={`${styles.view} d-flex flex-column h-100`}>
       <Header>
         <Form>
-          <Form.Group>
+          <Form.Group className="row">
             <Col xs="12" sm="4" md="auto">
               <Button
                 className="mt-2 mt-md-0"
