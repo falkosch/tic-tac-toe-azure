@@ -18,7 +18,7 @@ function tileSize(dimension: number): string {
   return `calc((100% - ${innerGridSize}${grid.unit}) / ${dimension})`;
 }
 
-function selectBorderWidth(upperEdge): string {
+function selectBorderWidth(upperEdge: boolean): string {
   return upperEdge ? '0' : `${grid.value}${grid.unit}`;
 }
 
