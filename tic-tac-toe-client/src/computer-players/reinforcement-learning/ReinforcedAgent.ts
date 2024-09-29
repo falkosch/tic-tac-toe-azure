@@ -15,10 +15,10 @@ export interface ReinforcedStateSpace extends NormalizedStateSpace {
 
 export type ReinforcedAgent = AIAgent<ReinforcedStateSpace>;
 
-function buildReinforcedStateSpace(
+const buildReinforcedStateSpace = (
   agentCellOwner: Readonly<SpecificCellOwner>,
   board: Readonly<Board>,
-): ReinforcedStateSpace {
+): ReinforcedStateSpace => {
   const normalizedStateSpace = buildNormalizedStateSpace(board);
   return {
     ...normalizedStateSpace,
@@ -32,11 +32,11 @@ function buildReinforcedStateSpace(
       return -1.0;
     }),
   };
-}
+};
 
-export async function findReinforcedDecision(
+export const findReinforcedDecision = (
   agent: Readonly<ReinforcedAgent>,
   board: Readonly<Board>,
-): Promise<Decision | null> {
+): Promise<Decision | null> => {
   return findDecisionForStateSpace(agent, buildReinforcedStateSpace(agent.cellOwner, board));
-}
+};

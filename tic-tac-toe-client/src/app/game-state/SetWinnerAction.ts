@@ -5,13 +5,13 @@ export interface SetWinnerActionPayload {
   value?: Readonly<CellOwner> | Readonly<Error>;
 }
 
-export function setWinner(
+export const setWinner = (
   prevState: Readonly<GameStateType>,
   payload: Readonly<SetWinnerActionPayload>,
-): GameStateType {
+): GameStateType => {
   const { value } = payload;
   return {
     ...prevState,
     winner: value,
   };
-}
+};

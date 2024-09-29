@@ -5,7 +5,7 @@ import logo from './logo.svg';
 
 import styles from './Header.module.scss';
 
-export const Header: FC<PropsWithChildren<{}>> = ({ children }) => (
+export const Header: FC<PropsWithChildren> = ({ children = undefined }) => (
   <div className={styles.header}>
     <Navbar fixed="top" expand="md" bg="light" variant="light">
       <Navbar.Brand href="https://github.com/falkosch/tic-tac-toe-azure">

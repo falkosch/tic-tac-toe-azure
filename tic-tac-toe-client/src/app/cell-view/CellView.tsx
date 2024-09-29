@@ -20,14 +20,14 @@ const grid = {
   unit: 'rem',
 };
 
-function tileSize(dimension: number): string {
+const tileSize = (dimension: number): string => {
   const innerGridSize = grid.value * (dimension - 1);
   return `calc((100% - ${innerGridSize}${grid.unit}) / ${dimension})`;
-}
+};
 
-function selectBorderWidth(upperEdge: boolean): string {
+const selectBorderWidth = (upperEdge: boolean): string => {
   return upperEdge ? '0' : `${grid.value}${grid.unit}`;
-}
+};
 
 export const CellView: FC<{
   boardDimensions: Readonly<BoardDimensions>;
@@ -57,11 +57,11 @@ export const CellView: FC<{
 
   const className = `${styles.view} position-relative bg-light border-secondary`;
 
-  function onClick(): void {
+  const onClick = (): void => {
     if (actionTokenDispatch) {
       actionTokenDispatch([cellAt]);
     }
-  }
+  };
 
   return (
     <button className={className} onClick={onClick} style={gridStyle} type="button">

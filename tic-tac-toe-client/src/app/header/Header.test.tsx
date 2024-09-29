@@ -1,12 +1,10 @@
+import { render } from '@testing-library/react';
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 import { Header } from './Header';
 
 describe(`${Header.name}`, () => {
   it('renders without crashing', () => {
-    const div = document.createElement('div');
-    ReactDOM.render(<Header />, div);
-    ReactDOM.unmountComponentAtNode(div);
+    render(<Header />);
   });
 });

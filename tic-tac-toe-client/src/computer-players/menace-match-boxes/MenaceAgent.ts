@@ -18,24 +18,24 @@ export interface MenaceAgent extends AIAgent<MenaceStateSpace> {
   startNewGame(): Promise<void>;
 }
 
-export function findFreeBeads(stateSpace: Readonly<MenaceStateSpace>): number[] {
+export const findFreeBeads = (stateSpace: Readonly<MenaceStateSpace>): number[] => {
   return findFreeCellIndices(stateSpace.boardAsCellOwners);
-}
+};
 
-export function randomBead(beads: ReadonlyArray<number>): number[] {
+export const randomBead = (beads: ReadonlyArray<number>): number[] => {
   return takeAny(beads);
-}
+};
 
-export function multiplyBeads(beads: ReadonlyArray<number>): number[] {
+export const multiplyBeads = (beads: ReadonlyArray<number>): number[] => {
   const multipliedBeadsCount = Math.floor((beads.length + 2) / 2);
   let multipliedBeads: number[] = [];
   for (let i = 0; i < multipliedBeadsCount; i += 1) {
     multipliedBeads = [...multipliedBeads, ...beads];
   }
   return multipliedBeads;
-}
+};
 
-function buildMenaceStateSpace(board: Readonly<Board>): MenaceStateSpace {
+const buildMenaceStateSpace = (board: Readonly<Board>): MenaceStateSpace => {
   const normalizedStateSpace = buildNormalizedStateSpace(board);
   const normalizedCells = transformBoardCells(board, normalizedStateSpace.normalization);
   return {
@@ -46,11 +46,11 @@ function buildMenaceStateSpace(board: Readonly<Board>): MenaceStateSpace {
     ),
     boardAsCellOwners: normalizedCells,
   };
-}
+};
 
-export async function findMenaceDecision(
+export const findMenaceDecision = (
   agent: Readonly<MenaceAgent>,
   board: Readonly<Board>,
-): Promise<Decision | null> {
+): Promise<Decision | null> => {
   return findDecisionForStateSpace(agent, buildMenaceStateSpace(board));
-}
+};

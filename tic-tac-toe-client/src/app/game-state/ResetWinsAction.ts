@@ -5,10 +5,10 @@ export interface ResetWinsActionPayload {
   player: Readonly<SpecificCellOwner>;
 }
 
-export function resetWins(
+export const resetWins = (
   prevState: Readonly<GameStateType>,
   payload: Readonly<ResetWinsActionPayload>,
-): GameStateType {
+): GameStateType => {
   const { player } = payload;
   return {
     ...prevState,
@@ -17,4 +17,4 @@ export function resetWins(
       [player]: 0,
     },
   };
-}
+};

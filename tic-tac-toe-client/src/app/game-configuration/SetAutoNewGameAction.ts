@@ -4,13 +4,13 @@ export interface SetAutoNewGameActionPayload {
   value: boolean;
 }
 
-export function setAutoNewGame(
+export const setAutoNewGame = (
   prevState: Readonly<GameConfigurationType>,
   payload: Readonly<SetAutoNewGameActionPayload>,
-): GameConfigurationType {
+): GameConfigurationType => {
   const { value } = payload;
   return {
     ...prevState,
     autoNewGame: value,
   };
-}
+};

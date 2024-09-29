@@ -6,14 +6,14 @@ export interface UpdateGameActionPayload {
   gameView: Readonly<GameView>;
 }
 
-export function updateGame(
+export const updateGame = (
   prevState: Readonly<GameStateType>,
   payload: Readonly<UpdateGameActionPayload>,
-): GameStateType {
+): GameStateType => {
   const { gameView } = payload;
   let nextGameState = prevState;
 
   nextGameState = setGameView(nextGameState, { gameView });
 
   return nextGameState;
-}
+};

@@ -1,5 +1,5 @@
+import { render } from '@testing-library/react';
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 import { ImageStack } from './ImageStack';
 
@@ -11,8 +11,6 @@ describe(`${ImageStack.name}`, () => {
   });
 
   it('renders without crashing', () => {
-    const div = document.createElement('div');
-    ReactDOM.render(<ImageStack imageSources={imageSources} />, div);
-    ReactDOM.unmountComponentAtNode(div);
+    render(<ImageStack imageSources={imageSources} />);
   });
 });

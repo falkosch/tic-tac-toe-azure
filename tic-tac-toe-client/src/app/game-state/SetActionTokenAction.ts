@@ -4,13 +4,13 @@ export interface SetActionTokenActionPayload {
   actionToken?: ActionToken;
 }
 
-export function setActionToken(
+export const setActionToken = (
   prevState: Readonly<GameStateType>,
   payload: Readonly<SetActionTokenActionPayload>,
-): GameStateType {
+): GameStateType => {
   const { actionToken } = payload;
   return {
     ...prevState,
     actionToken,
   };
-}
+};

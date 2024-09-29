@@ -7,14 +7,14 @@ interface ConsecutivenessConsumer {
   (nextConsecutiveness: Readonly<Consecutiveness>): void;
 }
 
-function findInCellOwnerSpans(
+const findInCellOwnerSpans = (
   consecutivenessConsumer: ConsecutivenessConsumer,
   direction: Readonly<ConsecutivenessDirection>,
   board: Readonly<Board>,
   lineDimension: number,
   minimumSpan: number,
   iteratorToCoordinates: LineIteratorToCoordinates,
-): void {
+): void => {
   // there are consecutiveness only if line dimension is big enough
   if (lineDimension < minimumSpan) {
     return;
@@ -52,9 +52,9 @@ function findInCellOwnerSpans(
   if (cellsAt.length >= minimumSpan && ownerOfSpan !== CellOwner.None) {
     consecutivenessConsumer({ cellsAt, direction });
   }
-}
+};
 
-export function findConsecutiveness(board: Readonly<Board>, minimumSpan = 3): Consecutiveness[] {
+export const findConsecutiveness = (board: Readonly<Board>, minimumSpan = 3): Consecutiveness[] => {
   const maxDiagonalLength = Math.min(board.dimensions.height, board.dimensions.width);
 
   const consecutiveness: Consecutiveness[] = [];
@@ -177,12 +177,12 @@ export function findConsecutiveness(board: Readonly<Board>, minimumSpan = 3): Co
   );
 
   return consecutiveness;
-}
+};
 
-export function coveredConsecutivenessDirections(
+export const coveredConsecutivenessDirections = (
   cellAt: number,
   consecutiveness: ReadonlyArray<Consecutiveness>,
-): ConsecutivenessDirection[] {
+): ConsecutivenessDirection[] => {
   const directions: ConsecutivenessDirection[] = [];
 
   consecutiveness.forEach((c) => {
@@ -192,4 +192,4 @@ export function coveredConsecutivenessDirections(
   });
 
   return directions;
-}
+};

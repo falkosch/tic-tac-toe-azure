@@ -22,15 +22,15 @@ const consecutivenessDirectionToImage = Object.freeze({
   [ConsecutivenessDirection.DiagonalTR2BL]: strikeTR2BL,
 });
 
-export function mapCellOwnerToImage(cellOwner: Readonly<CellOwner>): string | undefined {
+export const mapCellOwnerToImage = (cellOwner: Readonly<CellOwner>): string | undefined => {
   return cellOwnerToImage[cellOwner];
-}
+};
 
-export function mapConsecutivenessDirectionToImage(
+export const mapConsecutivenessDirectionToImage = (
   direction?: Readonly<ConsecutivenessDirection>,
-): string | undefined {
+): string | undefined => {
   if (direction === undefined) {
     return undefined;
   }
   return consecutivenessDirectionToImage[direction];
-}
+};

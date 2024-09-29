@@ -1,13 +1,13 @@
 import 'react-app-polyfill/stable';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
+
 import './index.scss';
 import { App } from './app/App';
 import reportWebVitals from './reportWebVitals';
 import * as serviceWorker from './serviceWorker';
 
-const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
-root.render(
+createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,

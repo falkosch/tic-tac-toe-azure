@@ -20,7 +20,7 @@ const menaceAgents: Record<string, StorableMenaceAgent> = {};
 
 const menaceObjectVersion = 2;
 
-function newAgent(): StorableMenaceAgent {
+const newAgent = (): StorableMenaceAgent => {
   return {
     draws: 0,
     losses: 0,
@@ -28,9 +28,9 @@ function newAgent(): StorableMenaceAgent {
     matchboxes: {},
     playedMoves: [],
   };
-}
+};
 
-async function loadMenaceAgent(id: string): Promise<StorableMenaceAgent> {
+const loadMenaceAgent = async (id: string): Promise<StorableMenaceAgent> => {
   if (id in menaceAgents) {
     return menaceAgents[id];
   }
@@ -39,12 +39,12 @@ async function loadMenaceAgent(id: string): Promise<StorableMenaceAgent> {
   const agent = loadedBrain || newAgent();
   menaceAgents[id] = agent;
   return agent;
-}
+};
 
-function selectEpsilonGreedyAction(
+const selectEpsilonGreedyAction = (
   stateSpace: Readonly<MenaceStateSpace>,
   getMenaceMemory: () => StorableMenaceAgent,
-): number {
+): number => {
   const { boardAsString } = stateSpace;
   const menaceMemory = getMenaceMemory();
   const beads = menaceMemory.matchboxes[boardAsString];
@@ -57,20 +57,20 @@ function selectEpsilonGreedyAction(
     .map((v, i) => (v === CellOwner.None ? i : -1))
     .filter((v) => v >= 0);
   return takeAny(freeCellsAt)[0];
-}
+};
 
-function populateMemory(
+const populateMemory = (
   stateSpace: Readonly<MenaceStateSpace>,
   getMenaceMemory: () => StorableMenaceAgent,
-): void {
+): void => {
   const { boardAsString } = stateSpace;
   const menaceMemory = getMenaceMemory();
   if (!(boardAsString in menaceMemory.matchboxes)) {
     menaceMemory.matchboxes[boardAsString] = multiplyBeads(findFreeBeads(stateSpace));
   }
-}
+};
 
-function learn(learnPolicy: LearnPolicy, getMenaceMemory: () => StorableMenaceAgent): void {
+const learn = (learnPolicy: LearnPolicy, getMenaceMemory: () => StorableMenaceAgent): void => {
   const menaceMemory = getMenaceMemory();
   menaceMemory.playedMoves.forEach((playedMove) => {
     const { boardAsString, bead } = playedMove;
@@ -79,15 +79,15 @@ function learn(learnPolicy: LearnPolicy, getMenaceMemory: () => StorableMenaceAg
     menaceMemory.matchboxes[boardAsString] = learnedBeads;
   });
   menaceMemory.playedMoves = [];
-}
+};
 
 export const getMenaceAgent: AIAgentCreator<MenaceAgent> = async (cellOwner, boardDimensions) => {
   const id = `menace-${cellOwner}-${boardDimensions.width}x${boardDimensions.height}`;
   const menaceMemory = await loadMenaceAgent(id);
 
-  async function persist(): Promise<void> {
-    await persistAgent<StorableMenaceAgent>(id, menaceObjectVersion, menaceMemory);
-  }
+  const persist = (): Promise<void> => {
+    return persistAgent<StorableMenaceAgent>(id, menaceObjectVersion, menaceMemory);
+  };
 
   /**
    * Encapsulates and persists the state of a Menace Matchbox "brain" and provides the interface

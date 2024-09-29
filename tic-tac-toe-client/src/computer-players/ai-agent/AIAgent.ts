@@ -31,19 +31,19 @@ export interface AIAgent<StateSpaceType extends NormalizedStateSpace> {
   rememberWin(): Promise<void>;
 }
 
-export function buildNormalizedStateSpace(board: Readonly<Board>): NormalizedStateSpace {
+export const buildNormalizedStateSpace = (board: Readonly<Board>): NormalizedStateSpace => {
   const normalization = determineBoardNormalization(board);
   return {
     dimensions: board.dimensions,
     inverseNormalization: inverseNormalization(normalization),
     normalization,
   };
-}
+};
 
-function transformDecision<StateSpaceType extends NormalizedStateSpace>(
+const transformDecision = <StateSpaceType extends NormalizedStateSpace>(
   decisionForNormalizedStateSpace: Readonly<Decision>,
   stateSpace: Readonly<StateSpaceType>,
-): Decision {
+): Decision => {
   const cellsAtToAttack = decisionForNormalizedStateSpace.cellsAtToAttack.map(
     (cellAtForNormalizedStateSpace) =>
       cellAtCoordinate(
@@ -57,21 +57,21 @@ function transformDecision<StateSpaceType extends NormalizedStateSpace>(
   );
 
   return { ...decisionForNormalizedStateSpace, cellsAtToAttack };
-}
+};
 
-export async function findDecisionForStateSpace<StateSpaceType extends NormalizedStateSpace>(
+export const findDecisionForStateSpace = async <StateSpaceType extends NormalizedStateSpace>(
   agent: Readonly<AIAgent<StateSpaceType>>,
   stateSpace: Readonly<StateSpaceType>,
-): Promise<Decision | null> {
+): Promise<Decision | null> => {
   const decisionForNormalizedStateSpace = await agent.decide(stateSpace);
   return transformDecision(decisionForNormalizedStateSpace, stateSpace);
-}
+};
 
-export async function notifyEndState<StateSpaceType extends NormalizedStateSpace>(
+export const notifyEndState = <StateSpaceType extends NormalizedStateSpace>(
   endState: Readonly<GameEndState>,
   agent: Readonly<AIAgent<StateSpaceType>>,
-): Promise<void> {
-  let promise: Promise<any> = Promise.resolve();
+): Promise<void> => {
+  let promise = Promise.resolve();
   endState.visitee({
     drawEndState() {
       promise = agent.rememberDraw();
@@ -88,4 +88,4 @@ export async function notifyEndState<StateSpaceType extends NormalizedStateSpace
     },
   });
   return promise;
-}
+};

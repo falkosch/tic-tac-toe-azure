@@ -5,10 +5,10 @@ export interface AddWinActionPayload {
   player: Readonly<SpecificCellOwner> | undefined;
 }
 
-export function addWin(
+export const addWin = (
   prevState: Readonly<GameStateType>,
   payload: Readonly<AddWinActionPayload>,
-): GameStateType {
+): GameStateType => {
   const { player } = payload;
   if (player === undefined) {
     return { ...prevState };
@@ -20,4 +20,4 @@ export function addWin(
       [player]: prevState.wins[player] + 1,
     },
   };
-}
+};

@@ -35,16 +35,13 @@
     }
   },
   "rules": {
-    "class-methods-use-this": "off",
-    "import/prefer-default-export": "off",
     "import/extensions": "off",
-    "linebreak-style": "off",
-    "no-use-before-define": [
+    "import/prefer-default-export": "off",
+    "react/function-component-definition": ["error", { "namedComponents": "arrow-function" }],
+    "react/require-default-props": [
       "error",
       {
-        "functions": false,
-        "classes": false,
-        "variables": true
+        "functions": "defaultArguments"
       }
     ],
     "react/jsx-filename-extension": [
@@ -55,58 +52,9 @@
           ".tsx"
         ]
       }
-    ],
-    "react/prop-types": "off",
-    "@typescript-eslint/explicit-function-return-type": [
-      "error",
-      {
-        "allowExpressions": true,
-        "allowTypedFunctionExpressions": true
-      }
-    ],
-    "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/no-parameter-properties": "off",
-    "@typescript-eslint/no-unused-vars": [
-      "error",
-      {
-        "argsIgnorePattern": "^__(_*|\\w+)$"
-      }
-    ],
-    "@typescript-eslint/no-use-before-define": [
-      "error",
-      {
-        "functions": false,
-        "classes": false,
-        "variables": true,
-        "typedefs": true
-      }
     ]
   },
   "overrides": [
-    {
-      "files": [
-        "src/**/*.d.ts"
-      ],
-      "rules": {
-        "spaced-comment": "off"
-      }
-    },
-    {
-      "files": [
-        "src/**/*.ts{,x}"
-      ],
-      "globals": {
-        "process": true
-      }
-    },
-    {
-      "files": [
-        "src/**/*.test.ts{,x}"
-      ],
-      "env": {
-        "jest/globals": true
-      }
-    },
     {
       "files": [
         "src/serviceWorker.ts"

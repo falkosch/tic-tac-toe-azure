@@ -10,7 +10,7 @@ export enum EdgeClassifier {
 
 export type EdgeClassifiers = Coordinates<EdgeClassifier>;
 
-export function cellEdgeClassifier(coordinate: number, dimension: number): EdgeClassifier {
+export const cellEdgeClassifier = (coordinate: number, dimension: number): EdgeClassifier => {
   if (coordinate <= 0) {
     return EdgeClassifier.Lower;
   }
@@ -18,14 +18,14 @@ export function cellEdgeClassifier(coordinate: number, dimension: number): EdgeC
     return EdgeClassifier.Upper;
   }
   return EdgeClassifier.Inner;
-}
+};
 
-export function cellEdgeClassifiers(
+export const cellEdgeClassifiers = (
   coordinates: Readonly<CellCoordinates>,
   boardDimensions: Readonly<BoardDimensions>,
-): EdgeClassifiers {
+): EdgeClassifiers => {
   return {
     x: cellEdgeClassifier(coordinates.x, boardDimensions.width),
     y: cellEdgeClassifier(coordinates.y, boardDimensions.height),
   };
-}
+};
