@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { CellOwner, SpecificCellOwner } from '../../meta-model/CellOwner';
 
 export enum PlayerType {
@@ -17,10 +15,10 @@ export interface GameConfigurationType {
   playerTypes: Readonly<PlayerConfiguration>;
 }
 
-export const GameConfiguration = React.createContext<GameConfigurationType>({
+export const initialGameConfiguration: Readonly<GameConfigurationType> = {
   autoNewGame: false,
   playerTypes: {
     [CellOwner.X]: PlayerType.Human,
     [CellOwner.O]: PlayerType.Menace,
   },
-});
+};

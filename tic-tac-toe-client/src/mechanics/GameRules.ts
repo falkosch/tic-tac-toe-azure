@@ -21,9 +21,9 @@ export function countPoints(
   return pointsTracking;
 }
 
-export function pointsLeader(points: Readonly<Points>): SpecificCellOwner | undefined {
+export function pointsLeader(points: Readonly<Points>): CellOwner {
   let winnerPoints = 0;
-  let winner: SpecificCellOwner | undefined;
+  let winner = CellOwner.None;
 
   Object.keys(points)
     .forEach((cellOwnerKey) => {

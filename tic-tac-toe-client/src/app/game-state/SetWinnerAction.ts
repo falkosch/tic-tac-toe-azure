@@ -2,7 +2,7 @@ import { CellOwner } from '../../meta-model/CellOwner';
 import { GameStateType } from './GameState';
 
 export interface SetWinnerActionPayload {
-  value: CellOwner | undefined | Error;
+  value?: Readonly<CellOwner> | Readonly<Error>;
 }
 
 export function setWinner(

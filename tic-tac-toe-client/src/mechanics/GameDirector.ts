@@ -1,6 +1,7 @@
 import { buildBoardModifier } from './Actions';
 import { countPoints, isEnding, pointsLeader } from './GameRules';
 import { findConsecutiveness } from './Consecutiveness';
+import { AttackGameAction } from '../meta-model/GameAction';
 import { Board, BoardDimensions } from '../meta-model/Board';
 import { CellOwner, SpecificCellOwner } from '../meta-model/CellOwner';
 import { GameActionHistory } from '../meta-model/GameActionHistory';
@@ -136,6 +137,10 @@ function effectiveMaxTurns(dimensions: BoardDimensions, maxTurns: number): numbe
   return Math.max(minTurnsRequired, maxTurns);
 }
 
+function isWithdrawAction(action: Readonly<AttackGameAction>): boolean {
+  return !action.affectedCellsAt || action.affectedCellsAt.length === 0;
+}
+
 export async function runNewGame(
   joiningPlayers: Readonly<JoiningPlayers>,
   onGameStart: OnGameStart = async () => {},
@@ -148,7 +153,7 @@ export async function runNewGame(
   let actionHistory = emptyActionHistory();
   let gameView = newGameView();
   let turn = 0;
-  let endState: GameEndState = {};
+  let endState = { winner: CellOwner.None };
 
   await notifyGameStart(gameView, joinedPlayers, onGameStart);
 
@@ -156,7 +161,7 @@ export async function runNewGame(
   while (turn < turnsLimit) {
     const [cellOwner, playerWithTurn] = playerOfTurn(joinedPlayers, turn);
 
-    let action;
+    let action: AttackGameAction;
     try {
       // eslint-disable-next-line no-await-in-loop
       action = await playerWithTurn.takeTurn({ cellOwner, gameView, actionHistory });
@@ -175,7 +180,7 @@ export async function runNewGame(
     // eslint-disable-next-line no-await-in-loop
     await notifyGameViewUpdate(gameView, joinedPlayers, onGameViewUpdate);
 
-    if (isEnding(gameView)) {
+    if (isWithdrawAction(action) || isEnding(gameView)) {
       endState = { winner: pointsLeader(points) };
       break;
     }

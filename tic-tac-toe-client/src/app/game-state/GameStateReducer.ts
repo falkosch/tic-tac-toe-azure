@@ -4,7 +4,6 @@ import { addWin, AddWinActionPayload } from './AddWinAction';
 import { endGame, EndGameActionPayload } from './EndGameAction';
 import { resetWins, ResetWinsActionPayload } from './ResetWinsAction';
 import { setActionToken, SetActionTokenActionPayload } from './SetActionTokenAction';
-import { setInProgress, SetInProgressActionPayload } from './SetInProgressAction';
 import { setGameView, SetGameViewActionPayload } from './SetGameViewAction';
 import { setWinner, SetWinnerActionPayload } from './SetWinnerAction';
 import { startNewGame, StartNewGameActionPayload } from './StartNewGameAction';
@@ -16,7 +15,6 @@ export enum GameStateActionType {
   EndGame,
   ResetWins,
   SetActionToken,
-  SetInProgress,
   SetGameView,
   SetWinner,
   StartNewGame,
@@ -27,7 +25,6 @@ export type GameStateActionPayload = AddWinActionPayload
   | EndGameActionPayload
   | ResetWinsActionPayload
   | SetActionTokenActionPayload
-  | SetInProgressActionPayload
   | SetGameViewActionPayload
   | SetWinnerActionPayload
   | StartNewGameActionPayload
@@ -58,10 +55,6 @@ const typeToAction: Readonly<Record<GameStateActionType, ActionDelegate>> = {
   [GameStateActionType.SetActionToken]: (
     prevState, payload,
   ) => setActionToken(prevState, payload as SetActionTokenActionPayload),
-
-  [GameStateActionType.SetInProgress]: (
-    prevState, payload,
-  ) => setInProgress(prevState, payload as SetInProgressActionPayload),
 
   [GameStateActionType.SetGameView]: (
     prevState, payload,
