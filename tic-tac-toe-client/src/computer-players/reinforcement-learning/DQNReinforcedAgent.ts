@@ -46,8 +46,8 @@ function createSolver(
   const agentEnvironment = new DQNEnv(width, height, stateCount, actionCount);
   const agentOptions = new DQNOpt();
   agentOptions.setEpsilon(0.05);
-  agentOptions.setEpsilonDecay(0.95, 0.1, 100000);
-  agentOptions.setNumberOfHiddenUnits([40]);
+  agentOptions.setEpsilonDecay(1, 0.1, 255168);
+  agentOptions.setNumberOfHiddenUnits([Math.floor((1 + actionCount / 2) * stateCount)]);
 
   const solver = new DQNSolver(agentEnvironment, agentOptions);
 
@@ -153,7 +153,7 @@ export const getDQNReinforcedAgent: AIAgentCreator<ReinforcedAgent> = async (
     },
 
     async rememberDraw(): Promise<void> {
-      solver.learn(0.0);
+      solver.learn(0.25);
       statistics.draws += 1;
       await persist();
     },
