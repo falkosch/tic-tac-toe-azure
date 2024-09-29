@@ -1,0 +1,13 @@
+@import-normalize;
+
+@import '~bootstrap/scss/bootstrap.scss';
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  min-width: 320px;
+}

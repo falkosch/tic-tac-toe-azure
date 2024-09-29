@@ -15,7 +15,7 @@ export interface GameStateType {
 
 export const initialGameState: Readonly<GameStateType> = {
   wins: {
-    [CellOwner.X]: 0,
     [CellOwner.O]: 0,
+    [CellOwner.X]: 0,
   },
 };
