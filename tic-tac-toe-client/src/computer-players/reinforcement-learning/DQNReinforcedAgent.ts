@@ -34,8 +34,6 @@ export class DQNReinforcedAgent implements ReinforcedAgent {
     if (!this.solver) {
       const agentEnvironment = new DQNEnv(width, height, stateCount, actionCount);
       const agentOptions = new DQNOpt();
-      agentOptions.setNumberOfHiddenUnits([100]);
-      agentOptions.setEpsilonDecay(1.0, 0.1, 1000);
       this.solver = new DQNSolver(agentEnvironment, agentOptions);
       agents[this.id] = this.solver;
 

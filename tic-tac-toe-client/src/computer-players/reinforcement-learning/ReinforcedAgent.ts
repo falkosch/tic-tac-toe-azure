@@ -52,34 +52,24 @@ function validateDecision(board: Readonly<Board>, decision: Readonly<Decision>):
   );
 }
 
-function boardValue(
-  agentCellOwner: Readonly<SpecificCellOwner>,
-  board: Readonly<Board>,
-  lossOfMove = 0,
-): number {
-  const consecutiveness = findConsecutiveness(board);
-  const points = countPoints(board, consecutiveness);
-  const pointsEntries = Object.entries(points);
-  const otherAgentsPoints = pointsEntries.reduce(
-    (sumPoints, [__, agentPoints]) => sumPoints + agentPoints,
-    0,
-  );
-  return Math.tanh(2 * points[agentCellOwner] - otherAgentsPoints - lossOfMove);
-}
-
 function rewardOfDecision(
   agentCellOwner: Readonly<SpecificCellOwner>,
   board: Readonly<Board>,
   decision: Readonly<Decision>,
 ): number {
   const boardModifier = buildBoardModifier(
-    {
-      affectedCellsAt: decision.cellsAtToAttack,
-    },
+    { affectedCellsAt: decision.cellsAtToAttack },
     agentCellOwner,
   );
   const updatedBoard = boardModifier(board);
-  return boardValue(agentCellOwner, updatedBoard, -0.1);
+  const consecutiveness = findConsecutiveness(updatedBoard);
+  const points = countPoints(updatedBoard, consecutiveness);
+  const pointsEntries = Object.entries(points);
+  const otherAgentsPoints = pointsEntries.reduce(
+    (sumPoints, [__, agentPoints]) => sumPoints + agentPoints,
+    0,
+  );
+  return Math.tanh(2 * points[agentCellOwner] - otherAgentsPoints);
 }
 
 export function findDecision(
@@ -90,16 +80,11 @@ export function findDecision(
 
   for (let i = 0; i < 100; i += 1) {
     const decision = agent.decide(stateSpace);
-
     if (validateDecision(gameView.board, decision)) {
       const value = rewardOfDecision(agent.cellOwner, gameView.board, decision);
       agent.reward(value);
       return decision;
     }
-
-    // punish the agent for invalid decisions so that it learns from that and
-    // selects different decision next time
-    agent.reward(-10.0);
   }
 
   return null;
