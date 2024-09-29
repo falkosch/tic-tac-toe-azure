@@ -1,4 +1,4 @@
-@import '../../scss/abstract';
+@use '../../scss/abstract';
 
 .view {
   @extend %hint-text;
