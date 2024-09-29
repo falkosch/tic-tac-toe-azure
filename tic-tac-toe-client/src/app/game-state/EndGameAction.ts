@@ -1,8 +1,7 @@
 import { addWin } from './AddWinAction';
 import { setGameView } from './SetGameViewAction';
-import { setInProgress } from './SetInProgressAction';
 import { setWinner } from './SetWinnerAction';
-import { CellOwner } from '../../meta-model/CellOwner';
+import { CellOwner, SpecificCellOwner } from '../../meta-model/CellOwner';
 import { GameEndState } from '../../meta-model/GameEndState';
 import { GameStateType } from './GameState';
 import { GameView } from '../../meta-model/GameView';
@@ -13,20 +12,20 @@ export interface EndGameActionPayload {
 }
 
 export function endGame(
-  prevState: GameStateType,
-  {
-    endState,
-    gameView,
-  }: EndGameActionPayload,
+  prevState: Readonly<GameStateType>,
+  payload: Readonly<EndGameActionPayload>,
 ): GameStateType {
+  const { endState: { winner }, gameView } = payload;
   let nextGameState = prevState;
 
   nextGameState = setGameView(nextGameState, { gameView });
-  nextGameState = setInProgress(prevState, { value: false });
-  nextGameState = setWinner(prevState, { value: endState.winner || CellOwner.None });
+  nextGameState = setWinner(nextGameState, { value: winner });
 
-  if (!(endState.winner instanceof Error)) {
-    nextGameState = addWin(nextGameState, { player: endState.winner });
+  if (!(winner instanceof Error || winner === CellOwner.None)) {
+    nextGameState = addWin(
+      nextGameState,
+      { player: winner as SpecificCellOwner },
+    );
   }
 
   return nextGameState;

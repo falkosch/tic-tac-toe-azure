@@ -83,11 +83,12 @@ export async function findDecisionForStateSpace<StateSpaceType extends Normalize
 }
 
 export async function notifyEndState(endState: GameEndState, agent: AIAgent<any>): Promise<void> {
-  if (endState.winner === undefined) {
+  const { winner } = endState;
+  if (winner === CellOwner.None || winner instanceof Error) {
     await agent.rememberDraw();
-  } else if (endState.winner === agent.cellOwner) {
+  } else if (winner === agent.cellOwner) {
     await agent.rememberWin();
-  } else if (endState.winner !== agent.cellOwner) {
+  } else if (winner !== agent.cellOwner) {
     await agent.rememberLoss();
   }
 }
