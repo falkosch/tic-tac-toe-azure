@@ -1,6 +1,6 @@
 {
-  "short_name": "TicTacToe Azure",
-  "name": "Tic Tac Toe Game with Azure",
+  "short_name": "TicTacToe",
+  "name": "Tic Tac Toe with Azure",
   "icons": [
     {
       "src": "favicon.ico",
