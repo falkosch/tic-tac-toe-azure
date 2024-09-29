@@ -1,0 +1,10 @@
+.board-view {
+  border: 1px gray solid;
+  border-radius: 16px;
+  display: flex;
+  flex-basis: calc(75vmin - 60px);
+  flex-flow: column wrap;
+  height: calc(75vmin - 60px);
+  padding: 8px;
+  width: calc(75vmin - 60px);
+}
