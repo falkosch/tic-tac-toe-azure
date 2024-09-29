@@ -2,10 +2,10 @@ import { CellOwner, SpecificCellOwner } from '../../meta-model/CellOwner';
 
 export enum PlayerType {
   Human = 'Human player',
-  Mock = 'Mock computer player (local)',
-  DQN = 'DQN AI computer player (local)',
-  Menace = 'Menace AI computer player (local)',
-  Azure = 'Azure function as computer player (remote)',
+  Mock = 'Random AI (local)',
+  DQN = 'DQN AI (local)',
+  Menace = 'Menace AI (local)',
+  Azure = 'Azure function (remote)',
 }
 
 export type PlayerConfiguration = Record<SpecificCellOwner, Readonly<PlayerType>>;

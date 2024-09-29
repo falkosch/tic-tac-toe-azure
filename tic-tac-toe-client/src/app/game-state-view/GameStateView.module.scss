@@ -1,0 +1,10 @@
+@import '../../scss/abstracts';
+
+.view {
+  flex: 1 0 auto;
+}
+
+.newGame {
+  @extend %hintText;
+  @extend %hintColorNeutral;
+}
