@@ -1,6 +1,8 @@
-export const NoCellOwner = ' ';
-export const XCellOwner = 'X';
-export const OCellOwner = 'O';
+export enum CellOwner {
+    None = ' ',
+    X = 'X',
+    O = 'O',
+}
+export default CellOwner;
 
-export type SpecificCellOwner = typeof XCellOwner | typeof OCellOwner;
-export type AnyCellOwner = typeof NoCellOwner | SpecificCellOwner;
+export type SpecificCellOwner = CellOwner.X | CellOwner.O;
