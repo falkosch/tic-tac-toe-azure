@@ -1,3 +1,16 @@
 .app-game-view {
   flex: 1 0 auto;
 }
+
+.app-game-view-winner {
+  color: darkseagreen;
+  font-size: 2rem;
+  line-height: 3rem;
+}
+
+.app-game-view-error {
+  color: darkred;
+  font-size: 2rem;
+  line-height: 3rem;
+  max-width: 70vw;
+}
