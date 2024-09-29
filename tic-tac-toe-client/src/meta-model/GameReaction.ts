@@ -1,5 +1,6 @@
-import { SpecificCellOwner } from './Cell';
-import { Board, Consecutiveness } from './Game';
+import { Board } from './Board';
+import { SpecificCellOwner } from './CellOwner';
+import { Consecutiveness } from './Game';
 
 export interface GameReaction {
     board: Board;
@@ -11,7 +12,6 @@ export enum EndState {
     Lost = 'lost',
     Draw = 'draw',
 }
-export default EndState;
 
 export interface GameEndsReaction extends GameReaction {
     endStates: Record<SpecificCellOwner, EndState>;

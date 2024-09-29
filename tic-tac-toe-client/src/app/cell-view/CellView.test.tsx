@@ -1,20 +1,29 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import CellView from './CellView';
-
-import { CellOwner } from '../../meta-model/Cell';
+import { CellView } from './CellView';
+import { BoardDimensions } from '../../meta-model/Board';
+import { CellOwner } from '../../meta-model/CellOwner';
 
 describe(`${CellView.name}`, () => {
+  let boardDimensions: BoardDimensions;
   let cellOwner: CellOwner;
 
   beforeEach(() => {
+    boardDimensions = {
+      height: 1,
+      width: 1,
+    };
     cellOwner = CellOwner.X;
   });
 
   it('renders without crashing', () => {
     const div = document.createElement('div');
-    ReactDOM.render(<CellView cellOwner={cellOwner} />, div);
+    ReactDOM.render(<CellView
+      cellOwner={cellOwner}
+      cellAt={0}
+      boardDimensions={boardDimensions}
+    />, div);
     ReactDOM.unmountComponentAtNode(div);
   });
 });
