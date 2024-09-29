@@ -1,5 +1,5 @@
 import { SpecificCellOwner } from './CellOwner';
 
-export interface GameEndedState {
+export interface GameEndState {
   winner?: SpecificCellOwner;
 }
