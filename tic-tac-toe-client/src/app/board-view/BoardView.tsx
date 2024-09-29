@@ -10,7 +10,7 @@ import { CellOwner } from '../../meta-model/CellOwner';
 import './BoardView.css';
 
 export const BoardView: React.FC<{ board: Board }> = ({ board }) => (
-  <div className="board-view">
+  <div className="board-view d-flex flex-row flex-wrap border-secondary bg-light p-2">
     {
       fpFlow(
         fpEntries,

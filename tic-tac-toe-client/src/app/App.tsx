@@ -22,11 +22,11 @@ export const App: React.FC = () => {
   }
 
   return (
-    <div className="app">
+    <div className="d-flex flex-column h-100">
       <div className="app-navbar">
-        <Navbar expand="lg" className="bg-light">
+        <Navbar expand="lg" bg="light" variant="light">
           <Navbar.Brand href="/">
-            <img src={logo} width="30" height="30" className="App-logo" alt="logo" />
+            <img className="app-logo d-inline-block align-top" src={logo} alt="logo" />
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
@@ -34,7 +34,9 @@ export const App: React.FC = () => {
           </Navbar.Collapse>
         </Navbar>
       </div>
-      <div className="app-game-view">{appGameView}</div>
+      <div className="app-game-view d-flex justify-content-center align-items-center">
+        {appGameView}
+      </div>
     </div>
   );
 };

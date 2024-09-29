@@ -1,17 +1,12 @@
-.app {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+.app-navbar {
+  flex: 0 0 auto;
 }
 
-.app-navbar {
-  flex-shrink: 0;
+.app-logo {
+  width: 30px;
+  height: 30px;
 }
 
 .app-game-view {
-  align-items: center;
-  display: flex;
-  flex-basis: auto;
-  flex-grow: 1;
-  justify-content: center;
+  flex: 1 0 auto;
 }
