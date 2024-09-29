@@ -11,15 +11,15 @@ import { Player } from '../meta-model/Player';
 export type JoiningPlayers = Record<SpecificCellOwner, Readonly<Player>>;
 
 export interface OnGameStart {
-  (gameView: Readonly<GameView>): void;
+  (gameView: Readonly<GameView>): Promise<void>;
 }
 
 export interface OnGameViewUpdate {
-  (gameView: Readonly<GameView>): void;
+  (gameView: Readonly<GameView>): Promise<void>;
 }
 
 export interface OnGameEnd {
-  (gameView: Readonly<GameView>, endState: Readonly<GameEndState>): void;
+  (gameView: Readonly<GameView>, endState: Readonly<GameEndState>): Promise<void>;
 }
 
 type JoinedPlayer = [SpecificCellOwner, Readonly<Player>];
@@ -65,64 +65,64 @@ function playerOfTurn(joinedPlayers: ReadonlyArray<JoinedPlayer>, turn: number):
   return joinedPlayers[indexOfPlayerWithTurn];
 }
 
-function notifyGameViewUpdate(
+async function notifyGameViewUpdate(
   gameView: Readonly<GameView>,
   joinedPlayers: ReadonlyArray<JoinedPlayer>,
   onGameViewUpdate?: OnGameViewUpdate,
-): void {
+): Promise<void> {
   if (onGameViewUpdate) {
-    onGameViewUpdate(gameView);
+    await onGameViewUpdate(gameView);
   }
 
-  joinedPlayers.forEach(
-    (
-      [cellOwner, { onGameViewUpdate: playerOnGameViewUpdate }],
-    ) => {
-      if (playerOnGameViewUpdate) {
-        playerOnGameViewUpdate(cellOwner, gameView);
-      }
-    },
+  await Promise.all(
+    joinedPlayers.map(
+      async ([cellOwner, { onGameViewUpdate: playerOnGameViewUpdate }]) => {
+        if (playerOnGameViewUpdate) {
+          await playerOnGameViewUpdate(cellOwner, gameView);
+        }
+      },
+    ),
   );
 }
 
-function notifyGameStart(
+async function notifyGameStart(
   gameView: Readonly<GameView>,
   joinedPlayers: ReadonlyArray<JoinedPlayer>,
   onGameStart?: OnGameStart,
-): void {
+): Promise<void> {
   if (onGameStart) {
-    onGameStart(gameView);
+    await onGameStart(gameView);
   }
 
-  joinedPlayers.forEach(
-    (
-      [cellOwner, { onGameStart: playerOnGameStart }],
-    ) => {
-      if (playerOnGameStart) {
-        playerOnGameStart(cellOwner, gameView);
-      }
-    },
+  await Promise.all(
+    joinedPlayers.map(
+      async ([cellOwner, { onGameStart: playerOnGameStart }]) => {
+        if (playerOnGameStart) {
+          await playerOnGameStart(cellOwner, gameView);
+        }
+      },
+    ),
   );
 }
 
-function notifyGameEnd(
+async function notifyGameEnd(
   gameView: Readonly<GameView>,
   endState: Readonly<GameEndState>,
   joinedPlayers: ReadonlyArray<JoinedPlayer>,
   onGameEnd?: OnGameEnd,
-): void {
+): Promise<void> {
   if (onGameEnd) {
-    onGameEnd(gameView, endState);
+    await onGameEnd(gameView, endState);
   }
 
-  joinedPlayers.forEach(
-    (
-      [cellOwner, { onGameEnd: playerOnGameEnd }],
-    ) => {
-      if (playerOnGameEnd) {
-        playerOnGameEnd(cellOwner, gameView, endState);
-      }
-    },
+  await Promise.all(
+    joinedPlayers.map(
+      async ([cellOwner, { onGameEnd: playerOnGameEnd }]) => {
+        if (playerOnGameEnd) {
+          await playerOnGameEnd(cellOwner, gameView, endState);
+        }
+      },
+    ),
   );
 }
 
@@ -133,9 +133,9 @@ function effectiveMaxTurns(dimensions: BoardDimensions, maxTurns: number): numbe
 
 export async function runNewGame(
   joiningPlayers: Readonly<JoiningPlayers>,
-  onGameStart: OnGameStart = () => {},
-  onGameViewUpdate: OnGameViewUpdate = () => {},
-  onGameEnd: OnGameEnd = () => {},
+  onGameStart: OnGameStart = async () => {},
+  onGameViewUpdate: OnGameViewUpdate = async () => {},
+  onGameEnd: OnGameEnd = async () => {},
   maxTurns = 100,
 ): Promise<GameEndState> {
   const joinedPlayers = joinPlayers(joiningPlayers);
@@ -144,7 +144,7 @@ export async function runNewGame(
   let gameView = newGameView();
   let turn = 0;
 
-  notifyGameStart(gameView, joinedPlayers, onGameStart);
+  await notifyGameStart(gameView, joinedPlayers, onGameStart);
 
   const turnsLimit = effectiveMaxTurns(gameView.board.dimensions, maxTurns);
   while (turn < turnsLimit) {
@@ -159,11 +159,13 @@ export async function runNewGame(
     const consecutiveness = findConsecutiveness(board);
     const points = countPoints(board, consecutiveness);
     gameView = { board, consecutiveness, points };
-    notifyGameViewUpdate(gameView, joinedPlayers, onGameViewUpdate);
+    // eslint-disable-next-line
+    await notifyGameViewUpdate(gameView, joinedPlayers, onGameViewUpdate);
 
     if (isEnding(gameView)) {
       const endState: GameEndState = { winner: pointsLeader(points) };
-      notifyGameEnd(gameView, endState, joinedPlayers, onGameEnd);
+      // eslint-disable-next-line
+      await notifyGameEnd(gameView, endState, joinedPlayers, onGameEnd);
       return endState;
     }
 
@@ -171,6 +173,6 @@ export async function runNewGame(
   }
 
   const endState: GameEndState = {};
-  notifyGameEnd(gameView, endState, joinedPlayers, onGameEnd);
+  await notifyGameEnd(gameView, endState, joinedPlayers, onGameEnd);
   return endState;
 }

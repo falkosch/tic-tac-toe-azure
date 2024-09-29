@@ -23,7 +23,10 @@ export class MenacePlayer implements Player {
     };
   }
 
-  onGameStart(cellOwner: Readonly<SpecificCellOwner>, gameView: Readonly<GameView>): void {
+  async onGameStart(
+    cellOwner: Readonly<SpecificCellOwner>,
+    gameView: Readonly<GameView>,
+  ): Promise<void> {
     const agent = new DefaultMenaceAgent(
       cellOwner,
       gameView.board.dimensions,
@@ -31,11 +34,11 @@ export class MenacePlayer implements Player {
     agent.startNewGame();
   }
 
-  onGameEnd(
+  async onGameEnd(
     cellOwner: Readonly<SpecificCellOwner>,
     gameView: Readonly<GameView>,
     endState: Readonly<GameEndState>,
-  ): void {
+  ): Promise<void> {
     const agent = new DefaultMenaceAgent(
       cellOwner,
       gameView.board.dimensions,
