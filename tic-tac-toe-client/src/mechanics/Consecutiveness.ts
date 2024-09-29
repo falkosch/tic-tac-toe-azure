@@ -1,10 +1,15 @@
+import { cellAtCoordinate, CellCoordinates } from './CellCoordinates';
 import { Board } from '../meta-model/Board';
 import { CellOwner } from '../meta-model/CellOwner';
-import { Consecutiveness } from '../meta-model/Game';
-import { cellAtCoordinate, CellCoordinates } from './CellCoordinates';
+import { Consecutiveness } from '../meta-model/GameView';
 
-type IteratorToCoordinates = (i: number) => CellCoordinates;
-type IteratorsToCoordinates = (j: number, i: number) => CellCoordinates;
+interface IteratorToCoordinates {
+  (i: number): CellCoordinates;
+}
+
+interface IteratorsToCoordinates {
+  (j: number, i: number): CellCoordinates;
+}
 
 interface LineDimensions {
   j: number;
@@ -26,14 +31,14 @@ function addConsecutiveness(
   if (cellsAt.length >= minimumSpan && ownerOfSpan !== CellOwner.None) {
     return [...consecutiveness, { cellsAt }];
   }
-  return consecutiveness as Consecutiveness[];
+  return [...consecutiveness];
 }
 
 function trackCellOwnerSpanChanges(
   { cells, dimensions }: Readonly<Board>,
   minimumSpan: number,
   iteratorToCoordinates: IteratorToCoordinates,
-  { cellsAt, consecutiveness, ownerOfSpan }: LineSpanTracking,
+  { cellsAt, consecutiveness, ownerOfSpan }: Readonly<LineSpanTracking>,
   index: number,
 ): LineSpanTracking {
   const iAsCellAt = cellAtCoordinate(iteratorToCoordinates(index), dimensions);
@@ -93,7 +98,7 @@ function findConsecutivenessInCellOwnerSpans(
 
 function findConsecutivenessForEachLine(
   board: Readonly<Board>,
-  lineDimensions: LineDimensions,
+  lineDimensions: Readonly<LineDimensions>,
   minimumSpan: number,
   coordinatesFromIterators: IteratorsToCoordinates,
 ): Consecutiveness[] {

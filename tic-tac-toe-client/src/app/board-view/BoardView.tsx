@@ -1,16 +1,14 @@
 import React from 'react';
 
-import { CellView } from '../cell-view/CellView';
 import { Board } from '../../meta-model/Board';
+import { CellView } from '../cell-view/CellView';
 
 import './BoardView.css';
 
 export const BoardView: React.FC<{
   board: Readonly<Board>;
-  onCellClick: (event: Readonly<React.MouseEvent>, cellAt: number) => void;
 }> = ({
   board,
-  onCellClick,
 }) => (
   <div className="board-view d-flex flex-row flex-wrap border-secondary bg-light p-2">
     {
@@ -22,7 +20,6 @@ export const BoardView: React.FC<{
             boardDimensions={board.dimensions}
             cellAt={cellAt}
             cellOwner={cellOwner}
-            onClick={(event) => onCellClick(event, cellAt)}
           />
         );
       })

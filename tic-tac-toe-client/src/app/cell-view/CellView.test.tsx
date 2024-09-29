@@ -23,7 +23,6 @@ describe(`${CellView.name}`, () => {
       boardDimensions={boardDimensions}
       cellAt={0}
       cellOwner={cellOwner}
-      onClick={() => {}}
     />, div);
     ReactDOM.unmountComponentAtNode(div);
   });

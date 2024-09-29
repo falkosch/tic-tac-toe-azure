@@ -2,95 +2,148 @@ import Button from 'react-bootstrap/Button';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Form from 'react-bootstrap/Form';
-import Navbar from 'react-bootstrap/Navbar';
-import React, { useState } from 'react';
+import React, {
+  useContext, useReducer, useRef, useState,
+} from 'react';
 
-import { evaluateReaction } from '../mechanics/Reactions';
-import { prepareAttack } from '../mechanics/Actions';
-import { AzureFunctionDefender } from '../defender/AzureFunctionDefender';
-import { CellOwner } from '../meta-model/CellOwner';
-import { Defender } from '../meta-model/Defender';
-import { DQNDefender } from '../defender/client-local/DQNDefender';
-import { Game } from '../meta-model/Game';
+import { gameConfigurationReducer, GameConfigurationActionType } from './configuration/GameConfigurationReducer';
+import { GameConfiguration, PlayerType } from './configuration/GameConfiguration';
+import { runNewGame } from '../mechanics/GameDirector';
+import { AppNavbar } from './app-navbar/AppNavbar';
+import { AttackGameAction } from '../meta-model/GameAction';
+import { AzureFunctionPlayer } from '../computer-players/AzureFunctionPlayer';
+import { CellClickDispatch } from './cell-actions/CellClickDispatch';
+import { CellOwner, SpecificCellOwner } from '../meta-model/CellOwner';
+import { DQNPlayer } from '../computer-players/DQNPlayer';
 import { GameView } from './game-view/GameView';
-import { MockDefender } from '../defender/MockDefender';
+import { GameView as ModelGameView } from '../meta-model/GameView';
+import { MockPlayer } from '../computer-players/MockPlayer';
+import { Player } from '../meta-model/Player';
 
 import './App.css';
-import logo from './logo.svg';
 
-const defenders: Readonly<Record<string, () => Defender>> = {
-  [MockDefender.ReadableName]: () => new MockDefender(),
-  [DQNDefender.ReadableName]: () => new DQNDefender(),
-  [AzureFunctionDefender.ReadableName]: () => new AzureFunctionDefender(),
-};
+type Players = Record<PlayerType, Readonly<Player>>;
 
-export const App: React.FC = () => {
-  const [defenderName, setDefenderName] = useState<string>(MockDefender.ReadableName);
-  const [defender, setDefender] = useState<Defender>(defenders[MockDefender.ReadableName]);
-  const [game, setGame] = useState<Game>();
+interface ActionToken {
+  attack(affectedCellsAt: ReadonlyArray<number>): void;
+}
 
-  async function newGame(): Promise<void> {
-    setGame(await defender.handshake());
+export const App: React.FC<{}> = () => {
+  const [gameView, setGameView] = useState<Readonly<ModelGameView> | null>(null);
+  const [actionToken, setActionToken] = useState<Readonly<ActionToken> | null>(null);
+  const initialGameConfiguration = useContext(GameConfiguration);
+  const [configuration, configurationDispatch] = useReducer(
+    gameConfigurationReducer,
+    initialGameConfiguration,
+  );
+  const autoNewGameRef = useRef(configuration.autoNewGame);
+
+  const players: Readonly<Players> = {
+    [PlayerType.Human]: { takeTurn: () => letPlayerTakeTurn() },
+    [PlayerType.Mock]: new MockPlayer(),
+    [PlayerType.DQN]: new DQNPlayer(),
+    [PlayerType.Azure]: new AzureFunctionPlayer(),
+  };
+  const playerKeys = Object.keys(players);
+
+  async function letPlayerTakeTurn(): Promise<AttackGameAction> {
+    return new Promise((resolve) => {
+      const newActionToken = {
+        attack(affectedCellsAt: ReadonlyArray<number>) {
+          setActionToken(null);
+          resolve({ affectedCellsAt });
+        },
+      };
+      setActionToken(newActionToken);
+    });
   }
 
-  async function changeDefender(newDefenderName: string): Promise<void> {
-    setDefenderName(newDefenderName);
-    const newDefender = defenders[newDefenderName]();
-    setDefender(newDefender);
-    setGame(await newDefender.handshake());
+  async function makeNewGame(): Promise<void> {
+    await runNewGame(
+      {
+        [CellOwner.X]: players[configuration.playerTypes[CellOwner.X]],
+        [CellOwner.O]: players[configuration.playerTypes[CellOwner.O]],
+      },
+      (newGameView) => setGameView(newGameView),
+    );
+
+    if (autoNewGameRef.current) {
+      setTimeout(makeNewGame, 0);
+    }
   }
 
-  async function commenceAction(cellAt: number): Promise<void> {
-    if (!game) return;
-    const action = prepareAttack(game.board, cellAt, CellOwner.X);
-    const reaction = await defender.defend(action);
-    const alteredGame = evaluateReaction(game, action, reaction);
-    setGame(alteredGame);
+  function commenceAction(cellAt: number): void {
+    if (actionToken) {
+      actionToken.attack([cellAt]);
+    }
   }
 
   function selectGameView(): JSX.Element {
-    if (game === undefined || game === null) {
-      return <div>Create a new game first.</div>;
+    if (gameView) {
+      return (
+        <CellClickDispatch.Provider value={commenceAction}>
+          <GameView gameView={gameView} />
+        </CellClickDispatch.Provider>
+      );
     }
 
-    return (
-      <GameView
-        game={game}
-        onCellClick={(__event, cellAt) => commenceAction(cellAt)}
-      />
-    );
+    return <div>Create a new game first.</div>;
   }
 
   return (
     <div className="d-flex flex-column h-100">
-      <div className="app-navbar">
-        <Navbar expand="lg" bg="light" variant="light">
-          <Navbar.Brand href="/">
-            <img className="app-logo d-inline-block align-top" src={logo} alt="logo" />
-            <span> Tic Tac Toe with Azure</span>
-          </Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Form inline>
-              <Button className="mr-2" onClick={newGame}>New game</Button>
-              <DropdownButton id="defenders-dropdown" title="Defender">
-                {
-                  Object.entries(defenders)
-                    .map(([_defenderName]) => (
+      <AppNavbar>
+        <Button className="mr-2" onClick={makeNewGame}>New game</Button>
+        {
+          Object.keys(configuration.playerTypes)
+            .map((cellOwnerKey) => {
+              const cellOwner = cellOwnerKey as SpecificCellOwner;
+              return (
+                <DropdownButton
+                  className="mr-2"
+                  id={`player-${cellOwner}-dropdown`}
+                  key={`d${cellOwner}`}
+                  title={`Player ${cellOwner}`}
+                >
+                  {
+                  playerKeys
+                    .map((playerKey) => (
                       <Dropdown.Item
-                        active={_defenderName === defenderName}
-                        key={_defenderName}
-                        onClick={() => changeDefender(_defenderName)}
+                        active={
+                          playerKey === configuration.playerTypes[cellOwner as SpecificCellOwner]
+                        }
+                        key={`d${cellOwner}${playerKey}`}
+                        onClick={() => configurationDispatch({
+                          type: GameConfigurationActionType.SetPlayerType,
+                          payload: {
+                            player: cellOwner,
+                            playerType: playerKey as PlayerType,
+                          },
+                        })}
                       >
-                        {_defenderName}
+                        { playerKey }
                       </Dropdown.Item>
                     ))
                 }
-              </DropdownButton>
-            </Form>
-          </Navbar.Collapse>
-        </Navbar>
-      </div>
+                </DropdownButton>
+              );
+            })
+        }
+        <Form.Check
+          inline
+          type="checkbox"
+          label="Auto new game"
+          checked={configuration.autoNewGame}
+          onChange={() => {
+            const value = !configuration.autoNewGame;
+            autoNewGameRef.current = value;
+            configurationDispatch({
+              type: GameConfigurationActionType.SetAutoNewGame,
+              payload: { value },
+            });
+          }}
+        />
+      </AppNavbar>
       <div className="app-game-view d-flex justify-content-center align-items-center">
         { selectGameView() }
       </div>

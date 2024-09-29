@@ -7,9 +7,8 @@ export interface Consecutiveness {
 
 export type Points = Record<SpecificCellOwner, number>;
 
-export interface Game {
+export interface GameView {
   board: Readonly<Board>;
   consecutiveness: ReadonlyArray<Consecutiveness>;
-  points: Points;
-  winner?: SpecificCellOwner;
+  points: Readonly<Points>;
 }
