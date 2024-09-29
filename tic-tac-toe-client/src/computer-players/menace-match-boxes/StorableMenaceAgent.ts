@@ -14,12 +14,8 @@ export interface StorableMenaceAgent extends BrainStatistics {
 }
 
 export function cloneMatchboxes(memory: Readonly<Matchboxes>): Matchboxes {
-  return Object.entries(memory)
-    .reduce<Matchboxes>(
-      (clonedMatchboxes, [board, beads]) => ({
-        ...clonedMatchboxes,
-        [board]: [...beads],
-      }),
-      {},
-    );
+  const newMatchbox: Matchboxes = {};
+  Object.keys(memory)
+    .forEach((key) => { newMatchbox[key] = [...memory[key]]; });
+  return newMatchbox;
 }

@@ -19,19 +19,15 @@ function buildStateSpace(
   cells: ReadonlyArray<CellOwner>,
 ): StateSpace {
   return {
-    states: [
-      ...cells.map(
-        (cellOwner) => {
-          if (cellOwner === CellOwner.None) {
-            return 1.0;
-          }
-          if (cellOwner === agentCellOwner) {
-            return 0.0;
-          }
-          return -1.0;
-        },
-      ),
-    ],
+    states: cells.map((cellOwner) => {
+      if (cellOwner === CellOwner.None) {
+        return 1.0;
+      }
+      if (cellOwner === agentCellOwner) {
+        return 0.0;
+      }
+      return -1.0;
+    }),
   };
 }
 

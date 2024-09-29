@@ -11,24 +11,19 @@ export type MenaceAgent = AIAgent<StateSpace>;
 
 function buildStateSpace(cells: ReadonlyArray<CellOwner>): StateSpace {
   return {
-    boardAsString: cells.reduce(
-      (stateString, cellOwner) => stateString + cellOwner,
-      '',
-    ),
+    boardAsString: cells.reduce((stateString, cellOwner) => `${stateString}${cellOwner}`, ''),
     boardAsCellOwners: cells,
   };
 }
 
-export function findFreeBeads(stateSpace: Readonly<StateSpace>): number[] {
-  return stateSpace.boardAsCellOwners.reduce<number[]>(
-    (beads, cellOwner, index) => {
-      if (cellOwner === CellOwner.None) {
-        return [...beads, index];
-      }
-      return beads;
-    },
-    [],
-  );
+export function findFreeBeads({ boardAsCellOwners }: Readonly<StateSpace>): number[] {
+  const freeBeads: number[] = [];
+  boardAsCellOwners.forEach((cellOwner, index) => {
+    if (cellOwner === CellOwner.None) {
+      freeBeads.push(index);
+    }
+  });
+  return freeBeads;
 }
 
 export function multiplyBeads(beads: ReadonlyArray<number>): number[] {

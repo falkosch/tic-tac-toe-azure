@@ -59,9 +59,9 @@ export class DefaultMenaceAgent implements MenaceAgent {
 
     // Add first beads for still unknown game states
     if (!(boardAsString in this.menaceMemory.matchboxes)) {
-      const freeBeads = findFreeBeads(stateSpace);
-      const newBeads = multiplyBeads(freeBeads);
-      this.menaceMemory.matchboxes[boardAsString] = newBeads;
+      this.menaceMemory.matchboxes[boardAsString] = multiplyBeads(
+        findFreeBeads(stateSpace),
+      );
       memoryChanged = true;
     }
 
@@ -70,10 +70,7 @@ export class DefaultMenaceAgent implements MenaceAgent {
     const beads = this.menaceMemory.matchboxes[boardAsString];
     if (beads.length > 0) {
       const bead = randomBead(beads);
-      this.menaceMemory.playedMoves.push({
-        boardAsString,
-        bead,
-      });
+      this.menaceMemory.playedMoves.push({ boardAsString, bead });
       memoryChanged = true;
 
       cellsAtToAttack.push(bead);
