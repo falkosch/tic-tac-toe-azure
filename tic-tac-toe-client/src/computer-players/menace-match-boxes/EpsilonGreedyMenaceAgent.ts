@@ -10,6 +10,7 @@ import { takeAny, Decision } from '../ai-agent/Decision';
 import { AIAgentCreator } from '../ai-agent/AIAgent';
 import { CellOwner } from '../../meta-model/CellOwner';
 import { StorableMenaceAgent } from './StorableMenaceAgent';
+import { Brains } from './EpsilonGreedyMenacePretrainedBrain';
 
 interface LearnPolicy {
   (beadsMemory: ReadonlyArray<number>, playedBead: number): number[];
@@ -19,7 +20,7 @@ const menaceAgents: Record<string, StorableMenaceAgent> = {};
 
 const menaceObjectVersion = 2;
 
-function initialStorableMenaceAgent(): StorableMenaceAgent {
+function newAgent(): StorableMenaceAgent {
   return {
     draws: 0,
     losses: 0,
@@ -34,12 +35,8 @@ async function loadMenaceAgent(id: string): Promise<StorableMenaceAgent> {
     return menaceAgents[id];
   }
 
-  const agent = await loadAgent<StorableMenaceAgent>(
-    id,
-    menaceObjectVersion,
-    initialStorableMenaceAgent(),
-  ) as StorableMenaceAgent;
-
+  const loadedBrain = await loadAgent<StorableMenaceAgent>(id, menaceObjectVersion, Brains[id]);
+  const agent = loadedBrain || newAgent();
   menaceAgents[id] = agent;
   return agent;
 }
@@ -95,6 +92,10 @@ export const getMenaceAgent: AIAgentCreator<MenaceAgent> = async (
   const id = `menace-${cellOwner}-${boardDimensions.width}x${boardDimensions.height}`;
   const menaceMemory = await loadMenaceAgent(id);
 
+  async function persist(): Promise<void> {
+    await persistAgent<StorableMenaceAgent>(id, menaceObjectVersion, menaceMemory);
+  }
+
   /**
    * Encapsulates and persists the state of a Menace Matchbox "brain" and provides the interface
    * for the decision and bead "experience" interaction between {@link MenacePlayer} and this
@@ -133,7 +134,7 @@ export const getMenaceAgent: AIAgentCreator<MenaceAgent> = async (
       );
 
       menaceMemory.draws += 1;
-      await persistAgent<StorableMenaceAgent>(id, menaceObjectVersion, menaceMemory);
+      await persist();
     },
 
     async rememberLoss(): Promise<void> {
@@ -150,7 +151,7 @@ export const getMenaceAgent: AIAgentCreator<MenaceAgent> = async (
       );
 
       menaceMemory.losses += 1;
-      await persistAgent<StorableMenaceAgent>(id, menaceObjectVersion, menaceMemory);
+      await persist();
     },
 
     async rememberWin(): Promise<void> {
@@ -160,7 +161,7 @@ export const getMenaceAgent: AIAgentCreator<MenaceAgent> = async (
       );
 
       menaceMemory.wins += 1;
-      await persistAgent<StorableMenaceAgent>(id, menaceObjectVersion, menaceMemory);
+      await persist();
     },
   };
 };
