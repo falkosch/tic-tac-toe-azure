@@ -1,21 +1,18 @@
-import { findDecisionForStateSpace, AIAgent } from '../ai-agent/AIAgent';
+import {
+  buildNormalizedStateSpace, findDecisionForStateSpace, AIAgent, NormalizedStateSpace,
+} from '../ai-agent/AIAgent';
 import { findFreeCellIndices, takeAny, Decision } from '../ai-agent/Decision';
+import { transformBoardCells } from '../../mechanics/BoardNormalization';
 import { CellOwner } from '../../meta-model/CellOwner';
+import { Board } from '../../meta-model/Board';
 
-export interface MenaceStateSpace {
+export interface MenaceStateSpace extends NormalizedStateSpace {
   boardAsString: string;
   boardAsCellOwners: ReadonlyArray<CellOwner>;
 }
 
 export interface MenaceAgent extends AIAgent<MenaceStateSpace> {
   startNewGame(): Promise<void>;
-}
-
-function buildStateSpace(cells: ReadonlyArray<CellOwner>): MenaceStateSpace {
-  return {
-    boardAsString: cells.reduce((stateString, cellOwner) => `${stateString}${cellOwner}`, ''),
-    boardAsCellOwners: cells,
-  };
 }
 
 export function findFreeBeads({ boardAsCellOwners }: Readonly<MenaceStateSpace>): number[] {
@@ -35,9 +32,24 @@ export function multiplyBeads(beads: ReadonlyArray<number>): number[] {
   return multipliedBeads;
 }
 
+function buildMenaceStateSpace(board: Readonly<Board>): MenaceStateSpace {
+  const normalizedStateSpace = buildNormalizedStateSpace(board);
+  const normalizedCells = transformBoardCells(board, normalizedStateSpace.normalization);
+  return {
+    ...normalizedStateSpace,
+    boardAsString: normalizedCells.reduce((stateString, cellOwner) => `${stateString}${cellOwner}`, ''),
+    boardAsCellOwners: normalizedCells,
+  };
+}
+
 export async function findMenaceDecision(
   agent: MenaceAgent,
-  cells: ReadonlyArray<CellOwner>,
+  board: Readonly<Board>,
 ): Promise<Decision | null> {
-  return findDecisionForStateSpace(agent, cells, buildStateSpace(cells), async () => {});
+  return findDecisionForStateSpace(
+    agent,
+    board.cells,
+    buildMenaceStateSpace(board),
+    async () => {},
+  );
 }
