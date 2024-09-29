@@ -59,7 +59,7 @@ function transformDecision<StateSpaceType extends NormalizedStateSpace>(
 }
 
 export async function findDecisionForStateSpace<StateSpaceType extends NormalizedStateSpace>(
-  agent: AIAgent<StateSpaceType>,
+  agent: Readonly<AIAgent<StateSpaceType>>,
   cells: ReadonlyArray<CellOwner>,
   stateSpace: Readonly<StateSpaceType>,
   evaluateDecision: (decision: Readonly<Decision>) => Promise<void> = async () => {},
@@ -82,7 +82,10 @@ export async function findDecisionForStateSpace<StateSpaceType extends Normalize
   return null;
 }
 
-export async function notifyEndState(endState: GameEndState, agent: AIAgent<any>): Promise<void> {
+export async function notifyEndState<StateSpaceType extends NormalizedStateSpace>(
+  endState: Readonly<GameEndState>,
+  agent: Readonly<AIAgent<StateSpaceType>>,
+): Promise<void> {
   const { winner } = endState;
   if (winner === CellOwner.None || winner instanceof Error) {
     await agent.rememberDraw();

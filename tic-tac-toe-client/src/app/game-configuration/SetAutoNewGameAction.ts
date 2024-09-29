@@ -5,9 +5,10 @@ export interface SetAutoNewGameActionPayload {
 }
 
 export function setAutoNewGame(
-  prevState: GameConfigurationType,
-  { value }: SetAutoNewGameActionPayload,
+  prevState: Readonly<GameConfigurationType>,
+  payload: Readonly<SetAutoNewGameActionPayload>,
 ): GameConfigurationType {
+  const { value } = payload;
   return {
     ...prevState,
     autoNewGame: value,

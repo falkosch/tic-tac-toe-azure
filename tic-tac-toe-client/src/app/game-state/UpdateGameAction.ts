@@ -7,9 +7,10 @@ export interface UpdateGameActionPayload {
 }
 
 export function updateGame(
-  prevState: GameStateType,
-  { gameView }: UpdateGameActionPayload,
+  prevState: Readonly<GameStateType>,
+  payload: Readonly<UpdateGameActionPayload>,
 ): GameStateType {
+  const { gameView } = payload;
   let nextGameState = prevState;
 
   nextGameState = setGameView(nextGameState, { gameView });

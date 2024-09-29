@@ -1,9 +1,9 @@
 import {
   DQNEnv, DQNOpt, DQNSolver, Solver,
 } from 'reinforce-js';
-import { AIAgentCreator } from '../ai-agent/AIAgent';
 
 import { loadAgent, persistAgent, BrainStatistics } from '../ai-agent/StorableAgent';
+import { AIAgentCreator } from '../ai-agent/AIAgent';
 import { Brains } from './DQNPretrainedBrain';
 import { Decision } from '../ai-agent/Decision';
 import { ReinforcedAgent } from './ReinforcedAgent';

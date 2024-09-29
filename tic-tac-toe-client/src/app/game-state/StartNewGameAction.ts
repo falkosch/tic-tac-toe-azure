@@ -9,9 +9,10 @@ export interface StartNewGameActionPayload {
 }
 
 export function startNewGame(
-  prevState: GameStateType,
-  { gameView }: StartNewGameActionPayload,
+  prevState: Readonly<GameStateType>,
+  payload: Readonly<StartNewGameActionPayload>,
 ): GameStateType {
+  const { gameView } = payload;
   let nextGameState = prevState;
 
   nextGameState = setActionToken(nextGameState, {});

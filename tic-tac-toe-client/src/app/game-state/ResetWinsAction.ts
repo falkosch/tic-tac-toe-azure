@@ -2,13 +2,14 @@ import { GameStateType } from './GameState';
 import { SpecificCellOwner } from '../../meta-model/CellOwner';
 
 export interface ResetWinsActionPayload {
-  player: SpecificCellOwner;
+  player: Readonly<SpecificCellOwner>;
 }
 
 export function resetWins(
-  prevState: GameStateType,
-  { player }: ResetWinsActionPayload,
+  prevState: Readonly<GameStateType>,
+  payload: Readonly<ResetWinsActionPayload>,
 ): GameStateType {
+  const { player } = payload;
   return {
     ...prevState,
     wins: {

@@ -2,14 +2,15 @@ import { GameConfigurationType, PlayerType } from './GameConfiguration';
 import { SpecificCellOwner } from '../../meta-model/CellOwner';
 
 export interface SetPlayerTypeActionPayload {
-  player: SpecificCellOwner;
-  playerType: PlayerType;
+  player: Readonly<SpecificCellOwner>;
+  playerType: Readonly<PlayerType>;
 }
 
 export function setPlayerType(
-  prevState: GameConfigurationType,
-  { player, playerType }: SetPlayerTypeActionPayload,
+  prevState: Readonly<GameConfigurationType>,
+  payload: Readonly<SetPlayerTypeActionPayload>,
 ): GameConfigurationType {
+  const { player, playerType } = payload;
   return {
     ...prevState,
     playerTypes: {
