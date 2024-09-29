@@ -23,10 +23,16 @@ function selectBorderWidth(upperEdge): string {
 }
 
 export const CellView: React.FC<{
-  cellOwner: CellOwner;
-  cellAt: number;
   boardDimensions: BoardDimensions;
-}> = ({ cellOwner, cellAt, boardDimensions }) => {
+  cellAt: number;
+  cellOwner: CellOwner;
+  onClick: (event: React.MouseEvent) => void;
+}> = ({
+  boardDimensions,
+  cellAt,
+  cellOwner,
+  onClick,
+}) => {
   const cellOwnerImage = mapCellOwnerToImage(cellOwner);
 
   const edgeClassifiers = cellEdgeClassifiers(
@@ -41,7 +47,12 @@ export const CellView: React.FC<{
   };
 
   return (
-    <div className="cell-view bg-light border-secondary" style={gridStyle}>
+    <button
+      className="cell-view bg-light border-secondary"
+      onClick={(event: React.MouseEvent) => onClick(event)}
+      style={gridStyle}
+      type="button"
+    >
       {
         cellOwnerImage && (
           <img
@@ -51,6 +62,6 @@ export const CellView: React.FC<{
           />
         )
       }
-    </div>
+    </button>
   );
 };
