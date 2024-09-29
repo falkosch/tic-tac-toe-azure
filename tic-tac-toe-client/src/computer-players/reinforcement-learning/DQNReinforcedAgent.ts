@@ -14,6 +14,11 @@ interface StorableAgent {
   network: any;
 }
 
+/**
+ * Encapsulates and persists the state of a DQN solver (the "brain") and provides the interface
+ * for the decision and reward interaction between {@link DQNPlayer} and this agent. The DQN
+ * solver is implemented by the package {@link 'reinforce-js'}.
+ */
 export class DQNReinforcedAgent implements ReinforcedAgent {
   static ObjectVersion = 1;
 
