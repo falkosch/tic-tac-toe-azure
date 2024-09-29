@@ -1,9 +1,5 @@
 pipeline {
-  agent {
-    docker {
-      image 'atlassianlabs:docker-node-jdk-chrome-firefox:2019-12-30'
-    }
-  }
+  agent any
   options {
     disableConcurrentBuilds()
     skipStagesAfterUnstable()
@@ -14,6 +10,13 @@ pipeline {
   }
   stages {
     stage('build client') {
+      agent {
+        dockerfile {
+          filename './tic-tac-toe-client/Dockerfile.build'
+          dir './tic-tac-toe-client'
+          label 'localdocker'
+        }
+      }
       stages {
         stage('build') {
           steps {
