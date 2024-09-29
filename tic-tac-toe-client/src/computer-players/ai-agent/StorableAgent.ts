@@ -48,21 +48,25 @@ const persisterInitialization = new Promise<Persister>((resolve) => {
 function createTransaction(
   database: Readonly<IDBDatabase>,
   readOnly: boolean,
-  transactionResolve: Function,
-  transactionReject: Function,
+  transactionResolve?: Function,
+  transactionReject?: Function,
 ): IDBTransaction {
   const dbTransaction = database.transaction(
     [indexedDBConfiguration.objectStore],
     readOnly ? 'readonly' : 'readwrite',
   );
 
-  dbTransaction.oncomplete = () => {
-    transactionResolve();
-  };
+  if (transactionResolve) {
+    dbTransaction.oncomplete = () => {
+      transactionResolve();
+    };
+  }
 
-  dbTransaction.onerror = () => {
-    transactionReject(new Error(dbTransaction.error.message));
-  };
+  if (transactionReject) {
+    dbTransaction.onerror = () => {
+      transactionReject(new Error(dbTransaction.error.message));
+    };
+  }
 
   return dbTransaction;
 }
@@ -76,11 +80,11 @@ function createIndexedDBPersister(database: Readonly<IDBDatabase>): Persister {
           .put(data, id);
       });
     },
-    async load(__id) {
+    async load(id) {
       return new Promise((loadResolve, loadReject) => {
-        const request = createTransaction(database, false, () => {}, loadReject)
+        const request = createTransaction(database, false, undefined, loadReject)
           .objectStore(indexedDBConfiguration.objectStore)
-          .get(__id);
+          .get(id);
 
         request.onsuccess = () => {
           loadResolve(request.result);
