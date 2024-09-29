@@ -1,5 +1,7 @@
 import { buildBoardModifier } from './Actions';
-import { countPoints, isEnding, pointsLeader } from './GameRules';
+import {
+  countPoints, isDrawEnding, isOneWinnerEnding, pointsLeader,
+} from './GameRules';
 import { findConsecutiveness } from './Consecutiveness';
 import { AttackGameAction } from '../meta-model/GameAction';
 import { Board, BoardDimensions } from '../meta-model/Board';
@@ -20,7 +22,7 @@ export interface OnGameViewUpdate {
 }
 
 export interface OnGameEnd {
-  (gameView: Readonly<GameView>, endState: Readonly<GameEndState>): Promise<void>;
+  (endState: Readonly<GameEndState>): Promise<void>;
 }
 
 type JoinedPlayer = [Readonly<SpecificCellOwner>, Readonly<Player>];
@@ -58,6 +60,16 @@ function emptyActionHistory(): GameActionHistory {
   };
 }
 
+function effectiveMaxTurns(dimensions: Readonly<BoardDimensions>, maxTurns: number): number {
+  const minTurnsRequired = dimensions.width * dimensions.height;
+  return Math.max(minTurnsRequired, maxTurns);
+}
+
+function playerOfTurn(joinedPlayers: ReadonlyArray<JoinedPlayer>, turn: number): JoinedPlayer {
+  const indexOfPlayerWithTurn = turn % joinedPlayers.length;
+  return joinedPlayers[indexOfPlayerWithTurn];
+}
+
 async function joinPlayers(joiningPlayers: Readonly<JoiningPlayers>): Promise<JoinedPlayer[]> {
   const joiningPlayersEntries = Object.entries(joiningPlayers);
   const createPromises = joiningPlayersEntries
@@ -67,9 +79,45 @@ async function joinPlayers(joiningPlayers: Readonly<JoiningPlayers>): Promise<Jo
   return Promise.all(createPromises);
 }
 
-function playerOfTurn(joinedPlayers: ReadonlyArray<JoinedPlayer>, turn: number): JoinedPlayer {
-  const indexOfPlayerWithTurn = turn % joinedPlayers.length;
-  return joinedPlayers[indexOfPlayerWithTurn];
+function isWithdrawAction(action: Readonly<AttackGameAction>): boolean {
+  return !action.affectedCellsAt || action.affectedCellsAt.length === 0;
+}
+
+function makeDrawEndState(gameView: Readonly<GameView>, moveLimitReached: boolean): GameEndState {
+  return {
+    gameView,
+    visitee(visitor) {
+      const { drawEndState } = visitor;
+      if (drawEndState) {
+        drawEndState(moveLimitReached);
+      }
+    },
+  };
+}
+
+function makeOneWinnerEndState(gameView: Readonly<GameView>): GameEndState {
+  const winner = pointsLeader(gameView.points);
+  return {
+    gameView,
+    visitee(visitor) {
+      const { oneWinnerEndState } = visitor;
+      if (oneWinnerEndState && winner) {
+        oneWinnerEndState(winner);
+      }
+    },
+  };
+}
+
+function makeErroneousEndState(gameView: Readonly<GameView>, error: Readonly<Error>): GameEndState {
+  return {
+    gameView,
+    visitee(visitor) {
+      const { erroneousEndState } = visitor;
+      if (erroneousEndState) {
+        erroneousEndState(error);
+      }
+    },
+  };
 }
 
 async function notifyGameViewUpdate(
@@ -83,7 +131,8 @@ async function notifyGameViewUpdate(
 
   await Promise.all(
     joinedPlayers.map(
-      async ([cellOwner, { onGameViewUpdate: playerOnGameViewUpdate }]) => {
+      async ([cellOwner, player]) => {
+        const { onGameViewUpdate: playerOnGameViewUpdate } = player;
         if (playerOnGameViewUpdate) {
           await playerOnGameViewUpdate(cellOwner, gameView);
         }
@@ -103,7 +152,8 @@ async function notifyGameStart(
 
   await Promise.all(
     joinedPlayers.map(
-      async ([cellOwner, { onGameStart: playerOnGameStart }]) => {
+      async ([cellOwner, player]) => {
+        const { onGameStart: playerOnGameStart } = player;
         if (playerOnGameStart) {
           await playerOnGameStart(cellOwner, gameView);
         }
@@ -113,52 +163,37 @@ async function notifyGameStart(
 }
 
 async function notifyGameEnd(
-  gameView: Readonly<GameView>,
   endState: Readonly<GameEndState>,
   joinedPlayers: ReadonlyArray<JoinedPlayer>,
   onGameEnd?: OnGameEnd,
 ): Promise<void> {
   if (onGameEnd) {
-    await onGameEnd(gameView, endState);
+    await onGameEnd(endState);
   }
 
   await Promise.all(
     joinedPlayers.map(
-      async ([cellOwner, { onGameEnd: playerOnGameEnd }]) => {
+      async ([cellOwner, player]) => {
+        const { onGameEnd: playerOnGameEnd } = player;
         if (playerOnGameEnd) {
-          await playerOnGameEnd(cellOwner, gameView, endState);
+          await playerOnGameEnd(cellOwner, endState);
         }
       },
     ),
   );
 }
 
-function effectiveMaxTurns(dimensions: Readonly<BoardDimensions>, maxTurns: number): number {
-  const minTurnsRequired = dimensions.width * dimensions.height;
-  return Math.max(minTurnsRequired, maxTurns);
-}
-
-function isWithdrawAction(action: Readonly<AttackGameAction>): boolean {
-  return !action.affectedCellsAt || action.affectedCellsAt.length === 0;
-}
-
-export async function runNewGame(
-  joiningPlayers: Readonly<JoiningPlayers>,
-  onGameStart: OnGameStart = async () => {},
+async function runTurns(
+  joinedPlayers: ReadonlyArray<JoinedPlayer>,
+  initialGameView: Readonly<GameView>,
   onGameViewUpdate: OnGameViewUpdate = async () => {},
-  onGameEnd: OnGameEnd = async () => {},
-  maxTurns = 100,
+  maxTurns: number,
 ): Promise<GameEndState> {
-  const joinedPlayers = await joinPlayers(joiningPlayers);
-
   let actionHistory = emptyActionHistory();
-  let gameView = newGameView();
-  let turn = 0;
-  let endState = { winner: CellOwner.None };
-
-  await notifyGameStart(gameView, joinedPlayers, onGameStart);
+  let gameView = initialGameView;
 
   const turnsLimit = effectiveMaxTurns(gameView.board.dimensions, maxTurns);
+  let turn = 0;
   while (turn < turnsLimit) {
     const [cellOwner, playerWithTurn] = playerOfTurn(joinedPlayers, turn);
 
@@ -166,9 +201,8 @@ export async function runNewGame(
     try {
       // eslint-disable-next-line no-await-in-loop
       action = await playerWithTurn.takeTurn({ cellOwner, gameView, actionHistory });
-    } catch (e) {
-      endState = { winner: e };
-      break;
+    } catch (error) {
+      return makeErroneousEndState(gameView, error);
     }
 
     actionHistory = { action, previous: actionHistory };
@@ -181,14 +215,34 @@ export async function runNewGame(
     // eslint-disable-next-line no-await-in-loop
     await notifyGameViewUpdate(gameView, joinedPlayers, onGameViewUpdate);
 
-    if (isWithdrawAction(action) || isEnding(gameView)) {
-      endState = { winner: pointsLeader(points) };
-      break;
+    if (isWithdrawAction(action) || isDrawEnding(gameView)) {
+      return makeDrawEndState(gameView, false);
+    }
+
+    if (isOneWinnerEnding(gameView)) {
+      return makeOneWinnerEndState(gameView);
     }
 
     turn += 1;
   }
 
-  await notifyGameEnd(gameView, endState, joinedPlayers, onGameEnd);
+  return makeDrawEndState(gameView, true);
+}
+
+export async function runNewGame(
+  joiningPlayers: Readonly<JoiningPlayers>,
+  onGameStart: OnGameStart = async () => {},
+  onGameViewUpdate: OnGameViewUpdate = async () => {},
+  onGameEnd: OnGameEnd = async () => {},
+  maxTurns = 100,
+): Promise<GameEndState> {
+  const joinedPlayers = await joinPlayers(joiningPlayers);
+
+  const initialGameView = newGameView();
+  await notifyGameStart(initialGameView, joinedPlayers, onGameStart);
+
+  const endState = await runTurns(joinedPlayers, initialGameView, onGameViewUpdate, maxTurns);
+  await notifyGameEnd(endState, joinedPlayers, onGameEnd);
+
   return endState;
 }

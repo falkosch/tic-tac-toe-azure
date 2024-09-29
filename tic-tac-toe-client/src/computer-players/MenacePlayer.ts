@@ -35,10 +35,9 @@ export const createMenacePlayer: PlayerCreator = async () => (
 
     async onGameEnd(
       cellOwner: Readonly<SpecificCellOwner>,
-      gameView: Readonly<GameView>,
       endState: Readonly<GameEndState>,
     ): Promise<void> {
-      const agent = await getMenaceAgent(cellOwner, gameView.board.dimensions);
+      const agent = await getMenaceAgent(cellOwner, endState.gameView.board.dimensions);
       await notifyEndState(endState, agent);
     },
   }

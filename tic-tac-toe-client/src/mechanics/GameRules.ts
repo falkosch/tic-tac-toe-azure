@@ -21,9 +21,9 @@ export function countPoints(
   return pointsTracking;
 }
 
-export function pointsLeader(points: Readonly<Points>): CellOwner {
+export function pointsLeader(points: Readonly<Points>): SpecificCellOwner | undefined {
   let winnerPoints = 0;
-  let winner = CellOwner.None;
+  let winner;
 
   Object.keys(points)
     .forEach((cellOwnerKey) => {
@@ -42,11 +42,12 @@ export function remainingMoves(cells: ReadonlyArray<CellOwner>): number {
   return cells.reduce((acc, cellOwner) => acc + (cellOwner === CellOwner.None ? 1 : 0), 0);
 }
 
-export function isEnding(gameView: Readonly<GameView>): boolean {
-  if (remainingMoves(gameView.board.cells) === 0) {
-    return true;
-  }
-
+export function isOneWinnerEnding(gameView: Readonly<GameView>): boolean {
   // for now, occurrence of a first consecutiveness sequence ends the game
   return gameView.consecutiveness.length > 0;
+}
+
+export function isDrawEnding(gameView: Readonly<GameView>): boolean {
+  return !isOneWinnerEnding(gameView)
+    && remainingMoves(gameView.board.cells) === 0;
 }

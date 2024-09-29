@@ -3,7 +3,6 @@ import { getDQNReinforcedAgent } from './reinforcement-learning/DQNReinforcedAge
 import { notifyEndState } from './ai-agent/AIAgent';
 import { AttackGameAction } from '../meta-model/GameAction';
 import { GameEndState } from '../meta-model/GameEndState';
-import { GameView } from '../meta-model/GameView';
 import { PlayerCreator } from '../meta-model/Player';
 import { PlayerTurn } from '../meta-model/PlayerTurn';
 import { SpecificCellOwner } from '../meta-model/CellOwner';
@@ -23,12 +22,11 @@ export const createDQNPlayer: PlayerCreator = async () => (
 
     async onGameEnd(
       cellOwner: Readonly<SpecificCellOwner>,
-      gameView: Readonly<GameView>,
       endState: Readonly<GameEndState>,
     ): Promise<void> {
       const agent = await getDQNReinforcedAgent(
         cellOwner,
-        gameView.board.dimensions,
+        endState.gameView.board.dimensions,
       );
       await notifyEndState(endState, agent);
     },
