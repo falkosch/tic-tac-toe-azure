@@ -1,10 +1,10 @@
 import { Board } from './Board';
 
 export interface Consecutiveness {
-    cellsAt: number[];
+  cellsAt: ReadonlyArray<number>;
 }
 
 export interface Game {
-    board: Board;
-    consecutiveness: Consecutiveness[];
+  board: Readonly<Board>;
+  consecutiveness: ReadonlyArray<Consecutiveness>;
 }

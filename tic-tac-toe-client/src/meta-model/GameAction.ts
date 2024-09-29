@@ -2,11 +2,11 @@ import { Board } from './Board';
 import { CellOwner } from './CellOwner';
 
 export interface AttackAction {
-    affectedCellsAt: number[];
-    newOwner: CellOwner;
+  affectedCellsAt: ReadonlyArray<number>;
+  newOwner: Readonly<CellOwner>;
 }
 
 export interface GameAction {
-  board: Board;
-  attack?: AttackAction;
+  attack?: Readonly<AttackAction>;
+  board: Readonly<Board>;
 }
