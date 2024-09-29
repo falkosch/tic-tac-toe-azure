@@ -1,6 +1,7 @@
 .cell-view {
   border: 1px darkgray solid;
-  flex-basis: 33%;
+  height: calc(100% / 3);
+  width: calc(100% / 3);
 }
 
 .cell-view-cell-owner {

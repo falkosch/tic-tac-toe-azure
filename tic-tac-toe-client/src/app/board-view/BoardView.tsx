@@ -11,8 +11,8 @@ const BoardView: React.FC<{ board: Board }> = ({ board }) => (
   <div className="board-view">
     <Map
       collection={board.cells}
-      iteratee={(cellOwner) => (
-        <CellView cellOwner={cellOwner} />
+      iteratee={(cellOwner, k) => (
+        <CellView key={k} cellOwner={cellOwner} />
       )}
     />
   </div>
