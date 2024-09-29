@@ -3,3 +3,7 @@
   box-sizing: content-box;
   padding: 0;
 }
+
+.cell-view-strike {
+  top: 0;
+}

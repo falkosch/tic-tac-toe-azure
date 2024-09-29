@@ -1,7 +1,7 @@
 import { cellAtCoordinate, CellCoordinates } from './CellCoordinates';
 import { Board } from '../meta-model/Board';
 import { CellOwner } from '../meta-model/CellOwner';
-import { Consecutiveness } from '../meta-model/GameView';
+import { Consecutiveness, ConsecutivenessDirection } from '../meta-model/GameView';
 
 interface IteratorToCoordinates {
   (i: number): CellCoordinates;
@@ -22,6 +22,7 @@ interface ConsecutivenessConsumer {
 
 function findInCellOwnerSpans(
   consecutivenessConsumer: ConsecutivenessConsumer,
+  direction: ConsecutivenessDirection,
   board: Readonly<Board>,
   lineDimension: number,
   minimumSpan: number,
@@ -49,7 +50,7 @@ function findInCellOwnerSpans(
       if (ownerOfSpan !== ownerAtCell) {
         // add span as consecutiveness if it exceeds the minimum span length
         if (cellsAt.length >= minimumSpan && ownerOfSpan !== CellOwner.None) {
-          consecutivenessConsumer({ cellsAt });
+          consecutivenessConsumer({ cellsAt, direction });
         }
         // start next span
         cellsAt = [iAsCellAt];
@@ -62,12 +63,13 @@ function findInCellOwnerSpans(
 
   // don't forget to check the last started span
   if (cellsAt.length >= minimumSpan && ownerOfSpan !== CellOwner.None) {
-    consecutivenessConsumer({ cellsAt });
+    consecutivenessConsumer({ cellsAt, direction });
   }
 }
 
 function findForEachLine(
   consecutivenessConsumer: ConsecutivenessConsumer,
+  direction: ConsecutivenessDirection,
   board: Readonly<Board>,
   lineDimensions: Readonly<LineDimensions>,
   minimumSpan: number,
@@ -79,6 +81,7 @@ function findForEachLine(
       const iteratorToCoordinates: IteratorToCoordinates = (i) => coordinatesFromIterators(j, i);
       findInCellOwnerSpans(
         consecutivenessConsumer,
+        direction,
         board,
         dimensionJForI,
         minimumSpan,
@@ -96,6 +99,7 @@ export function findConsecutiveness(board: Readonly<Board>, minimumSpan = 3): Co
   // find consecutiveness in each horizontal span
   findForEachLine(
     consecutivenessConsumer,
+    ConsecutivenessDirection.Horizontal,
     board,
     {
       j: board.dimensions.height,
@@ -111,6 +115,7 @@ export function findConsecutiveness(board: Readonly<Board>, minimumSpan = 3): Co
   // find consecutiveness in each vertical span
   findForEachLine(
     consecutivenessConsumer,
+    ConsecutivenessDirection.Vertical,
     board,
     {
       j: board.dimensions.width,
@@ -127,6 +132,7 @@ export function findConsecutiveness(board: Readonly<Board>, minimumSpan = 3): Co
   // - j iterates from TL to TR
   findForEachLine(
     consecutivenessConsumer,
+    ConsecutivenessDirection.DiagonalTL2BR,
     board,
     {
       j: board.dimensions.width,
@@ -142,6 +148,7 @@ export function findConsecutiveness(board: Readonly<Board>, minimumSpan = 3): Co
   // - j iterates from TL to BL
   findForEachLine(
     consecutivenessConsumer,
+    ConsecutivenessDirection.DiagonalTL2BR,
     board,
     {
       j: board.dimensions.height - 1,
@@ -158,6 +165,7 @@ export function findConsecutiveness(board: Readonly<Board>, minimumSpan = 3): Co
   // - j iterates from TR to TL
   findForEachLine(
     consecutivenessConsumer,
+    ConsecutivenessDirection.DiagonalTR2BL,
     board,
     {
       j: board.dimensions.width,
@@ -173,6 +181,7 @@ export function findConsecutiveness(board: Readonly<Board>, minimumSpan = 3): Co
   // - j iterates from TR to BR
   findForEachLine(
     consecutivenessConsumer,
+    ConsecutivenessDirection.DiagonalTR2BL,
     board,
     {
       j: board.dimensions.height - 1,
@@ -186,4 +195,19 @@ export function findConsecutiveness(board: Readonly<Board>, minimumSpan = 3): Co
   );
 
   return consecutiveness;
+}
+
+export function coveredConsecutivenessDirections(
+  cellAt: number,
+  consecutiveness: ReadonlyArray<Consecutiveness>,
+): ConsecutivenessDirection[] {
+  const directions: ConsecutivenessDirection[] = [];
+
+  consecutiveness.forEach((c) => {
+    if (c.cellsAt.includes(cellAt) && !directions.includes(c.direction)) {
+      directions.push(c.direction);
+    }
+  });
+
+  return directions;
 }
