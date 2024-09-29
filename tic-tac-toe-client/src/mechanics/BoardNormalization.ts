@@ -1,5 +1,10 @@
 import {
-  forEachLine, CellCoordinates, LineDimensions, LineIteratorsToCoordinates, cellAtCoordinate,
+  cellAtCoordinate,
+  forEachCellInLine,
+  forEachLine,
+  CellCoordinates,
+  LineDimensions,
+  LineIteratorsToCoordinates,
 } from './CellCoordinates';
 import { Board, BoardDimensions } from '../meta-model/Board';
 import { CellOwner } from '../meta-model/CellOwner';
@@ -32,14 +37,18 @@ function countFreeCellsInRegion(
   let freeCells = 0;
 
   forEachLine(
-    board,
     lineDimensions,
     iteratorsToCoordinates,
-    (cellAt) => {
-      if (board.cells[cellAt] === CellOwner.None) {
-        freeCells += 1;
-      }
-    },
+    (lineDimension, iteratorToCoordinates) => forEachCellInLine(
+      board.dimensions,
+      lineDimension,
+      iteratorToCoordinates,
+      (cellAt) => {
+        if (board.cells[cellAt] === CellOwner.None) {
+          freeCells += 1;
+        }
+      },
+    ),
   );
 
   return freeCells;
@@ -115,25 +124,28 @@ export function inverseNormalization(
 }
 
 export function transformBoardCells(
-  board: Readonly<Board>,
+  { cells, dimensions }: Readonly<Board>,
   normalization: Readonly<BoardNormalization>,
 ): CellOwner[] {
-  const cells = Array.from<CellOwner>({ length: board.cells.length });
-  const { dimensions } = board;
+  const transformedCells = Array.from<CellOwner>({ length: cells.length });
 
   forEachLine(
-    board,
     {
       j: dimensions.height,
       i: (__) => dimensions.width,
     },
     (j, i) => ({ x: i, y: j }),
-    (cellAt, coordinates) => {
-      const transformedCoordinates = transformCoordinates(coordinates, dimensions, normalization);
-      const transformedCellAt = cellAtCoordinate(transformedCoordinates, dimensions);
-      cells[transformedCellAt] = board.cells[cellAt];
-    },
+    (lineDimension, iteratorToCoordinates) => forEachCellInLine(
+      dimensions,
+      lineDimension,
+      iteratorToCoordinates,
+      (cellAt, coordinates) => {
+        const transformedCoordinates = transformCoordinates(coordinates, dimensions, normalization);
+        const transformedCellAt = cellAtCoordinate(transformedCoordinates, dimensions);
+        transformedCells[transformedCellAt] = cells[cellAt];
+      },
+    ),
   );
 
-  return cells;
+  return transformedCells;
 }

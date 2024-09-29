@@ -1,5 +1,4 @@
-import { Board, BoardDimensions } from '../meta-model/Board';
-
+import { BoardDimensions } from '../meta-model/Board';
 import { Coordinates } from './Coordinates';
 
 export type CellCoordinates = Coordinates<number>;
@@ -18,7 +17,11 @@ export interface LineIteratorsToCoordinates {
 }
 
 export interface ForEachCellInLineCallback {
-  (cellAt: number, coordinates: CellCoordinates): void;
+  (cellAt: number, coordinates: Readonly<CellCoordinates>): void;
+}
+
+export interface ForEachLineCallback {
+  (lineDimension: number, iteratorToCoordinates: LineIteratorToCoordinates): void;
 }
 
 export function cellCoordinates(
@@ -39,32 +42,26 @@ export function cellAtCoordinate(
 }
 
 export function forEachCellInLine(
-  board: Readonly<Board>,
+  boardDimensions: Readonly<BoardDimensions>,
   lineDimension: number,
   iteratorToCoordinates: LineIteratorToCoordinates,
-  callback: ForEachCellInLineCallback,
+  forEachCellInLineCallback: ForEachCellInLineCallback,
 ): void {
   for (let i = 0; i < lineDimension; i += 1) {
     const coordinates = iteratorToCoordinates(i);
-    callback(
-      cellAtCoordinate(coordinates, board.dimensions),
-      coordinates,
-    );
+    const cellAt = cellAtCoordinate(coordinates, boardDimensions);
+    forEachCellInLineCallback(cellAt, coordinates);
   }
 }
 
 export function forEachLine(
-  board: Readonly<Board>,
   lineDimensions: Readonly<LineDimensions>,
   iteratorsToCoordinates: LineIteratorsToCoordinates,
-  callback: ForEachCellInLineCallback,
+  forEachLineCallback: ForEachLineCallback,
 ): void {
   for (let j = 0; j < lineDimensions.j; j += 1) {
-    forEachCellInLine(
-      board,
-      lineDimensions.i(j),
-      (i) => iteratorsToCoordinates(j, i),
-      callback,
-    );
+    const lineDimension = lineDimensions.i(j);
+    const iteratorToCoordinates: LineIteratorToCoordinates = (i) => iteratorsToCoordinates(j, i);
+    forEachLineCallback(lineDimension, iteratorToCoordinates);
   }
 }
