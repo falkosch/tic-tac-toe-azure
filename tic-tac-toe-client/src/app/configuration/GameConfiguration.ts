@@ -6,7 +6,7 @@ export enum PlayerType {
   Human = 'Human player',
   Mock = 'Mock computer player (local)',
   DQN = 'DQN AI computer player (local)',
-  Azure = 'Azure function as computer player (local)',
+  Azure = 'Azure function as computer player (remote)',
 }
 
 export type PlayerConfiguration = Record<SpecificCellOwner, Readonly<PlayerType>>;
