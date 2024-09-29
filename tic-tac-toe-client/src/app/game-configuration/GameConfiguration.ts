@@ -19,6 +19,6 @@ export const initialGameConfiguration: Readonly<GameConfigurationType> = {
   autoNewGame: false,
   playerTypes: {
     [CellOwner.X]: PlayerType.Human,
-    [CellOwner.O]: PlayerType.Menace,
+    [CellOwner.O]: PlayerType.DQN,
   },
 };
