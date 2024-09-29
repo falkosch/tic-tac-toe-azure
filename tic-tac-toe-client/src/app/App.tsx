@@ -5,18 +5,18 @@ import Form from 'react-bootstrap/Form';
 import Navbar from 'react-bootstrap/Navbar';
 import React, { useState } from 'react';
 
+import { evaluateReaction } from '../mechanics/Reactions';
 import { prepareAttack } from '../mechanics/Actions';
 import { AzureFunctionDefender } from '../defender/AzureFunctionDefender';
-import { DQNDefender } from '../defender/client-local/DQNDefender';
+import { CellOwner } from '../meta-model/CellOwner';
 import { Defender } from '../meta-model/Defender';
+import { DQNDefender } from '../defender/client-local/DQNDefender';
 import { Game } from '../meta-model/Game';
 import { GameView } from './game-view/GameView';
 import { MockDefender } from '../defender/MockDefender';
 
 import './App.css';
 import logo from './logo.svg';
-import { evaluateReaction } from '../mechanics/Reactions';
-import { CellOwner } from '../meta-model/CellOwner';
 
 const defenders: Readonly<Record<string, () => Defender>> = {
   [MockDefender.ReadableName]: () => new MockDefender(),
@@ -46,6 +46,19 @@ export const App: React.FC = () => {
     const reaction = await defender.defend(action);
     const alteredGame = evaluateReaction(game, action, reaction);
     setGame(alteredGame);
+  }
+
+  function selectGameView(): JSX.Element {
+    if (game === undefined || game === null) {
+      return <div>Create a new game first.</div>;
+    }
+
+    return (
+      <GameView
+        game={game}
+        onCellClick={(__event, cellAt) => commenceAction(cellAt)}
+      />
+    );
   }
 
   return (
@@ -79,16 +92,7 @@ export const App: React.FC = () => {
         </Navbar>
       </div>
       <div className="app-game-view d-flex justify-content-center align-items-center">
-        {
-          game === undefined || game === null
-            ? <div>Create a new game first.</div>
-            : (
-              <GameView
-                game={game}
-                onCellClick={(__event, cellAt) => commenceAction(cellAt)}
-              />
-            )
-        }
+        { selectGameView() }
       </div>
     </div>
   );
