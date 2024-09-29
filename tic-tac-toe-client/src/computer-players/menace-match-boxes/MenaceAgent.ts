@@ -1,10 +1,13 @@
 import {
-  buildNormalizedStateSpace, findDecisionForStateSpace, AIAgent, NormalizedStateSpace,
+  buildNormalizedStateSpace,
+  findDecisionForStateSpace,
+  AIAgent,
+  NormalizedStateSpace,
 } from '../ai-agent/AIAgent';
 import { findFreeCellIndices, takeAny, Decision } from '../ai-agent/Decision';
 import { transformBoardCells } from '../../mechanics/BoardNormalization';
-import { CellOwner } from '../../meta-model/CellOwner';
 import { Board } from '../../meta-model/Board';
+import { CellOwner } from '../../meta-model/CellOwner';
 
 export interface MenaceStateSpace extends NormalizedStateSpace {
   boardAsString: string;
@@ -15,8 +18,8 @@ export interface MenaceAgent extends AIAgent<MenaceStateSpace> {
   startNewGame(): Promise<void>;
 }
 
-export function findFreeBeads({ boardAsCellOwners }: Readonly<MenaceStateSpace>): number[] {
-  return findFreeCellIndices(boardAsCellOwners);
+export function findFreeBeads(stateSpace: Readonly<MenaceStateSpace>): number[] {
+  return findFreeCellIndices(stateSpace.boardAsCellOwners);
 }
 
 export function randomBead(beads: ReadonlyArray<number>): number[] {
@@ -43,7 +46,7 @@ function buildMenaceStateSpace(board: Readonly<Board>): MenaceStateSpace {
 }
 
 export async function findMenaceDecision(
-  agent: MenaceAgent,
+  agent: Readonly<MenaceAgent>,
   board: Readonly<Board>,
 ): Promise<Decision | null> {
   return findDecisionForStateSpace(

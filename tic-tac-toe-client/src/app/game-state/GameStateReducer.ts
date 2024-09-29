@@ -31,12 +31,12 @@ export type GameStateActionPayload = AddWinActionPayload
   | UpdateGameActionPayload;
 
 export interface GameStateAction {
-  type: GameStateActionType;
-  payload: GameStateActionPayload;
+  type: Readonly<GameStateActionType>;
+  payload: Readonly<GameStateActionPayload>;
 }
 
 interface ActionDelegate {
-  (prevState: Readonly<GameStateType>, payload: GameStateActionPayload): GameStateType;
+  (prevState: Readonly<GameStateType>, payload: Readonly<GameStateActionPayload>): GameStateType;
 }
 
 const typeToAction: Readonly<Record<GameStateActionType, ActionDelegate>> = {
@@ -75,7 +75,11 @@ const typeToAction: Readonly<Record<GameStateActionType, ActionDelegate>> = {
 
 export type GameStateReducer = Reducer<GameStateType, GameStateAction>;
 
-export const gameStateReducer: GameStateReducer = (prevState: GameStateType, { type, payload }) => {
+export const gameStateReducer: GameStateReducer = (
+  prevState: Readonly<GameStateType>,
+  gameStateAction: Readonly<GameStateAction>,
+) => {
+  const { type, payload } = gameStateAction;
   const actionDelegate = typeToAction[type];
   if (actionDelegate) {
     return actionDelegate(prevState, payload);

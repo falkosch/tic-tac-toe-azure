@@ -10,7 +10,7 @@ export enum ConsecutivenessDirection {
 
 export interface Consecutiveness {
   cellsAt: ReadonlyArray<number>;
-  direction: ConsecutivenessDirection;
+  direction: Readonly<ConsecutivenessDirection>;
 }
 
 export type Points = Record<SpecificCellOwner, number>;

@@ -5,9 +5,10 @@ export interface SetActionTokenActionPayload {
 }
 
 export function setActionToken(
-  prevState: GameStateType,
-  { actionToken }: SetActionTokenActionPayload,
+  prevState: Readonly<GameStateType>,
+  payload: Readonly<SetActionTokenActionPayload>,
 ): GameStateType {
+  const { actionToken } = payload;
   return {
     ...prevState,
     actionToken,
