@@ -1,0 +1,6 @@
+{
+    "azureFunctions.deploySubpath": "TicTacToeGame/bin/Release/netcoreapp3.0/publish",
+    "azureFunctions.projectLanguage": "C#",
+    "azureFunctions.projectRuntime": "~2",
+    "azureFunctions.preDeployTask": "publish"
+}
