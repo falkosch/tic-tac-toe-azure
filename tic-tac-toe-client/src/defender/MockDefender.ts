@@ -9,9 +9,9 @@ export class MockDefender implements Defender {
     return Promise.resolve({
       board: {
         cells: [
-          CellOwner.X, CellOwner.O, CellOwner.X,
-          CellOwner.O, CellOwner.X, CellOwner.O,
-          CellOwner.O, CellOwner.X, CellOwner.O,
+          CellOwner.X, CellOwner.O, CellOwner.None,
+          CellOwner.None, CellOwner.None, CellOwner.None,
+          CellOwner.None, CellOwner.None, CellOwner.None,
         ],
         dimensions: {
           height: 3,
