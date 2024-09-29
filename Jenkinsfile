@@ -36,12 +36,68 @@ pipeline {
       }
 
       stages {
-        stage('build') {
+        stage('checkout') {
           steps {
             dir('tic-tac-toe-client') {
               sh 'npm ci'
+              sh 'npm run clean'
+            }
+          }
+        }
+
+        stage('validation') {
+          steps {
+            dir('tic-tac-toe-client') {
               sh 'npm run lint'
-              sh 'npm test'
+              sh 'npm run test:ci'
+            }
+          }
+        }
+
+        stage('collect reports') {
+          steps {
+            dir('tic-tac-toe-client') {
+              junit 'reports/junit-*.xml'
+
+              cobertura([
+                coberturaReportFile: 'coverage/cobertura-coverage.xml',
+                conditionalCoverageTargets: '0, 0, 0',
+                enableNewApi: true,
+                lineCoverageTargets: '0, 0, 0',
+                maxNumberOfBuilds: 0,
+                methodCoverageTargets: '0, 0, 0',
+                onlyStable: false,
+                sourceEncoding: 'ASCII'
+              ])
+            }
+          }
+        }
+
+        stage('sonar quality gate') {
+          steps {
+            dir('tic-tac-toe-client') {
+              lock(resource: 'sonarcloud-tic-tac-toe') {
+                withSonarQubeEnv('sonarqube') {
+                  withEnv(["sonar.branch.name=${env.BRANCH_NAME}"]) {
+                    sh 'npm run analyze'
+                  }
+                }
+
+                sleep time: 20, unit: 'SECONDS'
+
+                timeout(time: 1, unit: 'MINUTES') {
+                  waitForQualityGate abortPipeline: true
+                }
+              }
+            }
+          }
+        }
+
+        stage('build') {
+          steps {
+            dir('tic-tac-toe-client') {
+              milestone(3)
+              sh 'npm run build'
             }
           }
         }
@@ -61,9 +117,6 @@ pipeline {
 
               steps {
                 dir('tic-tac-toe-client') {
-                  milestone(3)
-                  sh 'npm run build'
-
                   lock(resource: 'deploy-tic-tac-toe') {
                     milestone(11)
 

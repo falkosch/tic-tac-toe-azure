@@ -4,13 +4,15 @@
   "private": true,
   "scripts": {
     "build": "react-scripts build",
+    "clean": "rimraf ./.scannerwork ./reports ./coverage",
     "eject": "react-scripts eject",
     "lint": "npm run lint:eslint && npm run lint:tsc && npm run lint:stylelint",
     "lint:eslint": "eslint \"**/*\" --fix",
     "lint:tsc": "tsc --noEmit",
     "lint:stylelint": "stylelint . --fix",
     "start": "react-scripts start",
-    "test": "react-scripts test"
+    "test": "react-scripts test",
+    "test:ci": "react-scripts test --watchAll=false --coverage --reporters=default --reporters=jest-junit"
   },
   "husky": {
     "hooks": {
@@ -56,9 +58,18 @@
     "not OperaMini all"
   ],
   "jest": {
+    "coverageReporters": [
+      "text",
+      "lcovonly",
+      "cobertura"
+    ],
     "transformIgnorePatterns": [
       "node_modules/?!(react-lodash)"
     ]
+  },
+  "jest-junit": {
+    "outputDirectory": "reports",
+    "uniqueOutputName": "true"
   },
   "devDependencies": {
     "@types/axios": "0.14.0",
@@ -83,10 +94,12 @@
     "eslint-plugin-react": "^7.17.0",
     "eslint-plugin-react-hooks": "^1.7.0",
     "husky": "^3.1.0",
+    "jest-junit": "10.0.0",
     "lint-staged": "^9.5.0",
     "node-sass": "^4.13.0",
     "prettier": "^1.19.1",
     "react-scripts": "^3.3.0",
+    "rimraf": "3.0.2",
     "stylelint": "^10.1.0",
     "stylelint-config-standard": "^19.0.0",
     "stylelint-no-unsupported-browser-features": "^3.0.2",
