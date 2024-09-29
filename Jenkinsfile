@@ -7,6 +7,9 @@ pipeline {
   triggers {
     pollSCM('H */15 * * *')
   }
+  environment {
+    CI = true
+  }
   stages {
     stage('build client') {
       agent {
