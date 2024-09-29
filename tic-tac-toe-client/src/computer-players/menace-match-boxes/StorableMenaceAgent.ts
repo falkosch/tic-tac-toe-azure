@@ -8,14 +8,6 @@ export interface PlayedMove {
 export type Matchboxes = Record<string, number[]>;
 
 export interface StorableMenaceAgent extends BrainStatistics {
-  longTermMatchboxes: Record<string, number[]>;
   matchboxes: Matchboxes;
   playedMoves: PlayedMove[];
-}
-
-export function cloneMatchboxes(memory: Readonly<Matchboxes>): Matchboxes {
-  const newMatchbox: Matchboxes = {};
-  Object.keys(memory)
-    .forEach((key) => { newMatchbox[key] = [...memory[key]]; });
-  return newMatchbox;
 }

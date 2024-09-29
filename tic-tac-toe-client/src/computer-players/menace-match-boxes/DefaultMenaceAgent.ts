@@ -1,17 +1,33 @@
-import { cloneMatchboxes, StorableMenaceAgent } from './StorableMenaceAgent';
 import {
   findFreeBeads,
   multiplyBeads,
   randomBead,
   MenaceAgent,
+  MenaceStateSpace,
 } from './MenaceAgent';
 import { loadAgent, persistAgent } from '../ai-agent/StorableAgent';
+import { takeAny, Decision } from '../ai-agent/Decision';
 import { AIAgentCreator } from '../ai-agent/AIAgent';
-import { Decision } from '../ai-agent/Decision';
+import { CellOwner } from '../../meta-model/CellOwner';
+import { StorableMenaceAgent } from './StorableMenaceAgent';
+
+interface LearnPolicy {
+  (beadsMemory: ReadonlyArray<number>, playedBead: number): number[];
+}
 
 const menaceAgents: Record<string, StorableMenaceAgent> = {};
 
 const menaceObjectVersion = 2;
+
+function initialStorableMenaceAgent(): StorableMenaceAgent {
+  return {
+    draws: 0,
+    losses: 0,
+    wins: 0,
+    matchboxes: {},
+    playedMoves: [],
+  };
+}
 
 async function loadMenaceAgent(id: string): Promise<StorableMenaceAgent> {
   if (id in menaceAgents) {
@@ -21,20 +37,55 @@ async function loadMenaceAgent(id: string): Promise<StorableMenaceAgent> {
   const agent = await loadAgent<StorableMenaceAgent>(
     id,
     menaceObjectVersion,
-    {
-      draws: 0,
-      losses: 0,
-      wins: 0,
-      longTermMatchboxes: {},
-      matchboxes: {},
-      playedMoves: [],
-    },
+    initialStorableMenaceAgent(),
   ) as StorableMenaceAgent;
 
   menaceAgents[id] = agent;
-
-  await persistAgent<StorableMenaceAgent>(id, menaceObjectVersion, agent);
   return agent;
+}
+
+function selectEpsilonGreedyAction(
+  stateSpace: Readonly<MenaceStateSpace>,
+  getMenaceMemory: () => StorableMenaceAgent,
+): number {
+  const { boardAsString } = stateSpace;
+  const menaceMemory = getMenaceMemory();
+  const beads = menaceMemory.matchboxes[boardAsString];
+
+  if (beads.length > 0 && Math.random() > 0.05) {
+    return randomBead(beads)[0];
+  }
+
+  const freeCellsAt = stateSpace.boardAsCellOwners
+    .map((v, i) => (v === CellOwner.None ? i : -1))
+    .filter((v) => v >= 0);
+  return takeAny(freeCellsAt)[0];
+}
+
+function populateMemory(
+  stateSpace: Readonly<MenaceStateSpace>,
+  getMenaceMemory: () => StorableMenaceAgent,
+): void {
+  const { boardAsString } = stateSpace;
+  const menaceMemory = getMenaceMemory();
+  if (!(boardAsString in menaceMemory.matchboxes)) {
+    menaceMemory.matchboxes[boardAsString] = multiplyBeads(
+      findFreeBeads(stateSpace),
+    );
+  }
+}
+
+function learn(learnPolicy: LearnPolicy, getMenaceMemory: () => StorableMenaceAgent): void {
+  const menaceMemory = getMenaceMemory();
+  menaceMemory.playedMoves.forEach(
+    (playedMove) => {
+      const { boardAsString, bead } = playedMove;
+      const beads = menaceMemory.matchboxes[boardAsString];
+      const learnedBeads = learnPolicy(beads, bead);
+      menaceMemory.matchboxes[boardAsString] = learnedBeads;
+    },
+  );
+  menaceMemory.playedMoves = [];
 }
 
 export const getMenaceAgent: AIAgentCreator<MenaceAgent> = async (
@@ -54,9 +105,6 @@ export const getMenaceAgent: AIAgentCreator<MenaceAgent> = async (
     cellOwner,
 
     async startNewGame(): Promise<void> {
-      // Clone the long term memory so that we can safely persist a running game for each move,
-      // but do not poison the long term memory with never completed games
-      menaceMemory.matchboxes = cloneMatchboxes(menaceMemory.longTermMatchboxes);
       menaceMemory.playedMoves = [];
     },
 
@@ -64,57 +112,54 @@ export const getMenaceAgent: AIAgentCreator<MenaceAgent> = async (
       const { boardAsString } = stateSpace;
 
       // Add first beads for still unknown game states
-      if (!(boardAsString in menaceMemory.matchboxes)) {
-        menaceMemory.matchboxes[boardAsString] = multiplyBeads(
-          findFreeBeads(stateSpace),
-        );
-      }
+      populateMemory(stateSpace, () => menaceMemory);
 
-      const beads = menaceMemory.matchboxes[boardAsString];
-      if (beads.length === 0) {
-        return {
-          cellsAtToAttack: [],
-        };
-      }
+      const bead = selectEpsilonGreedyAction(stateSpace, () => menaceMemory);
 
-      const bead = randomBead(beads)[0];
-      menaceMemory.playedMoves.push({ boardAsString, bead });
+      menaceMemory.playedMoves.push({
+        boardAsString,
+        bead,
+      });
+
       return {
         cellsAtToAttack: [bead],
       };
     },
 
     async rememberDraw(): Promise<void> {
+      learn(
+        (beads, playedBead) => [playedBead, ...beads],
+        () => menaceMemory,
+      );
+
       menaceMemory.draws += 1;
-      menaceMemory.longTermMatchboxes = cloneMatchboxes(menaceMemory.matchboxes);
-      menaceMemory.matchboxes = {};
-      menaceMemory.playedMoves = [];
       await persistAgent<StorableMenaceAgent>(id, menaceObjectVersion, menaceMemory);
     },
 
     async rememberLoss(): Promise<void> {
-      menaceMemory.playedMoves.forEach(
-        ({ boardAsString, bead }) => {
-          const beads = menaceMemory.matchboxes[boardAsString];
-          beads.splice(beads.indexOf(bead), 1);
+      learn(
+        (beads, playedBead) => {
+          const playedIndex = beads.indexOf(playedBead);
+          const learnedBeads = [...beads];
+          if (playedIndex >= 0) {
+            learnedBeads.splice(playedIndex, 1);
+          }
+          return learnedBeads;
         },
+        () => menaceMemory,
       );
+
       menaceMemory.losses += 1;
-      menaceMemory.longTermMatchboxes = cloneMatchboxes(menaceMemory.matchboxes);
-      menaceMemory.matchboxes = {};
-      menaceMemory.playedMoves = [];
       await persistAgent<StorableMenaceAgent>(id, menaceObjectVersion, menaceMemory);
     },
 
     async rememberWin(): Promise<void> {
-      menaceMemory.playedMoves.forEach(
-        ({ boardAsString, bead }) => menaceMemory.matchboxes[boardAsString]
-          .unshift(bead, bead),
+      learn(
+        (beads, playedBead) => [playedBead, playedBead, ...beads],
+        () => menaceMemory,
       );
+
       menaceMemory.wins += 1;
-      menaceMemory.longTermMatchboxes = cloneMatchboxes(menaceMemory.matchboxes);
-      menaceMemory.matchboxes = {};
-      menaceMemory.playedMoves = [];
       await persistAgent<StorableMenaceAgent>(id, menaceObjectVersion, menaceMemory);
     },
   };
