@@ -32,7 +32,7 @@ export function findFreeBeads(stateSpace: Readonly<StateSpace>): number[] {
 }
 
 export function multiplyBeads(beads: ReadonlyArray<number>): number[] {
-  const multipliedBeadsCount = beads.length * (Math.floor(beads.length + 2) / 2);
+  const multipliedBeadsCount = Math.floor((beads.length + 2) / 2);
   let multipliedBeads: number[] = [];
   for (let i = 0; i < multipliedBeadsCount; i += 1) {
     multipliedBeads = [...multipliedBeads, ...beads];

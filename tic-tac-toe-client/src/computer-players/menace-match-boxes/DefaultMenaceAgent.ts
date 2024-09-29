@@ -86,9 +86,6 @@ export class DefaultMenaceAgent implements MenaceAgent {
   }
 
   rememberDraw(): void {
-    this.menaceMemory.playedMoves.forEach(
-      ({ boardAsString: board, bead }) => this.menaceMemory.matchboxes[board].push(bead),
-    );
     // Manifest the learned outcomes of the completed game in the long term memory
     this.menaceMemory.draws += 1;
     this.menaceMemory.longTermMatchboxes = cloneMatchboxes(this.menaceMemory.matchboxes);
@@ -99,12 +96,9 @@ export class DefaultMenaceAgent implements MenaceAgent {
 
   rememberLoss(): void {
     this.menaceMemory.playedMoves.forEach(
-      ({ boardAsString: board, bead }) => {
-        const beads = this.menaceMemory.matchboxes[board];
-        const beadIndex = beads.indexOf(bead);
-        if (beadIndex >= 0) {
-          beads.splice(beadIndex, 1);
-        }
+      ({ boardAsString, bead }) => {
+        const beads = this.menaceMemory.matchboxes[boardAsString];
+        beads.splice(beads.indexOf(bead), 1);
       },
     );
     // Manifest the learned outcomes of the completed game in the long term memory
@@ -117,8 +111,7 @@ export class DefaultMenaceAgent implements MenaceAgent {
 
   rememberWin(): void {
     this.menaceMemory.playedMoves.forEach(
-      ({ boardAsString, bead }) => this.menaceMemory.matchboxes[boardAsString]
-        .push(bead, bead, bead),
+      ({ boardAsString, bead }) => this.menaceMemory.matchboxes[boardAsString].unshift(bead, bead),
     );
     // Manifest the learned outcomes of the completed game in the long term memory
     this.menaceMemory.wins += 1;
