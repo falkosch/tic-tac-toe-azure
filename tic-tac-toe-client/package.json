@@ -54,6 +54,11 @@
     "not OperaMini all",
     "not safari <= 6"
   ],
+  "jest": {
+    "transformIgnorePatterns": [
+      "node_modules/?!(react-lodash)"
+    ]
+  },
   "devDependencies": {
     "@types/jest": "24.0.22",
     "@types/lodash": "4.14.146",
