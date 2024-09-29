@@ -1,4 +1,4 @@
-import { countPoints, remainingMoves } from '../../mechanics/GameRules';
+import { countPoints } from '../../mechanics/GameRules';
 import { findConsecutiveness } from '../../mechanics/Consecutiveness';
 import { Board } from '../../meta-model/Board';
 import { CellOwner } from '../../meta-model/CellOwner';
@@ -17,14 +17,37 @@ export interface ReinforcedAgent {
   reward(value: number): void;
 }
 
-export type CellUpdater = (cellOwner: Readonly<CellOwner>, cellAt: number) => CellOwner;
+export function boardValue(board: Readonly<Board>, lossOfMove = 0): number {
+  const points = countPoints(board, findConsecutiveness(board));
+  return Math.tanh(points[CellOwner.O] - points[CellOwner.X] - lossOfMove);
+}
 
-export function buildCellUpdater(decision: Readonly<Decision>): CellUpdater {
+type CellUpdater = (cellOwner: Readonly<CellOwner>, cellAt: number) => CellOwner;
+
+function buildCellUpdater(decision: Readonly<Decision>): CellUpdater {
   return (cellOwner, cellAt) => {
     if (decision.cellsAtToAttack.indexOf(cellAt) >= 0) {
       return CellOwner.O;
     }
     return cellOwner;
+  };
+}
+
+function buildStateSpace(board: Readonly<Board>): StateSpace {
+  return {
+    states: [
+      ...board.cells.map(
+        (cellOwner) => {
+          if (cellOwner === CellOwner.X) {
+            return -1.0;
+          }
+          if (cellOwner === CellOwner.O) {
+            return 1.0;
+          }
+          return 0.0;
+        },
+      ),
+    ],
   };
 }
 
@@ -38,19 +61,11 @@ function validateDecision(board: Readonly<Board>, decision: Readonly<Decision>):
   );
 }
 
-export function boardValue(board: Readonly<Board>): number {
-  const points = countPoints(board, findConsecutiveness(board));
-  return points[CellOwner.O] - points[CellOwner.X];
-}
-
 export function commenceReaction(
   gameReaction: Readonly<GameReaction>,
   agent: ReinforcedAgent,
-  cellToState: (cellOwner: CellOwner, index?: number) => number,
 ): GameReaction {
-  const stateSpace = {
-    states: gameReaction.board.cells.map(cellToState),
-  };
+  const stateSpace = buildStateSpace(gameReaction.board);
 
   for (let i = 0; i < 100; i += 1) {
     const decision = agent.decide(stateSpace);
@@ -61,7 +76,7 @@ export function commenceReaction(
         ...gameReaction.board,
         cells: gameReaction.board.cells.map(cellUpdater),
       };
-      agent.reward(boardValue(updatedBoard) - 1);
+      agent.reward(boardValue(updatedBoard, -1.0));
 
       return {
         ...gameReaction,
@@ -70,7 +85,7 @@ export function commenceReaction(
     }
 
     // punish the agent for invalid reactions so that it learns from that too
-    agent.reward(-3 * remainingMoves(gameReaction.board.cells));
+    agent.reward(-1);
   }
 
   return gameReaction;
