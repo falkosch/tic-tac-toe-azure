@@ -102,9 +102,9 @@ export const App: React.FC<{}> = () => {
         type: GameStateActionType.UpdateGame,
         payload: { gameView: newGameView },
       }),
-      async (newGameView, endState) => gameStateDispatch({
+      async (endState) => gameStateDispatch({
         type: GameStateActionType.EndGame,
-        payload: { gameView: newGameView, endState },
+        payload: { endState },
       }),
     );
     setRunningGame(newRunningGame);
