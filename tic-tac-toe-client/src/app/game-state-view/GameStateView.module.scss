@@ -1,4 +1,4 @@
-@import '../../scss/abstracts';
+@import '../../scss/abstract';
 
 .view {
   flex: 1 0 auto;
@@ -9,6 +9,6 @@
 }
 
 .new-game {
-  @extend %hintText;
-  @extend %hintColorNeutral;
+  @extend %hint-text;
+  @extend %hint-color-neutral;
 }
