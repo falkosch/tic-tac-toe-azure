@@ -51,7 +51,7 @@ export const App: React.FC<{}> = () => {
   };
   const playerKeys = Object.keys(players);
 
-  function createHumanPlayer(): Player {
+  async function createHumanPlayer(): Promise<Player> {
     return {
       takeTurn: () => letPlayerTakeTurn(),
     };

@@ -9,11 +9,18 @@ export interface StorableAgent<BrainType extends BrainStatistics> {
   brain: BrainType;
 }
 
-export function persistAgent<BrainType extends BrainStatistics>(
+/**
+ * NOTE: The function is made asynchronous although {@code localStorage.setItem} isn't asynchronous.
+ * It is for preparing supporting different storage targets.
+ * @param id a unique identifier
+ * @param version the version of the object format
+ * @param brain the object to persist
+ */
+export async function persistAgent<BrainType extends BrainStatistics>(
   id: string,
   version: number,
   brain: Readonly<BrainType>,
-): void {
+): Promise<void> {
   const data: StorableAgent<BrainType> = {
     version,
     brain,
@@ -21,10 +28,18 @@ export function persistAgent<BrainType extends BrainStatistics>(
   localStorage.setItem(id, JSON.stringify(data));
 }
 
-export function loadAgent<BrainType extends BrainStatistics>(
+/**
+ * NOTE: The function is made asynchronous although {@code localStorage.getItem} isn't asynchronous.
+ * It is for preparing supporting different storage targets.
+ * @param id a unique identifier
+ * @param version the version of the object format
+ * @param defaultBrain a default value to return when no object for the given id exists yet
+ */
+export async function loadAgent<BrainType extends BrainStatistics>(
   id: string,
   version: number,
-): BrainType | undefined {
+  defaultBrain?: BrainType,
+): Promise<BrainType | undefined> {
   const stored = localStorage.getItem(id);
   if (stored) {
     try {
@@ -36,5 +51,5 @@ export function loadAgent<BrainType extends BrainStatistics>(
       console.error('Could not load agent data for ', id, ' due to ', e);
     }
   }
-  return undefined;
+  return defaultBrain;
 }

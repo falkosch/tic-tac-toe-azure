@@ -9,7 +9,7 @@ const axiosInstance = axios.create({
   baseURL: 'https://fstictactoegame.azurewebsites.net',
 });
 
-export const createAzureFunctionPlayer: PlayerCreator = () => (
+export const createAzureFunctionPlayer: PlayerCreator = async () => (
   {
     /**
      * Posts the current game state to the Azure Function fstictactoegame. The function can analyse

@@ -56,14 +56,13 @@ function emptyActionHistory(): GameActionHistory {
   };
 }
 
-function joinPlayers(joiningPlayers: Readonly<JoiningPlayers>): ReadonlyArray<JoinedPlayer> {
-  return Object.entries(joiningPlayers)
-    .map(
-      ([cellOwner, playerCreator]) => [
-        cellOwner as SpecificCellOwner,
-        playerCreator(),
-      ],
+async function joinPlayers(joiningPlayers: Readonly<JoiningPlayers>): Promise<JoinedPlayer[]> {
+  const joiningPlayersEntries = Object.entries(joiningPlayers);
+  const createPromises = joiningPlayersEntries
+    .map<Promise<[SpecificCellOwner, Player]>>(
+      async ([cellOwner, playerCreator]) => [cellOwner as SpecificCellOwner, await playerCreator()],
     );
+  return Promise.all(createPromises);
 }
 
 function playerOfTurn(joinedPlayers: ReadonlyArray<JoinedPlayer>, turn: number): JoinedPlayer {
@@ -144,7 +143,7 @@ export async function runNewGame(
   onGameEnd: OnGameEnd = async () => {},
   maxTurns = 100,
 ): Promise<GameEndState> {
-  const joinedPlayers = joinPlayers(joiningPlayers);
+  const joinedPlayers = await joinPlayers(joiningPlayers);
 
   let actionHistory = emptyActionHistory();
   let gameView = newGameView();
@@ -159,8 +158,8 @@ export async function runNewGame(
 
     let action;
     try {
-      // eslint-disable-next-line
-      action = await playerWithTurn.takeTurn({ cellOwner, gameView: gameView, actionHistory });
+      // eslint-disable-next-line no-await-in-loop
+      action = await playerWithTurn.takeTurn({ cellOwner, gameView, actionHistory });
     } catch (e) {
       endState = { winner: e };
       break;
@@ -173,7 +172,7 @@ export async function runNewGame(
     const consecutiveness = findConsecutiveness(board);
     const points = countPoints(board, consecutiveness);
     gameView = { board, consecutiveness, points };
-    // eslint-disable-next-line
+    // eslint-disable-next-line no-await-in-loop
     await notifyGameViewUpdate(gameView, joinedPlayers, onGameViewUpdate);
 
     if (isEnding(gameView)) {

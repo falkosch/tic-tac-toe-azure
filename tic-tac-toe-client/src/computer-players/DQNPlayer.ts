@@ -1,21 +1,21 @@
 import { findReinforcedDecision } from './reinforcement-learning/ReinforcedAgent';
+import { getDQNReinforcedAgent } from './reinforcement-learning/DQNReinforcedAgent';
 import { notifyEndState } from './ai-agent/AIAgent';
 import { AttackGameAction } from '../meta-model/GameAction';
-import { DQNReinforcedAgent } from './reinforcement-learning/DQNReinforcedAgent';
 import { GameEndState } from '../meta-model/GameEndState';
 import { GameView } from '../meta-model/GameView';
 import { PlayerCreator } from '../meta-model/Player';
 import { PlayerTurn } from '../meta-model/PlayerTurn';
 import { SpecificCellOwner } from '../meta-model/CellOwner';
 
-export const createDQNPlayer: PlayerCreator = () => (
+export const createDQNPlayer: PlayerCreator = async () => (
   {
     async takeTurn(playerTurn: Readonly<PlayerTurn>): Promise<AttackGameAction> {
-      const agent = new DQNReinforcedAgent(
+      const agent = await getDQNReinforcedAgent(
         playerTurn.cellOwner,
         playerTurn.gameView.board.dimensions,
       );
-      const decision = findReinforcedDecision(agent, playerTurn.gameView.board);
+      const decision = await findReinforcedDecision(agent, playerTurn.gameView.board);
       return {
         affectedCellsAt: decision ? decision.cellsAtToAttack : [],
       };
@@ -26,11 +26,11 @@ export const createDQNPlayer: PlayerCreator = () => (
       gameView: Readonly<GameView>,
       endState: Readonly<GameEndState>,
     ): Promise<void> {
-      const agent = new DQNReinforcedAgent(
+      const agent = await getDQNReinforcedAgent(
         cellOwner,
         gameView.board.dimensions,
       );
-      notifyEndState(endState, agent);
+      await notifyEndState(endState, agent);
     },
   }
 );

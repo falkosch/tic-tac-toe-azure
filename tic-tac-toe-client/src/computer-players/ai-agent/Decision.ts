@@ -29,6 +29,13 @@ export function findFreeCellIndices(cells: ReadonlyArray<CellOwner>): number[] {
   return freeCellIndices;
 }
 
-export function takeAny(freeCellIndices: ReadonlyArray<number>): number {
-  return freeCellIndices[Math.floor(Math.random() * freeCellIndices.length)];
+export function takeAny(freeCellIndices: ReadonlyArray<number>): number[] {
+  if (freeCellIndices.length === 0) {
+    return [];
+  }
+  if (freeCellIndices.length === 1) {
+    return [freeCellIndices[0]];
+  }
+  const choice = Math.floor(Math.random() * freeCellIndices.length);
+  return [freeCellIndices[choice]];
 }
