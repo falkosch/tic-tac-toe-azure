@@ -36,7 +36,9 @@ export const App: React.FC<{}> = () => {
     gameConfigurationReducer,
     initialGameConfiguration,
   );
-  const autoNewGameRef = useRef(configuration.autoNewGame);
+  const configurationRef = useRef(initialGameConfiguration);
+
+  configurationRef.current = configuration;
 
   const players: Readonly<Players> = {
     [PlayerType.Human]: { takeTurn: () => letPlayerTakeTurn() },
@@ -67,9 +69,28 @@ export const App: React.FC<{}> = () => {
       (newGameView) => setGameView(newGameView),
     );
 
-    if (autoNewGameRef.current) {
+    if (configurationRef.current.autoNewGame) {
       setTimeout(makeNewGame, 0);
     }
+  }
+
+  function toggleAutoNewGame(): void {
+    configurationDispatch({
+      type: GameConfigurationActionType.SetAutoNewGame,
+      payload: {
+        value: !configuration.autoNewGame,
+      },
+    });
+  }
+
+  function changePlayerType(cellOwner: SpecificCellOwner, playerKey: string): void {
+    configurationDispatch({
+      type: GameConfigurationActionType.SetPlayerType,
+      payload: {
+        player: cellOwner,
+        playerType: playerKey as PlayerType,
+      },
+    });
   }
 
   function commenceAction(cellAt: number): void {
@@ -106,25 +127,17 @@ export const App: React.FC<{}> = () => {
                   title={`Player ${cellOwner}`}
                 >
                   {
-                  playerKeys
-                    .map((playerKey) => (
-                      <Dropdown.Item
-                        active={
-                          playerKey === configuration.playerTypes[cellOwner as SpecificCellOwner]
-                        }
-                        key={`d${cellOwner}${playerKey}`}
-                        onClick={() => configurationDispatch({
-                          type: GameConfigurationActionType.SetPlayerType,
-                          payload: {
-                            player: cellOwner,
-                            playerType: playerKey as PlayerType,
-                          },
-                        })}
-                      >
-                        { playerKey }
-                      </Dropdown.Item>
-                    ))
-                }
+                    playerKeys
+                      .map((playerKey) => (
+                        <Dropdown.Item
+                          active={playerKey === configuration.playerTypes[cellOwner]}
+                          key={`d${cellOwner}${playerKey}`}
+                          onClick={() => changePlayerType(cellOwner, playerKey)}
+                        >
+                          { playerKey }
+                        </Dropdown.Item>
+                      ))
+                  }
                 </DropdownButton>
               );
             })
@@ -134,14 +147,7 @@ export const App: React.FC<{}> = () => {
           type="checkbox"
           label="Auto new game"
           checked={configuration.autoNewGame}
-          onChange={() => {
-            const value = !configuration.autoNewGame;
-            autoNewGameRef.current = value;
-            configurationDispatch({
-              type: GameConfigurationActionType.SetAutoNewGame,
-              payload: { value },
-            });
-          }}
+          onChange={() => toggleAutoNewGame()}
         />
       </AppNavbar>
       <div className="app-game-view d-flex justify-content-center align-items-center">
