@@ -2,6 +2,7 @@
   flex: 1 0 auto;
 }
 
+.app-game-view-create-new-game,
 .app-game-view-human-player-status,
 .app-game-view-winner,
 .app-game-view-error {
@@ -10,7 +11,8 @@
   max-width: 70vw;
 }
 
-.app-game-view-human-player-status {
+.app-game-view-human-player-status,
+.app-game-view-create-new-game {
   color: darkgrey;
 }
 
