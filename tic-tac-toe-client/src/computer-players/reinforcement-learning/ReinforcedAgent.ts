@@ -43,12 +43,9 @@ function rewardOfDecision(
   const updatedBoard = boardModifier(board);
   const consecutiveness = findConsecutiveness(updatedBoard);
   const points = countPoints(updatedBoard, consecutiveness);
-  const pointsEntries = Object.entries(points);
-  const otherAgentsPoints = pointsEntries.reduce(
-    (sumPoints, [__, agentPoints]) => sumPoints + agentPoints,
-    0,
-  );
-  return Math.tanh(2 * points[agentCellOwner] - otherAgentsPoints);
+  const sumAgentsPoints = Object.values(points)
+    .reduce((sumPoints, agentPoints) => sumPoints + agentPoints, 0);
+  return 2 * points[agentCellOwner] - sumAgentsPoints;
 }
 
 export function findReinforcedDecision(
