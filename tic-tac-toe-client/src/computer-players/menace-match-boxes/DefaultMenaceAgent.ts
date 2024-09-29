@@ -8,7 +8,7 @@ import { Decision } from '../ai-agent/Decision';
 
 const menaceAgents: Record<string, StorableMenaceAgent> = {};
 
-const menaceObjectVersion = 1;
+const menaceObjectVersion = 2;
 
 async function loadMenaceAgent(id: string): Promise<StorableMenaceAgent> {
   if (id in menaceAgents) {

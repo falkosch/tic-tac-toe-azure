@@ -16,7 +16,7 @@ interface SolverWithStatistics {
 
 const agents: Record<string, SolverWithStatistics> = {};
 
-const dqnObjectVersion = 2;
+const dqnObjectVersion = 3;
 
 async function loadDQNAgent(id: string): Promise<StorableDQNAgent | undefined> {
   return loadAgent<StorableDQNAgent>(id, dqnObjectVersion, Brains[id]);

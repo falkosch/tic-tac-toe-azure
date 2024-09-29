@@ -1,6 +1,8 @@
-import { findDecisionForStateSpace, AIAgent, NormalizedStateSpace } from '../ai-agent/AIAgent';
+import {
+  buildNormalizedStateSpace, findDecisionForStateSpace, AIAgent, NormalizedStateSpace,
+} from '../ai-agent/AIAgent';
 import { findFreeCellIndices, takeAny, Decision } from '../ai-agent/Decision';
-import { determineBoardNormalization, inverseNormalization, transformBoardCells } from '../../mechanics/BoardNormalization';
+import { transformBoardCells } from '../../mechanics/BoardNormalization';
 import { CellOwner } from '../../meta-model/CellOwner';
 import { Board } from '../../meta-model/Board';
 
@@ -30,13 +32,11 @@ export function multiplyBeads(beads: ReadonlyArray<number>): number[] {
   return multipliedBeads;
 }
 
-function buildStateSpace(board: Readonly<Board>): MenaceStateSpace {
-  const normalization = determineBoardNormalization(board);
-  const normalizedCells = transformBoardCells(board, normalization);
+function buildMenaceStateSpace(board: Readonly<Board>): MenaceStateSpace {
+  const normalizedStateSpace = buildNormalizedStateSpace(board);
+  const normalizedCells = transformBoardCells(board, normalizedStateSpace.normalization);
   return {
-    normalization,
-    inverseNormalization: inverseNormalization(normalization),
-    dimensions: board.dimensions,
+    ...normalizedStateSpace,
     boardAsString: normalizedCells.reduce((stateString, cellOwner) => `${stateString}${cellOwner}`, ''),
     boardAsCellOwners: normalizedCells,
   };
@@ -49,7 +49,7 @@ export async function findMenaceDecision(
   return findDecisionForStateSpace(
     agent,
     board.cells,
-    buildStateSpace(board),
+    buildMenaceStateSpace(board),
     async () => {},
   );
 }
