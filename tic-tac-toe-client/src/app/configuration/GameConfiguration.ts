@@ -6,6 +6,7 @@ export enum PlayerType {
   Human = 'Human player',
   Mock = 'Mock computer player (local)',
   DQN = 'DQN AI computer player (local)',
+  Menace = 'Menace AI computer player (local)',
   Azure = 'Azure function as computer player (remote)',
 }
 
