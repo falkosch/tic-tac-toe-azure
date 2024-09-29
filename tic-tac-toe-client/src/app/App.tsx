@@ -9,7 +9,8 @@ import Navbar from 'react-bootstrap/Navbar';
 import React, { useState } from 'react';
 
 import { prepareAttack } from '../mechanics/Actions';
-import { ClientDefender } from '../defender/ClientDefender';
+import { AzureFunctionDefender } from '../defender/AzureFunctionDefender';
+import { DQNDefender } from '../defender/client-local/DQNDefender';
 import { Defender } from '../meta-model/Defender';
 import { Game } from '../meta-model/Game';
 import { GameView } from './game-view/GameView';
@@ -19,16 +20,15 @@ import './App.css';
 import logo from './logo.svg';
 import { evaluateReaction } from '../mechanics/Reactions';
 
-const mockDefenderName = 'Mock defender';
 const defenders: Readonly<Record<string, () => Defender>> = {
-  [mockDefenderName]: () => new MockDefender(),
-  'Client-side defender': () => new ClientDefender(),
-  'Azure Function defender': () => new MockDefender(),
+  [MockDefender.ReadableName]: () => new MockDefender(),
+  [DQNDefender.ReadableName]: () => new DQNDefender(),
+  [AzureFunctionDefender.ReadableName]: () => new AzureFunctionDefender(),
 };
 
 export const App: React.FC = () => {
-  const [defenderName, setDefenderName] = useState<string>(mockDefenderName);
-  const [defender, setDefender] = useState<Defender>(defenders[mockDefenderName]);
+  const [defenderName, setDefenderName] = useState<string>(MockDefender.ReadableName);
+  const [defender, setDefender] = useState<Defender>(defenders[MockDefender.ReadableName]);
   const [game, setGame] = useState<Game>();
 
   async function newGame(): Promise<void> {
