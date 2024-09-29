@@ -5,8 +5,7 @@ import { PlayerCreator } from '../meta-model/Player';
 import { PlayerTurn } from '../meta-model/PlayerTurn';
 
 const axiosInstance = axios.create({
-  // baseURL: 'http://localhost:7071',
-  baseURL: 'https://fstictactoegame.azurewebsites.net',
+  baseURL: process.env.REACT_APP_NOT_SECRET_CODE,
 });
 
 export const createAzureFunctionPlayer: PlayerCreator = async () => (
