@@ -6,10 +6,10 @@ export interface SetPlayerTypeActionPayload {
   playerType: Readonly<PlayerType>;
 }
 
-export function setPlayerType(
+export const setPlayerType = (
   prevState: Readonly<GameConfigurationType>,
   payload: Readonly<SetPlayerTypeActionPayload>,
-): GameConfigurationType {
+): GameConfigurationType => {
   const { player, playerType } = payload;
   return {
     ...prevState,
@@ -18,4 +18,4 @@ export function setPlayerType(
       [player]: playerType,
     },
   };
-}
+};

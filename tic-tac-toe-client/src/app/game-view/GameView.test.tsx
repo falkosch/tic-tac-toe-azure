@@ -1,5 +1,5 @@
+import { render } from '@testing-library/react';
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 import { CellOwner } from '../../meta-model/CellOwner';
 import { GameView } from './GameView';
@@ -17,7 +17,7 @@ describe(`${GameView.name}`, () => {
           width: 1,
         },
       },
-      consecutiveness: [],
+      consecutive: [],
       points: {
         [CellOwner.O]: 0,
         [CellOwner.X]: 0,
@@ -26,8 +26,6 @@ describe(`${GameView.name}`, () => {
   });
 
   it('renders without crashing', () => {
-    const div = document.createElement('div');
-    ReactDOM.render(<GameView gameView={gameView} />, div);
-    ReactDOM.unmountComponentAtNode(div);
+    render(<GameView gameView={gameView} />);
   });
 });

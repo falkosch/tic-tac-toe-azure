@@ -1,8 +1,8 @@
 import { Mat } from 'recurrent-js';
 import { DQNEnv, DQNOpt, DQNSolver, Solver } from 'reinforce-js';
 
-import { loadAgent, persistAgent, BrainStatistics } from '../ai-agent/StorableAgent';
-import { takeAny, Decision } from '../ai-agent/Decision';
+import { BrainStatistics, loadAgent, persistAgent } from '../ai-agent/StorableAgent';
+import { Decision, takeAny } from '../ai-agent/Decision';
 import { AIAgentCreator } from '../ai-agent/AIAgent';
 import { Brains } from './DQNPretrainedBrain';
 import { ReinforcedAgent } from './ReinforcedAgent';
@@ -17,7 +17,7 @@ const agents: Record<string, SolverWithStatistics> = {};
 
 const dqnObjectVersion = 4;
 
-function validOnlyArgMax(stateVector: Readonly<Mat>, actionVector: Readonly<Mat>): number {
+const validOnlyArgMax = (stateVector: Readonly<Mat>, actionVector: Readonly<Mat>): number => {
   let maxValidValue = Number.NEGATIVE_INFINITY;
   let maxValidIndex = -1;
   actionVector.w.forEach((v: number, i: number) => {
@@ -29,39 +29,43 @@ function validOnlyArgMax(stateVector: Readonly<Mat>, actionVector: Readonly<Mat>
     }
   });
   return maxValidIndex;
-}
+};
 
 // We need to patch the action policy to only select valid actions.
 // TODO: propose a pull request for extending the decide function in reinforce-js.
-function patchSolver(getSolver: () => any): void {
+const patchSolver = (getSolver: () => DQNSolver): void => {
   // The getSolver is only used to avoid the "parameter assignment" warning
   const solverAsAny = getSolver();
 
+  // @ts-expect-error TS/2445 we need to patch this protected member
   solverAsAny.epsilonGreedyActionPolicy = (stateVector: Mat) => {
+    // @ts-expect-error TS/2445 we need to access this protected member
     if (Math.random() < solverAsAny.currentEpsilon()) {
       const freeStates = Array.from(stateVector.w)
         .map((v, i) => (v === 0 ? i : -1))
-        .filter(v => v >= 0);
+        .filter((v) => v >= 0);
       return takeAny(freeStates)[0];
     }
 
+    // @ts-expect-error TS/2445 we need to access this protected member
     return validOnlyArgMax(stateVector, solverAsAny.forwardQ(stateVector));
   };
 
+  // @ts-expect-error TS/2445 we need to patch this protected member
   solverAsAny.getTargetQ = (s1: Mat, r0: number) => {
+    // @ts-expect-error TS/2445 we need to access this protected member
     const targetActionVector = solverAsAny.forwardQ(s1);
     const targetActionIndex = validOnlyArgMax(s1, targetActionVector);
-    const qMax = r0 + solverAsAny.gamma * targetActionVector.w[targetActionIndex];
-    return qMax;
+    return r0 + solverAsAny.gamma * targetActionVector.w[targetActionIndex];
   };
-}
+};
 
-function createSolver(
+const createSolver = (
   width: number,
   height: number,
   stateCount: number,
   actionCount: number,
-): Solver {
+): DQNSolver => {
   const agentEnvironment = new DQNEnv(width, height, stateCount, actionCount);
   const agentOptions = new DQNOpt();
   agentOptions.setEpsilon(0.05);
@@ -71,27 +75,27 @@ function createSolver(
   const solver = new DQNSolver(agentEnvironment, agentOptions);
   patchSolver(() => solver);
   return solver;
-}
+};
 
-function newBrainStatistics(): BrainStatistics {
+const newBrainStatistics = (): BrainStatistics => {
   return {
     draws: 0,
     losses: 0,
     wins: 0,
   };
-}
+};
 
-async function loadBrainAndStatistics(
+const loadBrainAndStatistics = async (
   id: string,
-  solverCreator: () => Solver,
-): Promise<SolverWithStatistics> {
+  solverCreator: () => DQNSolver,
+): Promise<SolverWithStatistics> => {
   if (id in agents) {
     return agents[id];
   }
 
   let statistics: BrainStatistics;
   const solver = solverCreator();
-  const loadedAgentData = await loadAgent<StorableDQNAgent>(id, dqnObjectVersion, Brains[id]);
+  const loadedAgentData = await loadAgent(id, dqnObjectVersion, Brains[id]);
 
   if (loadedAgentData) {
     solver.fromJSON(loadedAgentData.network);
@@ -105,7 +109,8 @@ async function loadBrainAndStatistics(
     // Only concerns persisted DQN brains as their experience stack is not persisted.
     const keepExperienceInterval = solver.getOpt().get('keepExperienceInterval');
     const experienceOffset = loadedAgentData.wins % keepExperienceInterval;
-    (solver as any).learnTick = loadedAgentData.wins - experienceOffset;
+    // @ts-expect-error TS/2445 we need to patch this protected member
+    solver.learnTick = loadedAgentData.wins - experienceOffset;
   } else {
     statistics = newBrainStatistics();
   }
@@ -113,7 +118,7 @@ async function loadBrainAndStatistics(
   const agent = { solver, statistics };
   agents[id] = agent;
   return agent;
-}
+};
 
 export const getDQNReinforcedAgent: AIAgentCreator<ReinforcedAgent> = async (
   cellOwner,
@@ -126,11 +131,11 @@ export const getDQNReinforcedAgent: AIAgentCreator<ReinforcedAgent> = async (
     createSolver(width, height, cellCount, cellCount),
   );
 
-  async function persist(): Promise<void> {
-    const network = agentData.solver.toJSON();
-    const brain = { ...agentData.statistics, network };
-    await persistAgent<StorableDQNAgent>(id, dqnObjectVersion, brain);
-  }
+  const persist = async (): Promise<void> => {
+    const network = agentData.solver.toJSON() as unknown as StorableDQNAgent['network'];
+    const brain: StorableDQNAgent = { ...agentData.statistics, network };
+    await persistAgent(id, dqnObjectVersion, brain);
+  };
 
   /**
    * Encapsulates and persists the state of a DQN solver (the "brain") and provides the interface

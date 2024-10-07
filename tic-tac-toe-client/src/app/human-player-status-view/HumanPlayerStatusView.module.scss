@@ -1,6 +1,6 @@
-@import '../../scss/abstracts';
+@use '../../scss/abstract';
 
 .view {
-  @extend %hintText;
-  @extend %hintColorNeutral;
+  @extend %hint-text;
+  @extend %hint-color-neutral;
 }

@@ -9,19 +9,19 @@ export interface EndGameActionPayload {
   endState: Readonly<GameEndState>;
 }
 
-export function endGame(
+export const endGame = (
   prevState: Readonly<GameStateType>,
   payload: Readonly<EndGameActionPayload>,
-): GameStateType {
+): GameStateType => {
   const {
-    endState: { visitee, gameView },
+    endState: { visit, gameView },
   } = payload;
 
   let nextGameState = prevState;
 
   nextGameState = setGameView(nextGameState, { gameView });
 
-  visitee({
+  visit({
     drawEndState() {
       nextGameState = setWinner(nextGameState, { value: CellOwner.None });
     },
@@ -35,4 +35,4 @@ export function endGame(
   });
 
   return nextGameState;
-}
+};

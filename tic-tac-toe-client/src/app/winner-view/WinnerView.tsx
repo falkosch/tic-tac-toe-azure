@@ -5,26 +5,29 @@ import { Points } from '../../meta-model/GameView';
 
 import styles from './WinnerView.module.scss';
 
-function representsError(value: any): boolean {
+const representsError = (value: unknown): boolean => {
   return value instanceof Error;
-}
+};
 
-function representsAxiosError(value: any): boolean {
-  return value && !!value.isAxiosError;
-}
+const representsAxiosError = (value: unknown): boolean => {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+  return 'isAxiosError' in value && !!value.isAxiosError;
+};
 
-function representsDraw(value: any): boolean {
+const representsDraw = (value: unknown): boolean => {
   return value === CellOwner.None;
-}
+};
 
-function representsSpecificWinner(value: any): boolean {
+const representsSpecificWinner = (value: unknown): boolean => {
   return value === CellOwner.O || value === CellOwner.X;
-}
+};
 
 export const WinnerView: FC<{
   winner?: Readonly<CellOwner> | Error;
   wins: Readonly<Points>;
-}> = ({ winner, wins }) => (
+}> = ({ winner = undefined, wins }) => (
   <div className={styles.view}>
     <div className={styles.error}>
       {representsError(winner) &&

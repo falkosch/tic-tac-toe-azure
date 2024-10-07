@@ -1,19 +1,17 @@
-@import './variables';
-
-%hintText {
+%hint-text {
   font-size: 2rem;
   line-height: 3rem;
   max-width: 70vw;
 }
 
-%hintColorNeutral {
+%hint-color-neutral {
   color: darkgrey;
 }
 
-%hintColorAttention {
+%hint-color-attention {
   color: darkseagreen;
 }
 
-%hintColorAlert {
+%hint-color-alert {
   color: darkred;
 }

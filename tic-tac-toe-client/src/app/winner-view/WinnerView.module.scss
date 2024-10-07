@@ -1,13 +1,13 @@
-@import '../../scss/abstracts';
+@use '../../scss/abstract';
 
 .view {
-  @extend %hintText;
+  @extend %hint-text;
 }
 
 .winner {
-  @extend %hintColorAttention;
+  @extend %hint-color-attention;
 }
 
 .error {
-  @extend %hintColorAlert;
+  @extend %hint-color-alert;
 }

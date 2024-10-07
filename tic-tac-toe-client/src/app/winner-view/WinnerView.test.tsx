@@ -1,5 +1,5 @@
+import { render } from '@testing-library/react';
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 import { CellOwner } from '../../meta-model/CellOwner';
 import { Points } from '../../meta-model/GameView';
@@ -18,8 +18,6 @@ describe(`${WinnerView.name}`, () => {
   });
 
   it('renders without crashing', () => {
-    const div = document.createElement('div');
-    ReactDOM.render(<WinnerView winner={winner} wins={wins} />, div);
-    ReactDOM.unmountComponentAtNode(div);
+    render(<WinnerView winner={winner} wins={wins} />);
   });
 });

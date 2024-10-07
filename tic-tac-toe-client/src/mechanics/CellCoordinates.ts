@@ -24,44 +24,44 @@ export interface ForEachLineCallback {
   (lineDimension: number, iteratorToCoordinates: LineIteratorToCoordinates): void;
 }
 
-export function cellCoordinates(
+export const cellCoordinates = (
   cellAt: number,
   boardDimensions: Readonly<BoardDimensions>,
-): CellCoordinates {
+): CellCoordinates => {
   const span = boardDimensions.width;
   const x = Math.floor(cellAt % span);
   const y = Math.floor((cellAt - x) / span);
   return { x, y };
-}
+};
 
-export function cellAtCoordinate(
+export const cellAtCoordinate = (
   coordinates: Readonly<CellCoordinates>,
   boardDimensions: Readonly<BoardDimensions>,
-): number {
+): number => {
   return Math.floor(coordinates.y * boardDimensions.width + coordinates.x);
-}
+};
 
-export function forEachCellInLine(
+export const forEachCellInLine = (
   boardDimensions: Readonly<BoardDimensions>,
   lineDimension: number,
   iteratorToCoordinates: LineIteratorToCoordinates,
   forEachCellInLineCallback: ForEachCellInLineCallback,
-): void {
+): void => {
   for (let i = 0; i < lineDimension; i += 1) {
     const coordinates = iteratorToCoordinates(i);
     const cellAt = cellAtCoordinate(coordinates, boardDimensions);
     forEachCellInLineCallback(cellAt, coordinates);
   }
-}
+};
 
-export function forEachLine(
+export const forEachLine = (
   lineDimensions: Readonly<LineDimensions>,
   iteratorsToCoordinates: LineIteratorsToCoordinates,
   forEachLineCallback: ForEachLineCallback,
-): void {
+): void => {
   for (let j = 0; j < lineDimensions.j; j += 1) {
     const lineDimension = lineDimensions.i(j);
-    const iteratorToCoordinates: LineIteratorToCoordinates = i => iteratorsToCoordinates(j, i);
+    const iteratorToCoordinates: LineIteratorToCoordinates = (i) => iteratorsToCoordinates(j, i);
     forEachLineCallback(lineDimension, iteratorToCoordinates);
   }
-}
+};

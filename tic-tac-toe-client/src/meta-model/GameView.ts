@@ -1,22 +1,22 @@
 import { Board } from './Board';
 import { SpecificCellOwner } from './CellOwner';
 
-export enum ConsecutivenessDirection {
+export enum ConsecutiveDirection {
   Horizontal = 'H',
   Vertical = 'V',
   DiagonalTR2BL = 'TR2BL',
   DiagonalTL2BR = 'TL2BR',
 }
 
-export interface Consecutiveness {
+export interface Consecutive {
   cellsAt: ReadonlyArray<number>;
-  direction: Readonly<ConsecutivenessDirection>;
+  direction: Readonly<ConsecutiveDirection>;
 }
 
 export type Points = Record<SpecificCellOwner, number>;
 
 export interface GameView {
   board: Readonly<Board>;
-  consecutiveness: ReadonlyArray<Consecutiveness>;
+  consecutive: ReadonlyArray<Consecutive>;
   points: Readonly<Points>;
 }

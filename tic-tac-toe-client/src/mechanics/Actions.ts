@@ -10,10 +10,10 @@ export interface CellModifier {
   (currentCellOwner: Readonly<CellOwner>, currentCellAt: number): CellOwner;
 }
 
-export function buildCellModifier(
+export const buildCellModifier = (
   attack: Readonly<AttackGameAction>,
   newOwner: Readonly<CellOwner>,
-): CellModifier {
+): CellModifier => {
   return (currentCellOwner, currentCellAt) => {
     if (attack.affectedCellsAt.indexOf(currentCellAt) < 0) {
       return currentCellOwner;
@@ -23,15 +23,15 @@ export function buildCellModifier(
     }
     return newOwner;
   };
-}
+};
 
-export function buildBoardModifier(
+export const buildBoardModifier = (
   attack: Readonly<AttackGameAction>,
   newOwner: Readonly<CellOwner>,
-): BoardModifier {
+): BoardModifier => {
   const cellModifier = buildCellModifier(attack, newOwner);
-  return board => ({
+  return (board) => ({
     cells: board.cells.map(cellModifier),
     dimensions: board.dimensions,
   });
-}
+};

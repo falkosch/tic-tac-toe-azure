@@ -1,5 +1,5 @@
+import { render } from '@testing-library/react';
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 import { CellOwner } from '../../meta-model/CellOwner';
 import { GameStateType } from '../game-state/GameState';
@@ -18,8 +18,6 @@ describe(`${GameStateView.name}`, () => {
   });
 
   it('renders without crashing', () => {
-    const div = document.createElement('div');
-    ReactDOM.render(<GameStateView gameState={gameState} />, div);
-    ReactDOM.unmountComponentAtNode(div);
+    render(<GameStateView gameState={gameState} />);
   });
 });

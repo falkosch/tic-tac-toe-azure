@@ -4,16 +4,17 @@ export interface BrainStatistics {
   wins: number;
 }
 
-export interface StorableAgent<BrainType extends BrainStatistics> {
+export interface StorableAgent<BrainType extends BrainStatistics = never> {
   version: number;
   brain: BrainType;
 }
 
-interface Persister {
+interface BrainPersistence {
   store<BrainType extends BrainStatistics>(
     id: string,
     data: Readonly<StorableAgent<BrainType>>,
   ): Promise<void>;
+
   load<BrainType extends BrainStatistics>(
     id: string,
   ): Promise<StorableAgent<BrainType> | undefined>;
@@ -29,26 +30,12 @@ const indexedDBConfiguration = {
   version: 1,
 };
 
-const persisterInitialization = new Promise<Persister>(resolve => {
-  initializeDatabase((database, error) => {
-    if (database === undefined || error) {
-      if (localStorageIsAccessible()) {
-        resolve(createLocalStoragePersister());
-      } else {
-        resolve(createTransientInMemoryPersister());
-      }
-    } else {
-      resolve(createIndexedDBPersister(database));
-    }
-  });
-});
-
-function createTransaction(
+const createTransaction = (
   database: Readonly<IDBDatabase>,
   readOnly: boolean,
-  transactionResolve?: Function,
-  transactionReject?: Function,
-): IDBTransaction {
+  transactionResolve?: () => void,
+  transactionReject?: (error: Error) => void,
+): IDBTransaction => {
   const dbTransaction = database.transaction(
     [indexedDBConfiguration.objectStore],
     readOnly ? 'readonly' : 'readwrite',
@@ -62,14 +49,15 @@ function createTransaction(
 
   if (transactionReject) {
     dbTransaction.onerror = () => {
-      transactionReject(new Error(dbTransaction.error.message));
+      const { error } = dbTransaction;
+      transactionReject(new Error('transaction failed', { cause: error }));
     };
   }
 
   return dbTransaction;
-}
+};
 
-function createIndexedDBPersister(database: Readonly<IDBDatabase>): Persister {
+const createIndexedDBPersistence = (database: Readonly<IDBDatabase>): BrainPersistence => {
   return {
     store(id, data) {
       return new Promise((storeResolve, storeReject) => {
@@ -94,9 +82,9 @@ function createIndexedDBPersister(database: Readonly<IDBDatabase>): Persister {
       });
     },
   };
-}
+};
 
-function initializeDatabase(callback: DatabaseInitializationCallback): void {
+const initializeDatabase = (callback: DatabaseInitializationCallback): void => {
   if (!window.indexedDB || !window.indexedDB.open) {
     callback(undefined, new Error('indexedDB not supported'));
     return;
@@ -116,7 +104,7 @@ function initializeDatabase(callback: DatabaseInitializationCallback): void {
     callback(undefined, new Error(dbOpenRequest.error?.message));
   };
 
-  dbOpenRequest.onupgradeneeded = event => {
+  dbOpenRequest.onupgradeneeded = (event) => {
     if (event.oldVersion < 1) {
       dbOpenRequest.result.createObjectStore(indexedDBConfiguration.objectStore);
     }
@@ -125,9 +113,9 @@ function initializeDatabase(callback: DatabaseInitializationCallback): void {
   dbOpenRequest.onsuccess = () => {
     callback(dbOpenRequest.result);
   };
-}
+};
 
-function localStorageIsAccessible(): boolean {
+const localStorageIsAccessible = (): boolean => {
   const dummyKey = 'dummy';
   try {
     localStorage.setItem(dummyKey, dummyKey);
@@ -136,9 +124,9 @@ function localStorageIsAccessible(): boolean {
     return false;
   }
   return true;
-}
+};
 
-function createLocalStoragePersister(): Persister {
+const createLocalStoragePersistence = (): BrainPersistence => {
   return {
     async store(id, data) {
       const jsonData = JSON.stringify(data);
@@ -146,47 +134,55 @@ function createLocalStoragePersister(): Persister {
     },
     async load(id) {
       const stored = localStorage.getItem(id);
-      if (!stored) {
-        return undefined;
-      }
-      return JSON.parse(stored);
+      return stored ? JSON.parse(stored) : undefined;
     },
   };
-}
+};
 
-function createTransientInMemoryPersister(): Persister {
-  const memory: Record<string, StorableAgent<any>> = {};
+const createTransientInMemoryPersistence = (): BrainPersistence => {
+  const memory: Record<string, StorableAgent> = {};
   return {
     async store(id, data) {
-      memory[id] = data;
+      memory[id] = data as StorableAgent;
     },
     async load(id) {
       return memory[id];
     },
   };
-}
+};
 
-export async function persistAgent<BrainType extends BrainStatistics>(
+const persistenceInitialization = new Promise<BrainPersistence>((resolve) => {
+  initializeDatabase((database, error) => {
+    if (database === undefined || error) {
+      if (localStorageIsAccessible()) {
+        resolve(createLocalStoragePersistence());
+      } else {
+        resolve(createTransientInMemoryPersistence());
+      }
+    } else {
+      resolve(createIndexedDBPersistence(database));
+    }
+  });
+});
+
+export const persistAgent = async <BrainType extends BrainStatistics>(
   id: string,
   version: number,
   brain: Readonly<BrainType>,
-): Promise<void> {
-  const persister = await persisterInitialization;
-  return persister.store<BrainType>(id, {
-    version,
-    brain,
-  });
-}
+): Promise<void> => {
+  const persistence = await persistenceInitialization;
+  return persistence.store<BrainType>(id, { version, brain });
+};
 
-export async function loadAgent<BrainType extends BrainStatistics>(
+export const loadAgent = async <BrainType extends BrainStatistics>(
   id: string,
   version: number,
   defaultBrain?: Readonly<BrainType>,
-): Promise<BrainType | undefined> {
-  const persister = await persisterInitialization;
-  const stored = await persister.load<BrainType>(id);
+): Promise<BrainType | undefined> => {
+  const persistence = await persistenceInitialization;
+  const stored = await persistence.load<BrainType>(id);
   if (stored && stored.version === version && stored.brain) {
     return stored.brain;
   }
   return defaultBrain;
-}
+};

@@ -1,9 +1,9 @@
 import { cellAtCoordinate, cellCoordinates } from '../../mechanics/CellCoordinates';
 import {
+  BoardNormalization,
   determineBoardNormalization,
   inverseNormalization,
   transformCoordinates,
-  BoardNormalization,
 } from '../../mechanics/BoardNormalization';
 import { Board, BoardDimensions } from '../../meta-model/Board';
 import { SpecificCellOwner } from '../../meta-model/CellOwner';
@@ -11,9 +11,10 @@ import { Decision } from './Decision';
 import { GameEndState } from '../../meta-model/GameEndState';
 
 export interface AIAgentCreator<AIAgentType> {
-  (cellOwner: Readonly<SpecificCellOwner>, boardDimensions: Readonly<BoardDimensions>): Promise<
-    AIAgentType
-  >;
+  (
+    cellOwner: Readonly<SpecificCellOwner>,
+    boardDimensions: Readonly<BoardDimensions>,
+  ): Promise<AIAgentType>;
 }
 
 export interface NormalizedStateSpace {
@@ -24,27 +25,31 @@ export interface NormalizedStateSpace {
 
 export interface AIAgent<StateSpaceType extends NormalizedStateSpace> {
   readonly cellOwner: Readonly<SpecificCellOwner>;
+
   decide(prior: Readonly<StateSpaceType>): Promise<Decision>;
+
   rememberDraw(): Promise<void>;
+
   rememberLoss(): Promise<void>;
+
   rememberWin(): Promise<void>;
 }
 
-export function buildNormalizedStateSpace(board: Readonly<Board>): NormalizedStateSpace {
+export const buildNormalizedStateSpace = (board: Readonly<Board>): NormalizedStateSpace => {
   const normalization = determineBoardNormalization(board);
   return {
     dimensions: board.dimensions,
     inverseNormalization: inverseNormalization(normalization),
     normalization,
   };
-}
+};
 
-function transformDecision<StateSpaceType extends NormalizedStateSpace>(
+const transformDecision = <StateSpaceType extends NormalizedStateSpace>(
   decisionForNormalizedStateSpace: Readonly<Decision>,
   stateSpace: Readonly<StateSpaceType>,
-): Decision {
+): Decision => {
   const cellsAtToAttack = decisionForNormalizedStateSpace.cellsAtToAttack.map(
-    cellAtForNormalizedStateSpace =>
+    (cellAtForNormalizedStateSpace) =>
       cellAtCoordinate(
         transformCoordinates(
           cellCoordinates(cellAtForNormalizedStateSpace, stateSpace.dimensions),
@@ -56,22 +61,22 @@ function transformDecision<StateSpaceType extends NormalizedStateSpace>(
   );
 
   return { ...decisionForNormalizedStateSpace, cellsAtToAttack };
-}
+};
 
-export async function findDecisionForStateSpace<StateSpaceType extends NormalizedStateSpace>(
+export const findDecisionForStateSpace = async <StateSpaceType extends NormalizedStateSpace>(
   agent: Readonly<AIAgent<StateSpaceType>>,
   stateSpace: Readonly<StateSpaceType>,
-): Promise<Decision | null> {
+): Promise<Decision | null> => {
   const decisionForNormalizedStateSpace = await agent.decide(stateSpace);
   return transformDecision(decisionForNormalizedStateSpace, stateSpace);
-}
+};
 
-export async function notifyEndState<StateSpaceType extends NormalizedStateSpace>(
+export const notifyEndState = <StateSpaceType extends NormalizedStateSpace>(
   endState: Readonly<GameEndState>,
   agent: Readonly<AIAgent<StateSpaceType>>,
-): Promise<void> {
-  let promise: Promise<any> = Promise.resolve();
-  endState.visitee({
+): Promise<void> => {
+  let promise = Promise.resolve();
+  endState.visit({
     drawEndState() {
       promise = agent.rememberDraw();
     },
@@ -87,4 +92,4 @@ export async function notifyEndState<StateSpaceType extends NormalizedStateSpace
     },
   });
   return promise;
-}
+};

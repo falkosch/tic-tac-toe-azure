@@ -5,13 +5,13 @@ export interface SetGameViewActionPayload {
   gameView: Readonly<GameView> | undefined;
 }
 
-export function setGameView(
+export const setGameView = (
   prevState: Readonly<GameStateType>,
   payload: Readonly<SetGameViewActionPayload>,
-): GameStateType {
+): GameStateType => {
   const { gameView } = payload;
   return {
     ...prevState,
     gameView,
   };
-}
+};

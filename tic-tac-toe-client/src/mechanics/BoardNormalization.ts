@@ -1,8 +1,8 @@
 import {
   cellAtCoordinate,
+  CellCoordinates,
   forEachCellInLine,
   forEachLine,
-  CellCoordinates,
   LineDimensions,
   LineIteratorsToCoordinates,
 } from './CellCoordinates';
@@ -14,31 +14,31 @@ export interface BoardNormalization {
   mirroring: Coordinates<boolean>;
 }
 
-function transformOnAxis(value: number, dimension: number, mirrored: boolean): number {
+const transformOnAxis = (value: number, dimension: number, mirrored: boolean): number => {
   return mirrored ? dimension - value - 1 : value;
-}
+};
 
-export function transformCoordinates(
+export const transformCoordinates = (
   coordinates: Readonly<CellCoordinates>,
   boardDimensions: Readonly<BoardDimensions>,
   normalization: Readonly<BoardNormalization>,
-): CellCoordinates {
+): CellCoordinates => {
   const { mirroring } = normalization;
   return {
     x: transformOnAxis(coordinates.x, boardDimensions.width, mirroring.x),
     y: transformOnAxis(coordinates.y, boardDimensions.height, mirroring.y),
   };
-}
+};
 
-function countFreeCellsInRegion(
+const countFreeCellsInRegion = (
   board: Readonly<Board>,
   lineDimensions: Readonly<LineDimensions>,
   iteratorsToCoordinates: LineIteratorsToCoordinates,
-): number {
+): number => {
   let freeCells = 0;
 
   forEachLine(lineDimensions, iteratorsToCoordinates, (lineDimension, iteratorToCoordinates) =>
-    forEachCellInLine(board.dimensions, lineDimension, iteratorToCoordinates, cellAt => {
+    forEachCellInLine(board.dimensions, lineDimension, iteratorToCoordinates, (cellAt) => {
       if (board.cells[cellAt] === CellOwner.None) {
         freeCells += 1;
       }
@@ -46,13 +46,13 @@ function countFreeCellsInRegion(
   );
 
   return freeCells;
-}
+};
 
-function determineFreeCellsBalanceByDirection(
+const determineFreeCellsBalanceByDirection = (
   board: Readonly<Board>,
   lineDimensions: Readonly<LineDimensions>,
   iteratorsToCoordinates: LineIteratorsToCoordinates,
-): number {
+): number => {
   // As a distinct middle line on a board is not part of either of the two adjacent sides, it is
   // skipped when determining the balance, i.e. a 3x3 board has a distinct middle line while a
   // 2x2 board has not.
@@ -63,7 +63,7 @@ function determineFreeCellsBalanceByDirection(
     board,
     {
       j: halfLengths,
-      i: atJ => lineDimensions.i(atJ),
+      i: (atJ) => lineDimensions.i(atJ),
     },
     (j, i) => iteratorsToCoordinates(j, i),
   );
@@ -72,20 +72,20 @@ function determineFreeCellsBalanceByDirection(
     board,
     {
       j: halfLengths,
-      i: atJ => lineDimensions.i(atJ + distinctMiddleOffset),
+      i: (atJ) => lineDimensions.i(atJ + distinctMiddleOffset),
     },
     (j, i) => iteratorsToCoordinates(j + distinctMiddleOffset, i),
   );
 
   return first - second;
-}
+};
 
-export function determineBoardNormalization(board: Readonly<Board>): BoardNormalization {
+export const determineBoardNormalization = (board: Readonly<Board>): BoardNormalization => {
   const balanceHorizontal = determineFreeCellsBalanceByDirection(
     board,
     {
       j: board.dimensions.width,
-      i: __ => board.dimensions.height,
+      i: () => board.dimensions.height,
     },
     (j, i) => ({ x: j, y: i }),
   );
@@ -94,7 +94,7 @@ export function determineBoardNormalization(board: Readonly<Board>): BoardNormal
     board,
     {
       j: board.dimensions.height,
-      i: __ => board.dimensions.width,
+      i: () => board.dimensions.width,
     },
     (j, i) => ({ x: i, y: j }),
   );
@@ -105,27 +105,27 @@ export function determineBoardNormalization(board: Readonly<Board>): BoardNormal
       y: balanceVertical > 0,
     },
   };
-}
+};
 
-export function inverseNormalization(
+export const inverseNormalization = (
   normalization: Readonly<BoardNormalization>,
-): BoardNormalization {
+): BoardNormalization => {
   // For now the mirror transformation is inverted by mirroring the coordinates once again, so
   // the inverse normalization is identical with the given normalization.
   return normalization;
-}
+};
 
-export function transformBoardCells(
+export const transformBoardCells = (
   board: Readonly<Board>,
   normalization: Readonly<BoardNormalization>,
-): CellOwner[] {
+): CellOwner[] => {
   const { cells, dimensions } = board;
   const transformedCells = Array.from<CellOwner>({ length: cells.length });
 
   forEachLine(
     {
       j: dimensions.height,
-      i: __ => dimensions.width,
+      i: () => dimensions.width,
     },
     (j, i) => ({ x: i, y: j }),
     (lineDimension, iteratorToCoordinates) =>
@@ -137,4 +137,4 @@ export function transformBoardCells(
   );
 
   return transformedCells;
-}
+};

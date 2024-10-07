@@ -1,10 +1,10 @@
-import React, { useContext, FC } from 'react';
+import React, { FC, useContext } from 'react';
 
 import { ActionTokenDispatch } from '../game-state/ActionTokenDispatch';
 
 import styles from './HumanPlayerStatusView.module.scss';
 
-export const HumanPlayerStatusView: FC<{}> = () => {
+export const HumanPlayerStatusView: FC = () => {
   const actionTokenDispatch = useContext(ActionTokenDispatch);
 
   return (

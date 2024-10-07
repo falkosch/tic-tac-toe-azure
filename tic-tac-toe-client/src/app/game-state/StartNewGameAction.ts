@@ -8,10 +8,10 @@ export interface StartNewGameActionPayload {
   gameView: Readonly<GameView>;
 }
 
-export function startNewGame(
+export const startNewGame = (
   prevState: Readonly<GameStateType>,
   payload: Readonly<StartNewGameActionPayload>,
-): GameStateType {
+): GameStateType => {
   const { gameView } = payload;
   let nextGameState = prevState;
 
@@ -20,4 +20,4 @@ export function startNewGame(
   nextGameState = setWinner(nextGameState, { value: undefined });
 
   return nextGameState;
-}
+};
