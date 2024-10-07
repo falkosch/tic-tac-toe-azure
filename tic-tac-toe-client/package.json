@@ -11,6 +11,11 @@
     "lint:tsc": "tsc --noEmit",
     "lint:stylelint": "stylelint \"**/*.scss\""
   },
+  "jest": {
+    "moduleNameMapper": {
+      "^axios$": "axios/dist/node/axios.cjs"
+    }
+  },
   "stylelint": {
     "extends": [
       "stylelint-config-standard-scss"
