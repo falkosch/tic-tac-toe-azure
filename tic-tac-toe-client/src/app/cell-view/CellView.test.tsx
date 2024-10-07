@@ -23,7 +23,7 @@ describe(`${CellView.name}`, () => {
         boardDimensions={boardDimensions}
         cellAt={0}
         cellOwner={cellOwner}
-        consecutiveness={[]}
+        consecutive={[]}
       />,
     );
   });

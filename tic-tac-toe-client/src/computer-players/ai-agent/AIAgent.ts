@@ -1,9 +1,9 @@
 import { cellAtCoordinate, cellCoordinates } from '../../mechanics/CellCoordinates';
 import {
+  BoardNormalization,
   determineBoardNormalization,
   inverseNormalization,
   transformCoordinates,
-  BoardNormalization,
 } from '../../mechanics/BoardNormalization';
 import { Board, BoardDimensions } from '../../meta-model/Board';
 import { SpecificCellOwner } from '../../meta-model/CellOwner';
@@ -25,9 +25,13 @@ export interface NormalizedStateSpace {
 
 export interface AIAgent<StateSpaceType extends NormalizedStateSpace> {
   readonly cellOwner: Readonly<SpecificCellOwner>;
+
   decide(prior: Readonly<StateSpaceType>): Promise<Decision>;
+
   rememberDraw(): Promise<void>;
+
   rememberLoss(): Promise<void>;
+
   rememberWin(): Promise<void>;
 }
 
@@ -72,7 +76,7 @@ export const notifyEndState = <StateSpaceType extends NormalizedStateSpace>(
   agent: Readonly<AIAgent<StateSpaceType>>,
 ): Promise<void> => {
   let promise = Promise.resolve();
-  endState.visitee({
+  endState.visit({
     drawEndState() {
       promise = agent.rememberDraw();
     },

@@ -2,17 +2,17 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Form from 'react-bootstrap/Form';
-import React, { useReducer, useRef, useState, FC } from 'react';
+import React, { FC, JSX, useReducer, useRef, useState } from 'react';
 
 import { createAzureFunctionPlayer } from '../computer-players/AzureFunctionPlayer';
 import { createDQNPlayer } from '../computer-players/DQNPlayer';
 import { createMenacePlayer } from '../computer-players/MenacePlayer';
 import { createMockPlayer } from '../computer-players/MockPlayer';
 import {
-  gameConfigurationReducer,
   GameConfigurationActionType,
+  gameConfigurationReducer,
 } from './game-configuration/GameConfigurationReducer';
-import { gameStateReducer, GameStateActionType } from './game-state/GameStateReducer';
+import { GameStateActionType, gameStateReducer } from './game-state/GameStateReducer';
 import { initialGameConfiguration, PlayerType } from './game-configuration/GameConfiguration';
 import { initialGameState } from './game-state/GameState';
 import { runNewGame } from '../mechanics/GameDirector';

@@ -14,14 +14,14 @@ export const endGame = (
   payload: Readonly<EndGameActionPayload>,
 ): GameStateType => {
   const {
-    endState: { visitee, gameView },
+    endState: { visit, gameView },
   } = payload;
 
   let nextGameState = prevState;
 
   nextGameState = setGameView(nextGameState, { gameView });
 
-  visitee({
+  visit({
     drawEndState() {
       nextGameState = setWinner(nextGameState, { value: CellOwner.None });
     },

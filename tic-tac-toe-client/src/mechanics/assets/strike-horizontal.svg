@@ -1,22 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="188.976" height="188.976" viewBox="0 0 5000 5000"
-  preserveAspectRatio="xMidYMid" fill-rule="evenodd" stroke-width="28.222" stroke-linejoin="round">
+     preserveAspectRatio="xMidYMid" fill-rule="evenodd" stroke-width="28.222"
+     stroke-linejoin="round">
   <defs>
     <clipPath id="A">
-      <path d="M0 0h5000v5000H0z" />
+      <path d="M0 0h5000v5000H0z"/>
     </clipPath>
   </defs>
   <g clip-path="url(#A)">
     <defs>
       <mask id="B">
-        <path d="M-605 1884h6210v1233H-605V1884z" fill="url(#C)" />
+        <path d="M-605 1884h6210v1233H-605V1884z" fill="url(#C)"/>
       </mask>
       <linearGradient id="C" x1="2500" y1="1884" x2="2500" y2="3117" gradientUnits="userSpaceOnUse">
-        <stop offset=".5" stop-color="#a6a6a6" />
+        <stop offset=".5" stop-color="#a6a6a6"/>
       </linearGradient>
     </defs>
     <g mask="url(#B)">
       <path fill="none" stroke="#000" stroke-width="1000"
-        d="M5105 2582c-197 125-218-129-405-87-169 41-532-42-696-20-150 19-309 79-454 78-133 2-268 19-396 2-105-12-219 9-318-18-75-21-159-12-239-16s-160-17-246 2c-35 8-70 8-104-1-66-16-134-16-199-36-101-31-218-19-325-36-82-15-166-31-250-39-91-12-188-7-278-22-113-20-241 24-359 32-65 6-135 29-202 34-51 3-102-2-155 4-61 6-128 29-184 24-43 1-85-4-128-7-66-1-136 21-203 29l-39 10-30 5" />
+            d="M5105 2582c-197 125-218-129-405-87-169 41-532-42-696-20-150 19-309 79-454 78-133 2-268 19-396 2-105-12-219 9-318-18-75-21-159-12-239-16s-160-17-246 2c-35 8-70 8-104-1-66-16-134-16-199-36-101-31-218-19-325-36-82-15-166-31-250-39-91-12-188-7-278-22-113-20-241 24-359 32-65 6-135 29-202 34-51 3-102-2-155 4-61 6-128 29-184 24-43 1-85-4-128-7-66-1-136 21-203 29l-39 10-30 5"/>
     </g>
   </g>
 </svg>

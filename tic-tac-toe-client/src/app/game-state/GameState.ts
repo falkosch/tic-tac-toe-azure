@@ -3,6 +3,7 @@ import { GameView, Points } from '../../meta-model/GameView';
 
 export interface ActionToken {
   (affectedCellsAt: ReadonlyArray<number>, error?: Readonly<Error>): void;
+
   (): void;
 }
 

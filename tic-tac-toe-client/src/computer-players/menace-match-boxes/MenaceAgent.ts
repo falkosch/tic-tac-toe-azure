@@ -1,10 +1,10 @@
 import {
+  AIAgent,
   buildNormalizedStateSpace,
   findDecisionForStateSpace,
-  AIAgent,
   NormalizedStateSpace,
 } from '../ai-agent/AIAgent';
-import { findFreeCellIndices, takeAny, Decision } from '../ai-agent/Decision';
+import { Decision, findFreeCellIndices, takeAny } from '../ai-agent/Decision';
 import { transformBoardCells } from '../../mechanics/BoardNormalization';
 import { Board } from '../../meta-model/Board';
 import { CellOwner } from '../../meta-model/CellOwner';

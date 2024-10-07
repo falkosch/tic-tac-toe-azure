@@ -1,8 +1,8 @@
 import { Mat } from 'recurrent-js';
 import { DQNEnv, DQNOpt, DQNSolver, Solver } from 'reinforce-js';
 
-import { loadAgent, persistAgent, BrainStatistics } from '../ai-agent/StorableAgent';
-import { takeAny, Decision } from '../ai-agent/Decision';
+import { BrainStatistics, loadAgent, persistAgent } from '../ai-agent/StorableAgent';
+import { Decision, takeAny } from '../ai-agent/Decision';
 import { AIAgentCreator } from '../ai-agent/AIAgent';
 import { Brains } from './DQNPretrainedBrain';
 import { ReinforcedAgent } from './ReinforcedAgent';
@@ -56,8 +56,7 @@ const patchSolver = (getSolver: () => DQNSolver): void => {
     // @ts-expect-error TS/2445 we need to access this protected member
     const targetActionVector = solverAsAny.forwardQ(s1);
     const targetActionIndex = validOnlyArgMax(s1, targetActionVector);
-    const qMax = r0 + solverAsAny.gamma * targetActionVector.w[targetActionIndex];
-    return qMax;
+    return r0 + solverAsAny.gamma * targetActionVector.w[targetActionIndex];
   };
 };
 

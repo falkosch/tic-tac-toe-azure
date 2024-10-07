@@ -1,8 +1,8 @@
 import {
   cellAtCoordinate,
+  CellCoordinates,
   forEachCellInLine,
   forEachLine,
-  CellCoordinates,
   LineDimensions,
   LineIteratorsToCoordinates,
 } from './CellCoordinates';

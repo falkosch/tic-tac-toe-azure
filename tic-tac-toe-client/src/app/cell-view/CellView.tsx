@@ -1,16 +1,13 @@
-import React, { useContext, FC } from 'react';
+import React, { FC, useContext } from 'react';
 
 import { cellCoordinates } from '../../mechanics/CellCoordinates';
 import { cellEdgeClassifiers, EdgeClassifier } from '../../mechanics/CellEdgeClassifiers';
-import { coveredConsecutivenessDirections } from '../../mechanics/Consecutiveness';
-import {
-  mapCellOwnerToImage,
-  mapConsecutivenessDirectionToImage,
-} from '../../mechanics/MapToImage';
+import { coveredConsecutiveDirections } from '../../mechanics/Consecutiveness';
+import { mapCellOwnerToImage, mapConsecutiveDirectionToImage } from '../../mechanics/MapToImage';
 import { ActionTokenDispatch } from '../game-state/ActionTokenDispatch';
 import { BoardDimensions } from '../../meta-model/Board';
 import { CellOwner } from '../../meta-model/CellOwner';
-import { Consecutiveness } from '../../meta-model/GameView';
+import { Consecutive } from '../../meta-model/GameView';
 import { ImageStack } from '../image-stack/ImageStack';
 
 import styles from './CellView.module.scss';
@@ -33,15 +30,14 @@ export const CellView: FC<{
   boardDimensions: Readonly<BoardDimensions>;
   cellAt: number;
   cellOwner: Readonly<CellOwner>;
-  consecutiveness: ReadonlyArray<Consecutiveness>;
-}> = ({ boardDimensions, cellAt, cellOwner, consecutiveness }) => {
+  consecutive: ReadonlyArray<Consecutive>;
+}> = ({ boardDimensions, cellAt, cellOwner, consecutive }) => {
   const actionTokenDispatch = useContext(ActionTokenDispatch);
 
   const cellOwnerImage = mapCellOwnerToImage(cellOwner);
-  const consecutivenessDirectionImages = coveredConsecutivenessDirections(
-    cellAt,
-    consecutiveness,
-  ).map((d) => mapConsecutivenessDirectionToImage(d));
+  const consecutiveDirectionImages = coveredConsecutiveDirections(cellAt, consecutive).map((d) =>
+    mapConsecutiveDirectionToImage(d),
+  );
 
   const edgeClassifiers = cellEdgeClassifiers(
     cellCoordinates(cellAt, boardDimensions),
@@ -65,7 +61,7 @@ export const CellView: FC<{
 
   return (
     <button className={className} onClick={onClick} style={gridStyle} type="button">
-      <ImageStack imageSources={[cellOwnerImage, ...consecutivenessDirectionImages]} />
+      <ImageStack imageSources={[cellOwnerImage, ...consecutiveDirectionImages]} />
     </button>
   );
 };

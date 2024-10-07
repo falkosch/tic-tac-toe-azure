@@ -1,34 +1,35 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="188.976" height="188.976" viewBox="0 0 5000 5000"
-  preserveAspectRatio="xMidYMid" fill-rule="evenodd" stroke-width="28.222" stroke-linejoin="round">
+     preserveAspectRatio="xMidYMid" fill-rule="evenodd" stroke-width="28.222"
+     stroke-linejoin="round">
   <defs>
     <clipPath id="A">
-      <path d="M0 0h5000v5000H0z" />
+      <path d="M0 0h5000v5000H0z"/>
     </clipPath>
   </defs>
   <g clip-path="url(#A)">
     <defs>
       <mask id="B">
-        <path d="M474 261h3185v4697H474V261z" fill="url(#C)" />
+        <path d="M474 261h3185v4697H474V261z" fill="url(#C)"/>
       </mask>
       <linearGradient id="C" x1="2066" y1="261" x2="2066" y2="4958" gradientUnits="userSpaceOnUse">
-        <stop offset=".5" stop-color="#4d4d4d" />
+        <stop offset=".5" stop-color="#4d4d4d"/>
       </linearGradient>
     </defs>
     <g mask="url(#B)">
       <path fill="none" stroke="#81d41a" stroke-width="159"
-        d="M553 340c284 235 661 398 968 615 267 195 580 366 829 583 122 109 163 262 221 398 81 199 116 411 208 615 58 131 64 280 81 420 18 154 93 317 111 475 11 149 58 294 150 420 105 136 174 290 226 443 53 145 140 281 192 430l40 108v32" />
+            d="M553 340c284 235 661 398 968 615 267 195 580 366 829 583 122 109 163 262 221 398 81 199 116 411 208 615 58 131 64 280 81 420 18 154 93 317 111 475 11 149 58 294 150 420 105 136 174 290 226 443 53 145 140 281 192 430l40 108v32"/>
     </g>
     <defs>
       <mask id="D">
-        <path d="M99 99h4858v4127H99V99z" fill="url(#E)" />
+        <path d="M99 99h4858v4127H99V99z" fill="url(#E)"/>
       </mask>
       <linearGradient id="E" x1="2528" y1="99" x2="2528" y2="4226" gradientUnits="userSpaceOnUse">
-        <stop offset=".5" stop-color="#4d4d4d" />
+        <stop offset=".5" stop-color="#4d4d4d"/>
       </linearGradient>
     </defs>
     <g mask="url(#D)">
       <path fill="none" stroke="#81d41a" stroke-width="159"
-        d="M179 4147c189-241 391-469 613-667 267-241 448-556 726-791 283-232 518-529 810-752 382-287 724-645 1143-887 200-113 406-229 599-366 156-111 331-222 510-311l164-118 113-62 21-14" />
+            d="M179 4147c189-241 391-469 613-667 267-241 448-556 726-791 283-232 518-529 810-752 382-287 724-645 1143-887 200-113 406-229 599-366 156-111 331-222 510-311l164-118 113-62 21-14"/>
     </g>
   </g>
 </svg>

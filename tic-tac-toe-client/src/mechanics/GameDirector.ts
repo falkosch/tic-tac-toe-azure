@@ -1,6 +1,6 @@
 import { buildBoardModifier } from './Actions';
 import { countPoints, isDrawEnding, isOneWinnerEnding, pointsLeader } from './GameRules';
-import { findConsecutiveness } from './Consecutiveness';
+import { findConsecutive } from './Consecutiveness';
 import { AttackGameAction } from '../meta-model/GameAction';
 import { Board, BoardDimensions } from '../meta-model/Board';
 import { CellOwner, SpecificCellOwner } from '../meta-model/CellOwner';
@@ -41,7 +41,7 @@ const newBoard = (boardDimensions: Readonly<BoardDimensions>): Board => {
 const newGameView = (): GameView => {
   return {
     board: newBoard(DefaultDimensions),
-    consecutiveness: [],
+    consecutive: [],
     points: {
       [CellOwner.O]: 0,
       [CellOwner.X]: 0,
@@ -85,7 +85,7 @@ const makeDrawEndState = (
 ): GameEndState => {
   return {
     gameView,
-    visitee(visitor) {
+    visit(visitor) {
       const { drawEndState } = visitor;
       if (drawEndState) {
         drawEndState(moveLimitReached);
@@ -98,7 +98,7 @@ const makeOneWinnerEndState = (gameView: Readonly<GameView>): GameEndState => {
   const winner = pointsLeader(gameView.points);
   return {
     gameView,
-    visitee(visitor) {
+    visit(visitor) {
       const { oneWinnerEndState } = visitor;
       if (oneWinnerEndState && winner) {
         oneWinnerEndState(winner);
@@ -113,7 +113,7 @@ const makeErroneousEndState = (
 ): GameEndState => {
   return {
     gameView,
-    visitee(visitor) {
+    visit(visitor) {
       const { erroneousEndState } = visitor;
       if (erroneousEndState) {
         erroneousEndState(error);
@@ -205,9 +205,9 @@ const runTurns = async (
 
     const boardModifier = buildBoardModifier(action, cellOwner);
     const board = boardModifier(gameView.board);
-    const consecutiveness = findConsecutiveness(board);
-    const points = countPoints(board, consecutiveness);
-    gameView = { board, consecutiveness, points };
+    const consecutive = findConsecutive(board);
+    const points = countPoints(board, consecutive);
+    gameView = { board, consecutive, points };
     // eslint-disable-next-line no-await-in-loop
     await notifyGameViewUpdate(gameView, joinedPlayers, onGameViewUpdate);
 

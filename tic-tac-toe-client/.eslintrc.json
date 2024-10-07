@@ -37,7 +37,12 @@
   "rules": {
     "import/extensions": "off",
     "import/prefer-default-export": "off",
-    "react/function-component-definition": ["error", { "namedComponents": "arrow-function" }],
+    "react/function-component-definition": [
+      "error",
+      {
+        "namedComponents": "arrow-function"
+      }
+    ],
     "react/require-default-props": [
       "error",
       {
@@ -55,6 +60,14 @@
     ]
   },
   "overrides": [
+    {
+      "files": [
+        "src/reportWebVitals.ts"
+      ],
+      "rules": {
+        "no-console": "off"
+      }
+    },
     {
       "files": [
         "src/serviceWorker.ts"

@@ -1,5 +1,5 @@
 import { CellOwner } from '../meta-model/CellOwner';
-import { ConsecutivenessDirection } from '../meta-model/GameView';
+import { ConsecutiveDirection } from '../meta-model/GameView';
 
 import strikeHorizontal from './assets/strike-horizontal.svg';
 import strikeTL2BR from './assets/strike-TL2BR.svg';
@@ -9,28 +9,23 @@ import strikeVertical from './assets/strike-vertical.svg';
 import strokeO from './assets/stroke-o.svg';
 import strokeX from './assets/stroke-x.svg';
 
-const cellOwnerToImage = Object.freeze({
+const cellOwnerToImage: Record<CellOwner, string | undefined> = {
   [CellOwner.None]: undefined,
   [CellOwner.O]: strokeO,
   [CellOwner.X]: strokeX,
-});
+} as const;
 
-const consecutivenessDirectionToImage = Object.freeze({
-  [ConsecutivenessDirection.Horizontal]: strikeHorizontal,
-  [ConsecutivenessDirection.Vertical]: strikeVertical,
-  [ConsecutivenessDirection.DiagonalTL2BR]: strikeTL2BR,
-  [ConsecutivenessDirection.DiagonalTR2BL]: strikeTR2BL,
-});
+const consecutiveDirectionToImage: Record<ConsecutiveDirection, string> = {
+  [ConsecutiveDirection.Horizontal]: strikeHorizontal,
+  [ConsecutiveDirection.Vertical]: strikeVertical,
+  [ConsecutiveDirection.DiagonalTL2BR]: strikeTL2BR,
+  [ConsecutiveDirection.DiagonalTR2BL]: strikeTR2BL,
+} as const;
 
-export const mapCellOwnerToImage = (cellOwner: Readonly<CellOwner>): string | undefined => {
-  return cellOwnerToImage[cellOwner];
-};
+export const mapCellOwnerToImage = (cellOwner: Readonly<CellOwner>): string | undefined =>
+  cellOwnerToImage[cellOwner];
 
-export const mapConsecutivenessDirectionToImage = (
-  direction?: Readonly<ConsecutivenessDirection>,
-): string | undefined => {
-  if (direction === undefined) {
-    return undefined;
-  }
-  return consecutivenessDirectionToImage[direction];
-};
+export const mapConsecutiveDirectionToImage = (
+  direction?: Readonly<ConsecutiveDirection>,
+): string | undefined =>
+  direction === undefined ? undefined : consecutiveDirectionToImage[direction];

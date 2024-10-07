@@ -1,7 +1,7 @@
 import {
+  AIAgent,
   buildNormalizedStateSpace,
   findDecisionForStateSpace,
-  AIAgent,
   NormalizedStateSpace,
 } from '../ai-agent/AIAgent';
 import { transformBoardCells } from '../../mechanics/BoardNormalization';

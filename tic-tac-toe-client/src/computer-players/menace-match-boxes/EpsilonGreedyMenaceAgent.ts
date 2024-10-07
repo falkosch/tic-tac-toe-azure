@@ -1,12 +1,12 @@
 import {
   findFreeBeads,
-  multiplyBeads,
-  randomBead,
   MenaceAgent,
   MenaceStateSpace,
+  multiplyBeads,
+  randomBead,
 } from './MenaceAgent';
 import { loadAgent, persistAgent } from '../ai-agent/StorableAgent';
-import { takeAny, Decision } from '../ai-agent/Decision';
+import { Decision, takeAny } from '../ai-agent/Decision';
 import { AIAgentCreator } from '../ai-agent/AIAgent';
 import { CellOwner } from '../../meta-model/CellOwner';
 import { StorableMenaceAgent } from './StorableMenaceAgent';
@@ -75,8 +75,7 @@ const learn = (learnPolicy: LearnPolicy, getMenaceMemory: () => StorableMenaceAg
   menaceMemory.playedMoves.forEach((playedMove) => {
     const { boardAsString, bead } = playedMove;
     const beads = menaceMemory.matchboxes[boardAsString];
-    const learnedBeads = learnPolicy(beads, bead);
-    menaceMemory.matchboxes[boardAsString] = learnedBeads;
+    menaceMemory.matchboxes[boardAsString] = learnPolicy(beads, bead);
   });
   menaceMemory.playedMoves = [];
 };

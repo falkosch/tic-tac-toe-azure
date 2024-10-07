@@ -17,7 +17,7 @@ export const GameView: FC<{
           boardDimensions={gameView.board.dimensions}
           cellAt={cellAt}
           cellOwner={cellOwner}
-          consecutiveness={gameView.consecutiveness}
+          consecutive={gameView.consecutive}
         />
       );
     })}
