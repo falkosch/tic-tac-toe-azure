@@ -1,20 +1,33 @@
 # tic-tac-toe-client
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=tic-tac-toe&metric=alert_status)](https://sonarcloud.io/dashboard?id=tic-tac-toe)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=tic-tac-toe&metric=coverage)](https://sonarcloud.io/dashboard?id=tic-tac-toe)
-[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=tic-tac-toe&metric=ncloc)](https://sonarcloud.io/dashboard?id=tic-tac-toe)
+A React-based Tic Tac Toe game featuring different AI opponents, including a Deep Q-Network (DQN) player and a Menace Matchboxes Engine.
 
-React-based client of the Tic Tac Toe game example.
+## Features
 
-## Status
+- Play against a DQN AI powered by [mvrahden's reinforce-js](https://github.com/mvrahden/reinforce-js).
+- Challenge the Menace Matchboxes Engine, inspired by [andrewmccarthy's Python version](https://github.com/andrewmccarthy/menace).
 
-[![Build Status](https://falko-schwabe.visualstudio.com/tic-tac-toe-azure/_apis/build/status/falkosch.tic-tac-toe-azure%20tic-tac-toe-client?branchName=master)](https://falko-schwabe.visualstudio.com/tic-tac-toe-azure/_build/latest?definitionId=2&branchName=master)
+## Installation
+
+1. Clone the repository: `git clone https://github.com/yourusername/tic-tac-toe-client.git`
+2. Navigate into the project directory: `cd tic-tac-toe-client`
+3. Install dependencies: `npm install`
+
+## Usage
+
+1. Start the development server: `npm start`
+2. Open your browser and go to [http://localhost:3000](http://localhost:3000) to start playing.
+3. Choose your opponent (DQN or Menace) and enjoy the game!
 
 ## Credits
 
-The DQN player is implemented using [mvrahden's reinforce-js](https://github.com/mvrahden/reinforce-js).
+DQN player implementation by mvrahden's reinforce-js.
 
-The implementation of the Menace Matchboxes Engine is based upon [andrewmccarthy's Python version](https://github.com/andrewmccarthy/menace).
+Menace Matchboxes Engine based on andrewmccarthy's Python version.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Available Scripts
 
