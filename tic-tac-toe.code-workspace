@@ -16,10 +16,7 @@
     "azureFunctions.projectLanguage": "C#",
     "azureFunctions.projectRuntime": "~2",
     "azureFunctions.preDeployTask": "publish",
-    "jest.disabledWorkspaceFolders": [
-      "TicTacToeGame",
-      "tic-tac-toe-azure"
-    ],
+    "jest.disabledWorkspaceFolders": ["TicTacToeGame", "tic-tac-toe-azure"],
     "[javascript]": {
       "editor.defaultFormatter": "dbaeumer.vscode-eslint"
     },
@@ -49,7 +46,7 @@
     ],
     "css.lint.unknownAtRules": "ignore",
     "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": true
+      "source.fixAll.eslint": "explicit"
     }
   },
   "tasks": {
