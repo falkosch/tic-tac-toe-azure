@@ -47,7 +47,8 @@
     "css.lint.unknownAtRules": "ignore",
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "explicit"
-    }
+    },
+    "azureFunctions.showTargetFrameworkWarning": false
   },
   "tasks": {
     "version": "2.0.0",
